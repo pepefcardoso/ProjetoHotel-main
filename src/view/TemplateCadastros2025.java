@@ -85,7 +85,7 @@ public class TemplateCadastros2025 extends javax.swing.JDialog {
         jPanelBotoes.add(jButtonBuscar);
 
         jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Exit.png"))); // NOI18N
-        jButtonSair.setText("Sair");
+        jButtonSair.setText("Fechar");
         jPanelBotoes.add(jButtonSair);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

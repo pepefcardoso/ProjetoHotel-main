@@ -221,7 +221,7 @@ public class TelaCadastroModelo extends javax.swing.JDialog {
         jPanelBotoes.add(jButtonBuscar);
 
         jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Exit.png"))); // NOI18N
-        jButtonSair.setText("Sair");
+        jButtonSair.setText("Fechar");
         jButtonSair.setActionCommand("0");
         jPanelBotoes.add(jButtonSair);
 
