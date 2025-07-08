@@ -1,51 +1,58 @@
-
 package controller;
 
+import model.Quarto;
+import model.Status;
 import view.TelaCadastroQuarto;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import view.buscas.TelaBuscaQuarto;
 
-public class ControllerCadQuarto implements ActionListener {
-
-    TelaCadastroQuarto telaCadastroQuarto;
+public class ControllerCadQuarto extends ControllerCadAbstract {
 
     public ControllerCadQuarto(TelaCadastroQuarto telaCadastroQuarto) {
-
-        this.telaCadastroQuarto = telaCadastroQuarto;
-
-        this.telaCadastroQuarto.getjButtonNovo().addActionListener(this);
-        this.telaCadastroQuarto.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroQuarto.getjButtonGravar().addActionListener(this);
-        this.telaCadastroQuarto.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroQuarto.getjButtonSair().addActionListener(this);
-
-        //Desenvolver as setagens de situação inicial dos componentes
-        /*this.telaCadastroQuarto.getjButtonNovo().setEnabled(true);
-        this.telaCadastroQuarto.getjButtonCancelar().setEnabled(false);
-        this.telaCadastroQuarto.getjButtonGravar().setEnabled(false);
-        this.telaCadastroQuarto.getjButtonBuscar().setEnabled(true);
-        this.telaCadastroQuarto.getjButtonSair().setEnabled(true);*/
-        utilities.Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), true);
+        super(telaCadastroQuarto, telaCadastroQuarto.getjPanelBotoes(), telaCadastroQuarto.getjPanelDados());
     }
 
     @Override
-    public void actionPerformed(ActionEvent evento) {
-        if (evento.getSource() == this.telaCadastroQuarto.getjButtonNovo()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), false);
-        } else if (evento.getSource() == this.telaCadastroQuarto.getjButtonCancelar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroQuarto.getjButtonGravar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroQuarto.getjButtonBuscar()) {
-            
-            TelaBuscaQuarto telaBuscaQuarto = new TelaBuscaQuarto(null, true);
-            ControllerBuscaQuarto controllerBuscaQuarto = new ControllerBuscaQuarto(telaBuscaQuarto);
-            telaBuscaQuarto.setVisible(true);
-            
-        } else if (evento.getSource() == this.telaCadastroQuarto.getjButtonSair()) {
-            this.telaCadastroQuarto.dispose();
+    public void buscar() {
+        TelaBuscaQuarto telaBuscaQuarto = new TelaBuscaQuarto(null, true);
+        ControllerBuscaQuarto controllerBuscaQuarto = new ControllerBuscaQuarto(telaBuscaQuarto);
+        telaBuscaQuarto.setVisible(true);
+    }
+
+    @Override
+    public void preencherObjeto() {
+        Quarto quarto = new Quarto();
+        quarto.setId(Integer.parseInt(((TelaCadastroQuarto) tela).getjTextFieldId().getText()));
+        quarto.setDescricao(((TelaCadastroQuarto) tela).getjTextFieldDescricao().getText());
+        quarto.setObs(((TelaCadastroQuarto) tela).getjTextFieldObservacao().getText());
+        quarto.setCapacidadeHospedes(Integer.parseInt(((TelaCadastroQuarto) tela).getjFormattedTextFieldCapacidade().getText()));
+        quarto.setMetragem(Float.parseFloat(((TelaCadastroQuarto) tela).getjFormattedTextFieldMetragem().getText()));
+        quarto.setAndar(Integer.parseInt(((TelaCadastroQuarto) tela).getjFormattedTextFieldAndar().getText()));
+        quarto.setIdentificacao(((TelaCadastroQuarto) tela).getjTextFieldDescricaoidentificacao().getText());
+        quarto.setFlagAnimais(((TelaCadastroQuarto) tela).getjCheckBoxFlagAnimais().isSelected());
+
+        if (((TelaCadastroQuarto) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+            quarto.setStatus(Status.ATIVO);
+        } else {
+            quarto.setStatus(Status.INATIVO);
+        }
+    }
+
+    @Override
+    public void preencherTela(Object objeto) {
+        Quarto quarto = (Quarto) objeto;
+        ((TelaCadastroQuarto) tela).getjTextFieldId().setText(String.valueOf(quarto.getId()));
+        ((TelaCadastroQuarto) tela).getjTextFieldDescricao().setText(quarto.getDescricao());
+        ((TelaCadastroQuarto) tela).getjTextFieldObservacao().setText(quarto.getObs());
+        ((TelaCadastroQuarto) tela).getjFormattedTextFieldCapacidade().setText(String.valueOf(quarto.getCapacidadeHospedes()));
+        ((TelaCadastroQuarto) tela).getjFormattedTextFieldMetragem().setText(String.valueOf(quarto.getMetragem()));
+        ((TelaCadastroQuarto) tela).getjFormattedTextFieldAndar().setText(String.valueOf(quarto.getAndar()));
+        ((TelaCadastroQuarto) tela).getjTextFieldDescricaoidentificacao().setText(quarto.getIdentificacao());
+        ((TelaCadastroQuarto) tela).getjCheckBoxFlagAnimais().setSelected(quarto.isFlagAnimais());
+
+        if (quarto.getStatus() == Status.ATIVO) {
+            ((TelaCadastroQuarto) tela).getjComboBoxStatus().setSelectedIndex(0);
+        } else {
+            ((TelaCadastroQuarto) tela).getjComboBoxStatus().setSelectedIndex(1);
         }
     }
 }

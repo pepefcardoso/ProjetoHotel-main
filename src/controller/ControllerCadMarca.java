@@ -1,51 +1,55 @@
-
 package controller;
 
+import model.Marca;
+import model.Status;
 import view.TelaCadastroMarca;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import view.buscas.TelaBuscaMarca;
 
-public class ControllerCadMarca implements ActionListener {
-
-    TelaCadastroMarca telaCadastroMarca;
+public class ControllerCadMarca extends ControllerCadAbstract {
 
     public ControllerCadMarca(TelaCadastroMarca telaCadastroMarca) {
+        super(telaCadastroMarca, telaCadastroMarca.getjPanelBotoes(), telaCadastroMarca.getjPanelDados());
 
-        this.telaCadastroMarca = telaCadastroMarca;
-
-        this.telaCadastroMarca.getjButtonNovo().addActionListener(this);
-        this.telaCadastroMarca.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroMarca.getjButtonGravar().addActionListener(this);
-        this.telaCadastroMarca.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroMarca.getjButtonSair().addActionListener(this);
-
-        //Desenvolver as setagens de situação inicial dos componentes
-        /*this.telaCadastroMarca.getjButtonNovo().setEnabled(true);
-        this.telaCadastroMarca.getjButtonCancelar().setEnabled(false);
-        this.telaCadastroMarca.getjButtonGravar().setEnabled(false);
-        this.telaCadastroMarca.getjButtonBuscar().setEnabled(true);
-        this.telaCadastroMarca.getjButtonSair().setEnabled(true);*/
-        utilities.Utilities.ativaDesativa(this.telaCadastroMarca.getjPanelBotoes(), true);
+        utilities.Utilities.ativaDesativa(this.painelBotoes, true);
+        utilities.Utilities.limpaComponentes(this.painelDados, false);
     }
 
     @Override
-    public void actionPerformed(ActionEvent evento) {
-        if (evento.getSource() == this.telaCadastroMarca.getjButtonNovo()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroMarca.getjPanelBotoes(), false);
-        } else if (evento.getSource() == this.telaCadastroMarca.getjButtonCancelar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroMarca.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroMarca.getjButtonGravar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroMarca.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroMarca.getjButtonBuscar()) {
-            
-            TelaBuscaMarca telaBuscaMarca = new TelaBuscaMarca(null, true);
-            ControllerBuscaMarca controllerBuscaMarca = new ControllerBuscaMarca(telaBuscaMarca);
-            telaBuscaMarca.setVisible(true);
-            
-        } else if (evento.getSource() == this.telaCadastroMarca.getjButtonSair()) {
-            this.telaCadastroMarca.dispose();
+    public void buscar() {
+        TelaBuscaMarca telaBuscaMarca = new TelaBuscaMarca(null, true);
+        ControllerBuscaMarca controllerBuscaMarca = new ControllerBuscaMarca(telaBuscaMarca);
+        telaBuscaMarca.setVisible(true);
+    }
+
+    @Override
+    public void preencherObjeto() {
+        Marca marca = new Marca();
+        TelaCadastroMarca tela = (TelaCadastroMarca) this.tela;
+
+        marca.setDescricao(tela.getjTextFieldDescricao().getText());
+
+        if (tela.getjComboBoxStatus().getSelectedIndex() == 0) {
+            marca.setStatus(Status.ATIVO);
+        } else {
+            marca.setStatus(Status.INATIVO);
+        }
+
+        System.out.println(marca);
+    }
+
+    @Override
+    public void preencherTela(Object objeto) {
+        if (objeto instanceof Marca marca) {
+            TelaCadastroMarca tela = (TelaCadastroMarca) this.tela;
+
+            tela.getjTextFieldId().setText(String.valueOf(marca.getId()));
+            tela.getjTextFieldDescricao().setText(marca.getDescricao());
+
+            if (marca.getStatus() == Status.ATIVO) {
+                tela.getjComboBoxStatus().setSelectedIndex(0);
+            } else {
+                tela.getjComboBoxStatus().setSelectedIndex(1);
+            }
         }
     }
 }

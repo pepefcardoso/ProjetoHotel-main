@@ -1,51 +1,53 @@
-
 package controller;
 
+import java.math.BigDecimal;
+import model.Produto;
+import model.Status;
 import view.TelaCadastroProduto;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import view.buscas.TelaBuscaProduto;
 
-public class ControllerCadProduto implements ActionListener {
-
-    TelaCadastroProduto telaCadastroProduto;
+public class ControllerCadProduto extends ControllerCadAbstract {
 
     public ControllerCadProduto(TelaCadastroProduto telaCadastroProduto) {
-
-        this.telaCadastroProduto = telaCadastroProduto;
-
-        this.telaCadastroProduto.getjButtonNovo().addActionListener(this);
-        this.telaCadastroProduto.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonGravar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonSair().addActionListener(this);
-
-        //Desenvolver as setagens de situação inicial dos componentes
-        /*this.telaCadastroProduto.getjButtonNovo().setEnabled(true);
-        this.telaCadastroProduto.getjButtonCancelar().setEnabled(false);
-        this.telaCadastroProduto.getjButtonGravar().setEnabled(false);
-        this.telaCadastroProduto.getjButtonBuscar().setEnabled(true);
-        this.telaCadastroProduto.getjButtonSair().setEnabled(true);*/
-        utilities.Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), true);
+        super(telaCadastroProduto, telaCadastroProduto.getjPanelBotoes(), telaCadastroProduto.getjPanelDados());
     }
 
     @Override
-    public void actionPerformed(ActionEvent evento) {
-        if (evento.getSource() == this.telaCadastroProduto.getjButtonNovo()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), false);
-        } else if (evento.getSource() == this.telaCadastroProduto.getjButtonCancelar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroProduto.getjButtonGravar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroProduto.getjButtonBuscar()) {
-            
-            TelaBuscaProduto telaBuscaProduto = new TelaBuscaProduto(null, true);
-            ControllerBuscaProduto controllerBuscaProduto = new ControllerBuscaProduto(telaBuscaProduto);
-            telaBuscaProduto.setVisible(true);
-            
-        } else if (evento.getSource() == this.telaCadastroProduto.getjButtonSair()) {
-            this.telaCadastroProduto.dispose();
+    public void buscar() {
+        TelaBuscaProduto telaBuscaProduto = new TelaBuscaProduto(null, true);
+        ControllerBuscaProduto controllerBuscaProduto = new ControllerBuscaProduto(telaBuscaProduto);
+        telaBuscaProduto.setVisible(true);
+    }
+
+    @Override
+    public void preencherObjeto() {
+        Produto produto = new Produto();
+        produto.setId(Integer.parseInt(((TelaCadastroProduto) tela).getjTextFieldId().getText()));
+        produto.setDescricao(((TelaCadastroProduto) tela).getjTextFieldDescricao().getText());
+        produto.setObs(((TelaCadastroProduto) tela).getjTextFieldObservacao().getText());
+
+        String valorText = ((TelaCadastroProduto) tela).getjFormattedTextFieldValor().getText().replace(".", "").replace(",", ".");
+        produto.setValor(new BigDecimal(valorText));
+
+        if (((TelaCadastroProduto) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+            produto.setStatus(Status.ATIVO);
+        } else {
+            produto.setStatus(Status.INATIVO);
+        }
+    }
+
+    @Override
+    public void preencherTela(Object objeto) {
+        Produto produto = (Produto) objeto;
+        ((TelaCadastroProduto) tela).getjTextFieldId().setText(String.valueOf(produto.getId()));
+        ((TelaCadastroProduto) tela).getjTextFieldDescricao().setText(produto.getDescricao());
+        ((TelaCadastroProduto) tela).getjTextFieldObservacao().setText(produto.getObs());
+        ((TelaCadastroProduto) tela).getjFormattedTextFieldValor().setText(produto.getValor().toPlainString());
+
+        if (produto.getStatus() == Status.ATIVO) {
+            ((TelaCadastroProduto) tela).getjComboBoxStatus().setSelectedIndex(0);
+        } else {
+            ((TelaCadastroProduto) tela).getjComboBoxStatus().setSelectedIndex(1);
         }
     }
 }

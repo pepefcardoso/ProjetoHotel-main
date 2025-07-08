@@ -1,51 +1,54 @@
-
 package controller;
 
+import model.Modelo;
+import model.Status;
+import model.Veiculo;
 import view.TelaCadastroVeiculo;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import view.buscas.TelaBuscaVeiculo;
 
-public class ControllerCadVeiculo implements ActionListener {
-
-    TelaCadastroVeiculo telaCadastroVeiculo;
+public class ControllerCadVeiculo extends ControllerCadAbstract {
 
     public ControllerCadVeiculo(TelaCadastroVeiculo telaCadastroVeiculo) {
-
-        this.telaCadastroVeiculo = telaCadastroVeiculo;
-
-        this.telaCadastroVeiculo.getjButtonNovo().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonGravar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonSair().addActionListener(this);
-
-        //Desenvolver as setagens de situação inicial dos componentes
-        /*this.telaCadastroVeiculo.getjButtonNovo().setEnabled(true);
-        this.telaCadastroVeiculo.getjButtonCancelar().setEnabled(false);
-        this.telaCadastroVeiculo.getjButtonGravar().setEnabled(false);
-        this.telaCadastroVeiculo.getjButtonBuscar().setEnabled(true);
-        this.telaCadastroVeiculo.getjButtonSair().setEnabled(true);*/
-        utilities.Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), true);
+        super(telaCadastroVeiculo, telaCadastroVeiculo.getjPanelBotoes(), telaCadastroVeiculo.getjPanelDados());
     }
 
     @Override
-    public void actionPerformed(ActionEvent evento) {
-        if (evento.getSource() == this.telaCadastroVeiculo.getjButtonNovo()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), false);
-        } else if (evento.getSource() == this.telaCadastroVeiculo.getjButtonCancelar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroVeiculo.getjButtonGravar()) {
-            utilities.Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), true);
-        } else if (evento.getSource() == this.telaCadastroVeiculo.getjButtonBuscar()) {
-            
-            TelaBuscaVeiculo telaBuscaVeiculo = new TelaBuscaVeiculo(null, true);
-            ControllerBuscaVeiculo controllerBuscaVeiculo = new ControllerBuscaVeiculo(telaBuscaVeiculo);
-            telaBuscaVeiculo.setVisible(true);
-            
-        } else if (evento.getSource() == this.telaCadastroVeiculo.getjButtonSair()) {
-            this.telaCadastroVeiculo.dispose();
+    public void buscar() {
+        TelaBuscaVeiculo telaBuscaVeiculo = new TelaBuscaVeiculo(null, true);
+        ControllerBuscaVeiculo controllerBuscaVeiculo = new ControllerBuscaVeiculo(telaBuscaVeiculo);
+        telaBuscaVeiculo.setVisible(true);
+    }
+
+    @Override
+    public void preencherObjeto() {
+        Veiculo veiculo = new Veiculo();
+        veiculo.setId(Integer.parseInt(((TelaCadastroVeiculo) tela).getjTextFieldId().getText()));
+        veiculo.setPlaca(((TelaCadastroVeiculo) tela).getjTextFieldPlaca().getText());
+        veiculo.setCor(((TelaCadastroVeiculo) tela).getjTextFieldCor().getText());
+
+        if (((TelaCadastroVeiculo) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+            veiculo.setStatus(Status.ATIVO);
+        } else {
+            veiculo.setStatus(Status.INATIVO);
         }
+
+        Modelo modelo = (Modelo) ((TelaCadastroVeiculo) tela).getjComboBoxModelo().getSelectedItem();
+        veiculo.setModelo(modelo);
+    }
+
+    @Override
+    public void preencherTela(Object objeto) {
+        Veiculo veiculo = (Veiculo) objeto;
+        ((TelaCadastroVeiculo) tela).getjTextFieldId().setText(String.valueOf(veiculo.getId()));
+        ((TelaCadastroVeiculo) tela).getjTextFieldPlaca().setText(veiculo.getPlaca());
+        ((TelaCadastroVeiculo) tela).getjTextFieldCor().setText(veiculo.getCor());
+
+        if (veiculo.getStatus() == Status.ATIVO) {
+            ((TelaCadastroVeiculo) tela).getjComboBoxStatus().setSelectedIndex(0);
+        } else {
+            ((TelaCadastroVeiculo) tela).getjComboBoxStatus().setSelectedIndex(1);
+        }
+
+        ((TelaCadastroVeiculo) tela).getjComboBoxModelo().setSelectedItem(veiculo.getModelo());
     }
 }
