@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Marca;
 import model.Status;
 import view.TelaCadastroMarca;
@@ -24,17 +25,26 @@ public class ControllerCadMarca extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Marca marca = new Marca();
-        TelaCadastroMarca tela = (TelaCadastroMarca) this.tela;
+        TelaCadastroMarca telaMarca = (TelaCadastroMarca) this.tela;
 
-        marca.setDescricao(tela.getjTextFieldDescricao().getText());
+        if (!telaMarca.getjTextFieldId().getText().isEmpty()) {
+            try {
+                marca.setId(Integer.parseInt(telaMarca.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID da marca é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID da Marca.");
+            }
+        }
 
-        if (tela.getjComboBoxStatus().getSelectedIndex() == 0) {
+        marca.setDescricao(telaMarca.getjTextFieldDescricao().getText());
+
+        if (telaMarca.getjComboBoxStatus().getSelectedIndex() == 0) {
             marca.setStatus(Status.ATIVO);
         } else {
             marca.setStatus(Status.INATIVO);
         }
 
-        System.out.println(marca);
+        System.out.println("Marca a ser salva: " + marca);
     }
 
     @Override

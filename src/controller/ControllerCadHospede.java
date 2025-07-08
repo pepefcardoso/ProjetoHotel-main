@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Hospede;
 import model.Status;
 import view.TelaCadastroHospede;
@@ -24,30 +25,38 @@ public class ControllerCadHospede extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Hospede hospede = new Hospede();
+        TelaCadastroHospede telaHospede = (TelaCadastroHospede) this.tela;
 
-        TelaCadastroHospede tela = (TelaCadastroHospede) this.tela;
+        if (!telaHospede.getjTextFieldId().getText().isEmpty()) {
+            try {
+                hospede.setId(Integer.parseInt(telaHospede.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do hóspede é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Hóspede.");
+            }
+        }
 
-        hospede.setNome(tela.getjTextFieldNomeFantasia().getText());
-        hospede.setCpf(tela.getjFormattedTextFieldCpf().getText());
-        hospede.setRg(tela.getjTextFieldRg().getText());
-        hospede.setFone1(tela.getjFormattedTextFieldFone1().getText());
-        hospede.setFone2(tela.getjFormattedTextFieldFone2().getText());
-        hospede.setEmail(tela.getjTextFieldEmail().getText());
-        hospede.setCep(tela.getjFormattedTextFieldCep().getText());
-        hospede.setCidade(tela.getjTextFieldCidade().getText());
-        hospede.setBairro(tela.getjTextFieldBairro().getText());
-        hospede.setLogradouro(tela.getjTextFieldLogradouro().getText());
-        hospede.setComplemento(tela.getjTextFieldComplemento().getText());
-        hospede.setObs(tela.getjTextFieldObs().getText());
-        hospede.setContato(tela.getjTextFieldContato().getText());
+        hospede.setNome(telaHospede.getjTextFieldNomeFantasia().getText());
+        hospede.setCpf(telaHospede.getjFormattedTextFieldCpf().getText());
+        hospede.setRg(telaHospede.getjTextFieldRg().getText());
+        hospede.setFone1(telaHospede.getjFormattedTextFieldFone1().getText());
+        hospede.setFone2(telaHospede.getjFormattedTextFieldFone2().getText());
+        hospede.setEmail(telaHospede.getjTextFieldEmail().getText());
+        hospede.setCep(telaHospede.getjFormattedTextFieldCep().getText());
+        hospede.setCidade(telaHospede.getjTextFieldCidade().getText());
+        hospede.setBairro(telaHospede.getjTextFieldBairro().getText());
+        hospede.setLogradouro(telaHospede.getjTextFieldLogradouro().getText());
+        hospede.setComplemento(telaHospede.getjTextFieldComplemento().getText());
+        hospede.setObs(telaHospede.getjTextFieldObs().getText());
+        hospede.setContato(telaHospede.getjTextFieldContato().getText());
 
-        if (tela.getjComboBoxStatus().getSelectedIndex() == 0) {
+        if (telaHospede.getjComboBoxStatus().getSelectedIndex() == 0) {
             hospede.setStatus(Status.ATIVO);
         } else {
             hospede.setStatus(Status.INATIVO);
         }
 
-        System.out.println(hospede);
+        System.out.println("Hóspede a ser salvo: " + hospede);
     }
 
     @Override

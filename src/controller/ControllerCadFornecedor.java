@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Fornecedor;
 import model.Status;
 import view.TelaCadastroFornecedor;
@@ -21,33 +22,42 @@ public class ControllerCadFornecedor extends ControllerCadAbstract {
         telaBuscaFornecedor.setVisible(true);
     }
 
-    @Override
+   @Override
     public void preencherObjeto() {
         Fornecedor fornecedor = new Fornecedor();
-        TelaCadastroFornecedor tela = (TelaCadastroFornecedor) this.tela;
+        TelaCadastroFornecedor telaFornecedor = (TelaCadastroFornecedor) this.tela;
 
-        fornecedor.setNome(tela.getjTextFieldNomeFantasia().getText());
-        fornecedor.setRazaoSocial(tela.getjTextFieldRazaoSocial().getText());
-        fornecedor.setCnpj(tela.getjFormattedTextFieldCnpj().getText());
-        fornecedor.setInscricaoEstadual(tela.getjTextFieldInscricaoEstadual().getText());
-        fornecedor.setFone1(tela.getjFormattedTextFieldFone1().getText());
-        fornecedor.setFone2(tela.getjFormattedTextFieldFone2().getText());
-        fornecedor.setEmail(tela.getjTextFieldEmail().getText());
-        fornecedor.setCep(tela.getjFormattedTextFieldCep().getText());
-        fornecedor.setCidade(tela.getjTextFieldCidade().getText());
-        fornecedor.setBairro(tela.getjTextFieldBairro().getText());
-        fornecedor.setLogradouro(tela.getjTextFieldLogradouro().getText());
-        fornecedor.setComplemento(tela.getjTextFieldComplemento().getText());
-        fornecedor.setObs(tela.getjTextFieldObs().getText());
-        fornecedor.setContato(tela.getjTextFieldContato().getText());
+        if (!telaFornecedor.getjTextFieldId().getText().isEmpty()) {
+            try {
+                fornecedor.setId(Integer.parseInt(telaFornecedor.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do fornecedor é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Fornecedor.");
+            }
+        }
 
-        if (tela.getjComboBoxStatus().getSelectedIndex() == 0) {
+        fornecedor.setNome(telaFornecedor.getjTextFieldNomeFantasia().getText());
+        fornecedor.setRazaoSocial(telaFornecedor.getjTextFieldRazaoSocial().getText());
+        fornecedor.setCnpj(telaFornecedor.getjFormattedTextFieldCnpj().getText());
+        fornecedor.setInscricaoEstadual(telaFornecedor.getjTextFieldInscricaoEstadual().getText());
+        fornecedor.setFone1(telaFornecedor.getjFormattedTextFieldFone1().getText());
+        fornecedor.setFone2(telaFornecedor.getjFormattedTextFieldFone2().getText());
+        fornecedor.setEmail(telaFornecedor.getjTextFieldEmail().getText());
+        fornecedor.setCep(telaFornecedor.getjFormattedTextFieldCep().getText());
+        fornecedor.setCidade(telaFornecedor.getjTextFieldCidade().getText());
+        fornecedor.setBairro(telaFornecedor.getjTextFieldBairro().getText());
+        fornecedor.setLogradouro(telaFornecedor.getjTextFieldLogradouro().getText());
+        fornecedor.setComplemento(telaFornecedor.getjTextFieldComplemento().getText());
+        fornecedor.setObs(telaFornecedor.getjTextFieldObs().getText());
+        fornecedor.setContato(telaFornecedor.getjTextFieldContato().getText());
+
+        if (telaFornecedor.getjComboBoxStatus().getSelectedIndex() == 0) {
             fornecedor.setStatus(Status.ATIVO);
         } else {
             fornecedor.setStatus(Status.INATIVO);
         }
 
-        System.out.println(fornecedor);
+        System.out.println("Fornecedor a ser salvo: " + fornecedor);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Servico;
 import model.Status;
 import view.TelaCadastroServico;
@@ -21,15 +22,27 @@ public class ControllerCadServico extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Servico servico = new Servico();
-        servico.setId(Integer.parseInt(((TelaCadastroServico) tela).getjTextFieldId().getText()));
-        servico.setDescricao(((TelaCadastroServico) tela).getjTextFieldDescricao().getText());
-        servico.setObs(((TelaCadastroServico) tela).getjTextFieldObservacao().getText());
+        TelaCadastroServico telaServico = (TelaCadastroServico) this.tela;
 
-        if (((TelaCadastroServico) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+        if (!telaServico.getjTextFieldId().getText().isEmpty()) {
+            try {
+                servico.setId(Integer.parseInt(telaServico.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do serviço é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Serviço.");
+            }
+        }
+
+        servico.setDescricao(telaServico.getjTextFieldDescricao().getText());
+        servico.setObs(telaServico.getjTextFieldObservacao().getText());
+
+        if (telaServico.getjComboBoxStatus().getSelectedIndex() == 0) {
             servico.setStatus(Status.ATIVO);
         } else {
             servico.setStatus(Status.INATIVO);
         }
+
+        System.out.println("Serviço a ser salvo: " + servico);
     }
 
     @Override

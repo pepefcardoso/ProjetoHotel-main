@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Marca;
 import model.Modelo;
 import model.Status;
@@ -22,17 +23,34 @@ public class ControllerCadModelo extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Modelo modelo = new Modelo();
-        modelo.setId(Integer.parseInt(((TelaCadastroModelo) tela).getjTextFieldId().getText()));
-        modelo.setDescricao(((TelaCadastroModelo) tela).getjTextFieldDescricao().getText());
-        
-        if (((TelaCadastroModelo) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+        TelaCadastroModelo telaModelo = (TelaCadastroModelo) this.tela;
+
+        if (!telaModelo.getjTextFieldId().getText().isEmpty()) {
+            try {
+                modelo.setId(Integer.parseInt(telaModelo.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do modelo é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Modelo.");
+            }
+        }
+
+        modelo.setDescricao(telaModelo.getjTextFieldDescricao().getText());
+
+        if (telaModelo.getjComboBoxStatus().getSelectedIndex() == 0) {
             modelo.setStatus(Status.ATIVO);
         } else {
             modelo.setStatus(Status.INATIVO);
         }
-        
-        Marca marca = (Marca) ((TelaCadastroModelo) tela).getjComboBoxMarca().getSelectedItem();
-        modelo.setMarca(marca);
+
+        Object itemSelecionado = telaModelo.getjComboBoxMarca().getSelectedItem();
+        if (itemSelecionado instanceof Marca) {
+            modelo.setMarca((Marca) itemSelecionado);
+        } else {
+            JOptionPane.showMessageDialog(tela, "Por favor, selecione uma marca.", "Erro de Validação", JOptionPane.WARNING_MESSAGE);
+            throw new RuntimeException("Marca não selecionada.");
+        }
+
+        System.out.println("Modelo a ser salvo: " + modelo);
     }
 
     @Override
@@ -46,7 +64,7 @@ public class ControllerCadModelo extends ControllerCadAbstract {
         } else {
             ((TelaCadastroModelo) tela).getjComboBoxStatus().setSelectedIndex(1);
         }
-        
+
         ((TelaCadastroModelo) tela).getjComboBoxMarca().setSelectedItem(modelo.getMarca());
     }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Modelo;
 import model.Status;
 import model.Veiculo;
@@ -22,18 +23,35 @@ public class ControllerCadVeiculo extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Veiculo veiculo = new Veiculo();
-        veiculo.setId(Integer.parseInt(((TelaCadastroVeiculo) tela).getjTextFieldId().getText()));
-        veiculo.setPlaca(((TelaCadastroVeiculo) tela).getjTextFieldPlaca().getText());
-        veiculo.setCor(((TelaCadastroVeiculo) tela).getjTextFieldCor().getText());
+        TelaCadastroVeiculo telaVeiculo = (TelaCadastroVeiculo) this.tela;
 
-        if (((TelaCadastroVeiculo) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+        if (!telaVeiculo.getjTextFieldId().getText().isEmpty()) {
+            try {
+                veiculo.setId(Integer.parseInt(telaVeiculo.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do veículo é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Veículo.");
+            }
+        }
+
+        veiculo.setPlaca(telaVeiculo.getjTextFieldPlaca().getText());
+        veiculo.setCor(telaVeiculo.getjTextFieldCor().getText());
+
+        if (telaVeiculo.getjComboBoxStatus().getSelectedIndex() == 0) {
             veiculo.setStatus(Status.ATIVO);
         } else {
             veiculo.setStatus(Status.INATIVO);
         }
 
-        Modelo modelo = (Modelo) ((TelaCadastroVeiculo) tela).getjComboBoxModelo().getSelectedItem();
-        veiculo.setModelo(modelo);
+        Object itemSelecionado = telaVeiculo.getjComboBoxModelo().getSelectedItem();
+        if (itemSelecionado instanceof Modelo) {
+            veiculo.setModelo((Modelo) itemSelecionado);
+        } else {
+            JOptionPane.showMessageDialog(tela, "Por favor, selecione um modelo para o veículo.", "Erro de Validação", JOptionPane.WARNING_MESSAGE);
+            throw new RuntimeException("Modelo não selecionado.");
+        }
+
+        System.out.println("Veículo a ser salvo: " + veiculo);
     }
 
     @Override

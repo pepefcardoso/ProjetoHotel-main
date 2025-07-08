@@ -1,3 +1,4 @@
+
 package controller;
 
 import java.awt.event.ActionEvent;
@@ -5,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import utilities.Utilities;
+
 
 public abstract class ControllerCadAbstract implements IController {
 
@@ -48,9 +50,13 @@ public abstract class ControllerCadAbstract implements IController {
 
     @Override
     public void gravar() {
-        preencherObjeto();
-        Utilities.ativaDesativa(painelBotoes, true);
-        Utilities.limpaComponentes(painelDados, false);
+        try {
+            preencherObjeto();
+            Utilities.ativaDesativa(painelBotoes, true);
+            Utilities.limpaComponentes(painelDados, false);
+        } catch (Exception e) {
+            System.err.println("A gravação foi interrompida: " + e.getMessage());
+        }
     }
 
     @Override

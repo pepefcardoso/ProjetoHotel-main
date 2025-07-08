@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Quarto;
 import model.Status;
 import view.TelaCadastroQuarto;
@@ -21,20 +22,43 @@ public class ControllerCadQuarto extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Quarto quarto = new Quarto();
-        quarto.setId(Integer.parseInt(((TelaCadastroQuarto) tela).getjTextFieldId().getText()));
-        quarto.setDescricao(((TelaCadastroQuarto) tela).getjTextFieldDescricao().getText());
-        quarto.setObs(((TelaCadastroQuarto) tela).getjTextFieldObservacao().getText());
-        quarto.setCapacidadeHospedes(Integer.parseInt(((TelaCadastroQuarto) tela).getjFormattedTextFieldCapacidade().getText()));
-        quarto.setMetragem(Float.parseFloat(((TelaCadastroQuarto) tela).getjFormattedTextFieldMetragem().getText()));
-        quarto.setAndar(Integer.parseInt(((TelaCadastroQuarto) tela).getjFormattedTextFieldAndar().getText()));
-        quarto.setIdentificacao(((TelaCadastroQuarto) tela).getjTextFieldDescricaoidentificacao().getText());
-        quarto.setFlagAnimais(((TelaCadastroQuarto) tela).getjCheckBoxFlagAnimais().isSelected());
+        TelaCadastroQuarto telaQuarto = (TelaCadastroQuarto) this.tela;
 
-        if (((TelaCadastroQuarto) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+        if (!telaQuarto.getjTextFieldId().getText().isEmpty()) {
+            try {
+                quarto.setId(Integer.parseInt(telaQuarto.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do quarto é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Quarto.");
+            }
+        }
+
+        quarto.setDescricao(telaQuarto.getjTextFieldDescricao().getText());
+        quarto.setObs(telaQuarto.getjTextFieldObservacao().getText());
+        quarto.setIdentificacao(telaQuarto.getjTextFieldDescricaoidentificacao().getText());
+        quarto.setFlagAnimais(telaQuarto.getjCheckBoxFlagAnimais().isSelected());
+        try {
+            String capacidadeTexto = telaQuarto.getjFormattedTextFieldCapacidade().getText();
+            quarto.setCapacidadeHospedes(!capacidadeTexto.isEmpty() ? Integer.parseInt(capacidadeTexto) : 0);
+
+            String metragemTexto = telaQuarto.getjFormattedTextFieldMetragem().getText();
+            quarto.setMetragem(!metragemTexto.isEmpty() ? Float.parseFloat(metragemTexto.replace(",", ".")) : 0.0f);
+
+            String andarTexto = telaQuarto.getjFormattedTextFieldAndar().getText();
+            quarto.setAndar(!andarTexto.isEmpty() ? Integer.parseInt(andarTexto) : 0);
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(tela, "Os campos 'Capacidade', 'Metragem' e 'Andar' devem ser números válidos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Erro de validação nos campos numéricos do Quarto.");
+        }
+
+        if (telaQuarto.getjComboBoxStatus().getSelectedIndex() == 0) {
             quarto.setStatus(Status.ATIVO);
         } else {
             quarto.setStatus(Status.INATIVO);
         }
+
+        System.out.println("Quarto a ser salvo: " + quarto);
     }
 
     @Override

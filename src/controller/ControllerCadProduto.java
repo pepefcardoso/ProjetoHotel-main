@@ -1,6 +1,7 @@
 package controller;
 
 import java.math.BigDecimal;
+import javax.swing.JOptionPane;
 import model.Produto;
 import model.Status;
 import view.TelaCadastroProduto;
@@ -22,18 +23,40 @@ public class ControllerCadProduto extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Produto produto = new Produto();
-        produto.setId(Integer.parseInt(((TelaCadastroProduto) tela).getjTextFieldId().getText()));
-        produto.setDescricao(((TelaCadastroProduto) tela).getjTextFieldDescricao().getText());
-        produto.setObs(((TelaCadastroProduto) tela).getjTextFieldObservacao().getText());
+        TelaCadastroProduto telaProduto = (TelaCadastroProduto) this.tela;
 
-        String valorText = ((TelaCadastroProduto) tela).getjFormattedTextFieldValor().getText().replace(".", "").replace(",", ".");
-        produto.setValor(new BigDecimal(valorText));
+        if (!telaProduto.getjTextFieldId().getText().isEmpty()) {
+            try {
+                produto.setId(Integer.parseInt(telaProduto.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do produto é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Produto.");
+            }
+        }
 
-        if (((TelaCadastroProduto) tela).getjComboBoxStatus().getSelectedIndex() == 0) {
+        produto.setDescricao(telaProduto.getjTextFieldDescricao().getText());
+        produto.setObs(telaProduto.getjTextFieldObservacao().getText());
+
+        try {
+            String valorTexto = telaProduto.getjFormattedTextFieldValor().getText().replace(".", "").replace(",", ".");
+
+            if (!valorTexto.isEmpty()) {
+                produto.setValor(new BigDecimal(valorTexto));
+            } else {
+                produto.setValor(BigDecimal.ZERO);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(tela, "O campo 'Valor' deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Erro de validação no campo Valor.");
+        }
+
+        if (telaProduto.getjComboBoxStatus().getSelectedIndex() == 0) {
             produto.setStatus(Status.ATIVO);
         } else {
             produto.setStatus(Status.INATIVO);
         }
+
+        System.out.println("Produto a ser salvo: " + produto);
     }
 
     @Override

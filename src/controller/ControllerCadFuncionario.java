@@ -1,5 +1,6 @@
 package controller;
 
+import javax.swing.JOptionPane;
 import model.Funcionario;
 import model.Status;
 import view.TelaCadastroFuncionario;
@@ -24,30 +25,39 @@ public class ControllerCadFuncionario extends ControllerCadAbstract {
     @Override
     public void preencherObjeto() {
         Funcionario funcionario = new Funcionario();
-        TelaCadastroFuncionario tela = (TelaCadastroFuncionario) this.tela;
+        TelaCadastroFuncionario telaFuncionario = (TelaCadastroFuncionario) this.tela;
 
-        funcionario.setNome(tela.getjTextFieldDescricao().getText());
-        funcionario.setUsuario(tela.getjTextFieldDescricao().getText()); // Assumindo que o nome é o usuário
-        funcionario.setSenha(new String(tela.getjPasswordFieldSenha().getPassword()));
-        funcionario.setRg(tela.getjTextFieldRg().getText());
-        funcionario.setCpf(tela.getjFormattedTextFieldCpf().getText());
-        funcionario.setFone1(tela.getjFormattedTextFieldFone1().getText());
-        funcionario.setFone2(tela.getjFormattedTextFieldFone2().getText());
-        funcionario.setEmail(tela.getjTextFieldEmail().getText());
-        funcionario.setCep(tela.getjFormattedTextFieldCep().getText());
-        funcionario.setCidade(tela.getjTextFieldCidade().getText());
-        funcionario.setBairro(tela.getjTextFieldBairro().getText());
-        funcionario.setLogradouro(tela.getjTextFieldLogradouro().getText());
-        funcionario.setComplemento(tela.getjTextFieldComplemento().getText());
-        funcionario.setObs(tela.getjTextFieldObs().getText());
+        if (!telaFuncionario.getjTextFieldId().getText().isEmpty()) {
+            try {
+                funcionario.setId(Integer.parseInt(telaFuncionario.getjTextFieldId().getText()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(tela, "O ID do funcionário é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Erro de validação no ID do Funcionário.");
+            }
+        }
 
-        if (tela.getjComboBoxStatus().getSelectedIndex() == 0) {
+        funcionario.setNome(telaFuncionario.getjTextFieldDescricao().getText());
+        funcionario.setUsuario(telaFuncionario.getjTextFieldDescricao().getText()); // Assumindo que o nome é o usuário
+        funcionario.setSenha(new String(telaFuncionario.getjPasswordFieldSenha().getPassword()));
+        funcionario.setRg(telaFuncionario.getjTextFieldRg().getText());
+        funcionario.setCpf(telaFuncionario.getjFormattedTextFieldCpf().getText());
+        funcionario.setFone1(telaFuncionario.getjFormattedTextFieldFone1().getText());
+        funcionario.setFone2(telaFuncionario.getjFormattedTextFieldFone2().getText());
+        funcionario.setEmail(telaFuncionario.getjTextFieldEmail().getText());
+        funcionario.setCep(telaFuncionario.getjFormattedTextFieldCep().getText());
+        funcionario.setCidade(telaFuncionario.getjTextFieldCidade().getText());
+        funcionario.setBairro(telaFuncionario.getjTextFieldBairro().getText());
+        funcionario.setLogradouro(telaFuncionario.getjTextFieldLogradouro().getText());
+        funcionario.setComplemento(telaFuncionario.getjTextFieldComplemento().getText());
+        funcionario.setObs(telaFuncionario.getjTextFieldObs().getText());
+
+        if (telaFuncionario.getjComboBoxStatus().getSelectedIndex() == 0) {
             funcionario.setStatus(Status.ATIVO);
         } else {
             funcionario.setStatus(Status.INATIVO);
         }
 
-        System.out.println(funcionario);
+        System.out.println("Funcionário a ser salvo: " + funcionario);
     }
 
     @Override
