@@ -451,7 +451,7 @@ public class TelaCadastroFuncionario extends javax.swing.JDialog {
         jPanelBotoes.add(jButtonBuscar);
 
         jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Exit.png"))); // NOI18N
-        jButtonSair.setText("Fechar");
+        jButtonSair.setText("Sair");
         jButtonSair.setActionCommand("0");
         jPanelBotoes.add(jButtonSair);
 
