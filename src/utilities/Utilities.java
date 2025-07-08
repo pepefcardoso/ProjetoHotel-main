@@ -10,20 +10,22 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class Utilities {
-    
+
     public static void ativaDesativa(JPanel painel, boolean ativa) {
-    Component[] vetComponentes = painel.getComponents();
-    for (Component componenteAtual : vetComponentes) {
-        if (componenteAtual instanceof JButton jButton) {
-            if ("0".equals(jButton.getActionCommand())) {
-                componenteAtual.setEnabled(ativa);
-            } else {
-                componenteAtual.setEnabled(!ativa);
+        Component[] vetComponentes = painel.getComponents();
+        for (Component componenteAtual : vetComponentes) {
+            if (componenteAtual instanceof JButton botao) {
+                String textoBotao = botao.getText();
+
+                if (textoBotao.equals("Gravar") || textoBotao.equals("Cancelar")) {
+                    botao.setEnabled(!ativa);
+                } else {
+                    botao.setEnabled(ativa);
+                }
             }
         }
     }
-}
-    
+
     public static void limpaComponentes(JPanel painel, boolean ativa) {
         Component[] vetComponentes = painel.getComponents();
         for (Component componenteAtual : vetComponentes) {

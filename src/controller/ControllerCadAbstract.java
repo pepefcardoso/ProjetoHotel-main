@@ -35,7 +35,7 @@ public abstract class ControllerCadAbstract implements IController {
                 cancelar();
             case "Buscar" ->
                 buscar();
-            case "Sair" ->
+            case "Fechar" ->
                 sair();
         }
     }

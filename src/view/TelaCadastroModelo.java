@@ -200,29 +200,29 @@ public class TelaCadastroModelo extends javax.swing.JDialog {
 
         jButtonNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Create.png"))); // NOI18N
         jButtonNovo.setText("Novo");
-        jButtonNovo.setActionCommand("0");
+        
         jPanelBotoes.add(jButtonNovo);
 
         jButtonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Cancel.png"))); // NOI18N
         jButtonCancelar.setText("Cancelar");
-        jButtonCancelar.setActionCommand("1");
+        
         jButtonCancelar.setEnabled(false);
         jPanelBotoes.add(jButtonCancelar);
 
         jButtonGravar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/OK.png"))); // NOI18N
         jButtonGravar.setText("Gravar");
-        jButtonGravar.setActionCommand("1");
+        
         jButtonGravar.setEnabled(false);
         jPanelBotoes.add(jButtonGravar);
 
         jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Load.png"))); // NOI18N
         jButtonBuscar.setText("Buscar");
-        jButtonBuscar.setActionCommand("0");
+        
         jPanelBotoes.add(jButtonBuscar);
 
         jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Exit.png"))); // NOI18N
         jButtonSair.setText("Fechar");
-        jButtonSair.setActionCommand("0");
+        
         jPanelBotoes.add(jButtonSair);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
