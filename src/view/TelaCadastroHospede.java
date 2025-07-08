@@ -99,6 +99,10 @@ public class TelaCadastroHospede extends javax.swing.JDialog {
         return jTextFieldContato;
     }
 
+    public javax.swing.JComboBox<String> getjComboBoxStatus() {
+    return jComboBoxStatus;
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
