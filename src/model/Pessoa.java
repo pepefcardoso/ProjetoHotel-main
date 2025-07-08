@@ -1,6 +1,8 @@
 package model;
 
-public class Pessoa {
+import java.util.StringJoiner;
+
+public abstract class Pessoa {
 
     private int id;
     private String nome;
@@ -13,15 +15,14 @@ public class Pessoa {
     private String cidade;
     private String complemento;
     private String dataCadastro;
-    private String cpf;
-    private String rg;
     private String obs;
-    private char status;
+    private Status status;
 
     public Pessoa() {
+        this.status = Status.ATIVO;
     }
 
-    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, String obs, char status) {
+    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String obs, Status status) {
         this.id = id;
         this.nome = nome;
         this.fone1 = fone1;
@@ -33,11 +34,10 @@ public class Pessoa {
         this.cidade = cidade;
         this.complemento = complemento;
         this.dataCadastro = dataCadastro;
-        this.cpf = cpf;
-        this.rg = rg;
         this.obs = obs;
         this.status = status;
     }
+
     public int getId() {
         return id;
     }
@@ -126,22 +126,6 @@ public class Pessoa {
         this.dataCadastro = dataCadastro;
     }
 
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getRg() {
-        return rg;
-    }
-
-    public void setRg(String rg) {
-        this.rg = rg;
-    }
-
     public String getObs() {
         return obs;
     }
@@ -150,31 +134,23 @@ public class Pessoa {
         this.obs = obs;
     }
 
-    public char getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
-        
-        if ( (status == 'A') || (status == 'C') || (status == 'a') || (status == 'c') ) {
-            this.status = status;
-        }else {
-            this.status = 'A';
-        }
-        
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
-        return  "id      = " + this.id + 
-                "\nnome   = " + this.nome +
-                "\nfone1  = " + this.fone1 +
-                "\nfone2  = " + this.fone2 +
-                "\nemail  = " + this.email +
-                "\nrg     = " + this.rg +
-                "\ncpf    = " + this.cpf +
-                "\nobs    = " + this.obs +
-                "\nstatus = " + this.status  ;
+        return new StringJoiner(", ", Pessoa.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("nome='" + nome + "'")
+                .add("fone1='" + fone1 + "'")
+                .add("fone2='" + fone2 + "'")
+                .add("email='" + email + "'")
+                .add("status=" + status)
+                .toString();
     }
-
 }

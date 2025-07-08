@@ -1,24 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author MarcusVinicius
- */
 public class VagaEstacionamento {
+
     private int id;
     private String descricao;
     private String obs;
     private float metragemVaga;
-    private char status;
+    private Status status;
 
     public VagaEstacionamento() {
+        this.status = Status.ATIVO;
     }
-    
-    public VagaEstacionamento(int id, String descricao, String obs, float metragemVaga, char status) {
+
+    public VagaEstacionamento(int id, String descricao, String obs, float metragemVaga, Status status) {
         this.id = id;
         this.descricao = descricao;
         this.obs = obs;
@@ -58,29 +52,16 @@ public class VagaEstacionamento {
         this.metragemVaga = metragemVaga;
     }
 
-    public char getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
-        if ( (status == 'A') || (status == 'C') || (status == 'a') || (status == 'c') ) {
-            this.status = status;
-        }else {
-            this.status = 'A';
-        }
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
-        return 
-        "id             = " + id + 
-        "\ndescricao    = " + descricao + 
-        "\nobs          = " + obs + 
-        "\nmetragemVaga = " + metragemVaga + 
-        "\nstatus       = " + status;
+        return "VagaEstacionamento [id=" + id + ", descricao=" + descricao + ", metragem=" + metragemVaga + ", status=" + status + "]";
     }
-    
-    
-    
-    
 }

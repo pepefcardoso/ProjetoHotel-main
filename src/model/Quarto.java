@@ -1,28 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author MarcusVinicius
- */
 public class Quarto {
+
     private int id;
-    private int descricao;
+    private String descricao;
     private int capacidadeHospedes;
     private float metragem;
     private String identificacao;
     private int andar;
     private boolean flagAnimais;
     private String obs;
-    private char status;
+    private Status status;
 
     public Quarto() {
+        this.status = Status.ATIVO;
     }
 
-    public Quarto(int id, int descricao, int capacidadeHospedes, float metragem, String identificacao, int andar, boolean flagAnimais, String obs, char status) {
+    public Quarto(int id, String descricao, int capacidadeHospedes, float metragem, String identificacao, int andar, boolean flagAnimais, String obs, Status status) {
         this.id = id;
         this.descricao = descricao;
         this.capacidadeHospedes = capacidadeHospedes;
@@ -42,11 +36,11 @@ public class Quarto {
         this.id = id;
     }
 
-    public int getDescricao() {
+    public String getDescricao() {
         return descricao;
     }
 
-    public void setDescricao(int descricao) {
+    public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
@@ -98,33 +92,16 @@ public class Quarto {
         this.obs = obs;
     }
 
-    public char getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
-        if ( (status == 'A') || (status == 'C') || (status == 'a') || (status == 'c') ) {
-            this.status = status;
-        }else {
-            this.status = 'A';
-        }
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
-        return 
-        "id                   = " + id + 
-        "\ndescricao          = " + descricao + 
-        "\ncapacidadeHospedes = " + capacidadeHospedes + 
-        "\nmetragem           = " + metragem + 
-        "\nidentificacao      = " + identificacao + 
-        "\nandar              = " + andar + 
-        "\nflagAnimais        = " + flagAnimais + 
-        "\nobs                = " + obs + 
-        "\nstatus             = " + status;
+        return "Quarto [id=" + id + ", descricao=" + descricao + ", capacidade=" + capacidadeHospedes + ", status=" + status + "]";
     }
-    
-    
-    
-    
 }
