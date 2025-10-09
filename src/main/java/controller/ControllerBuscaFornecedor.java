@@ -65,7 +65,7 @@ public final class ControllerBuscaFornecedor implements ActionListener, Interfac
 
     private void handleSelecionarItem() {
         int row = telaBuscaFornecedor.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaFornecedor.getjTableDados().getValueAt(row, 3); // coluna status
+        Object statusObj = telaBuscaFornecedor.getjTableDados().getValueAt(row, 3);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaFornecedor.getjButtonAtivar().setEnabled(status == 'I');

@@ -16,8 +16,8 @@ public class AppLogger {
 
     static {
         logger = Logger.getLogger("ProjetoHotelLogger");
-        // Remove o ConsoleHandler padrão
         logger.setUseParentHandlers(false);
+        
         try {
             String logDir = "logs";
             Files.createDirectories(Paths.get(logDir));

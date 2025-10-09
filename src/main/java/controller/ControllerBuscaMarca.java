@@ -42,7 +42,7 @@ public final class ControllerBuscaMarca implements ActionListener, InterfaceCont
 
     private void handleSelecionarItem() {
         int row = telaBuscaMarca.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaMarca.getjTableDados().getValueAt(row, 2); // coluna status
+        Object statusObj = telaBuscaMarca.getjTableDados().getValueAt(row, 2);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaMarca.getjButtonAtivar().setEnabled(status == 'I');

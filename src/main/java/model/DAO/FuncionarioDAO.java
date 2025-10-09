@@ -84,9 +84,7 @@ public class FuncionarioDAO extends BaseDAO<Funcionario> {
 
     @Override
     protected void setUpdateParameters(PreparedStatement pstm, Funcionario objeto) throws SQLException {
-        // Reutiliza a lógica da criação para definir os primeiros 17 parâmetros
         setCreateParameters(pstm, objeto);
-        // Define o ID como último parâmetro para a cláusula WHERE
         pstm.setInt(18, objeto.getId());
     }
 }

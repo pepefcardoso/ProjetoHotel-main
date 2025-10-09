@@ -42,7 +42,7 @@ public final class ControllerBuscaFuncionario implements ActionListener, Interfa
 
     private void handleSelecionarItem() {
         int row = telaBuscaFuncionario.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaFuncionario.getjTableDados().getValueAt(row, 3); // coluna status
+        Object statusObj = telaBuscaFuncionario.getjTableDados().getValueAt(row, 3);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaFuncionario.getjButtonAtivar().setEnabled(status == 'I');

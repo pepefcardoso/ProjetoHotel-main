@@ -42,7 +42,7 @@ public final class ControllerBuscaHospede implements ActionListener, InterfaceCo
 
     private void handleSelecionarItem() {
         int row = telaBuscaHospede.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaHospede.getjTableDados().getValueAt(row, 3); // coluna status
+        Object statusObj = telaBuscaHospede.getjTableDados().getValueAt(row, 3);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaHospede.getjButtonAtivar().setEnabled(status == 'I');

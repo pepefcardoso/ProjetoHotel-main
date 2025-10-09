@@ -42,7 +42,7 @@ public final class ControllerBuscaServico implements ActionListener, InterfaceCo
 
     private void handleSelecionarItem() {
         int row = telaBuscaServico.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaServico.getjTableDados().getValueAt(row, 3); // coluna status
+        Object statusObj = telaBuscaServico.getjTableDados().getValueAt(row, 3);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaServico.getjButtonAtivar().setEnabled(status == 'I');

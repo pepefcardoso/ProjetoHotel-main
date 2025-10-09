@@ -42,7 +42,7 @@ public final class ControllerBuscaVeiculo implements ActionListener, InterfaceCo
 
     private void handleSelecionarItem() {
         int row = telaBuscaVeiculo.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaVeiculo.getjTableDados().getValueAt(row, 5); // coluna status
+        Object statusObj = telaBuscaVeiculo.getjTableDados().getValueAt(row, 5);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaVeiculo.getjButtonAtivar().setEnabled(status == 'I');

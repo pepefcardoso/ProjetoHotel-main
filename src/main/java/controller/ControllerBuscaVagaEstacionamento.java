@@ -42,7 +42,7 @@ public final class ControllerBuscaVagaEstacionamento implements ActionListener, 
 
     private void handleSelecionarItem() {
         int row = telaBuscaVaga.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaVaga.getjTableDados().getValueAt(row, 4); // coluna status
+        Object statusObj = telaBuscaVaga.getjTableDados().getValueAt(row, 4);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaVaga.getjButtonAtivar().setEnabled(status == 'I');

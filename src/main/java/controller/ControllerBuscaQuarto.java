@@ -43,7 +43,7 @@ public final class ControllerBuscaQuarto implements ActionListener, InterfaceCon
 
     private void handleSelecionarItem() {
         int row = telaBuscaQuarto.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaQuarto.getjTableDados().getValueAt(row, 8); // coluna status
+        Object statusObj = telaBuscaQuarto.getjTableDados().getValueAt(row, 8);
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
             telaBuscaQuarto.getjButtonAtivar().setEnabled(status == 'I');
