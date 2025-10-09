@@ -9,14 +9,13 @@ public class Caixa {
     private LocalDateTime dataHoraAbertura;
     private LocalDateTime dataHoraFechamento;
     private String obs;
-    private Status status;
+    private char status;
     private Funcionario funcionario;
 
     public Caixa() {
-        this.status = Status.ATIVO;
     }
 
-    public Caixa(int id, float valorDeAbertura, float valorDeFechamento, LocalDateTime dataHoraAbertura, LocalDateTime dataHoraFechamento, String obs, Status status, Funcionario funcionario) {
+    public Caixa(int id, float valorDeAbertura, float valorDeFechamento, LocalDateTime dataHoraAbertura, LocalDateTime dataHoraFechamento, String obs, char status, Funcionario funcionario) {
         this.id = id;
         this.valorDeAbertura = valorDeAbertura;
         this.valorDeFechamento = valorDeFechamento;
@@ -75,11 +74,11 @@ public class Caixa {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -93,6 +92,13 @@ public class Caixa {
 
     @Override
     public String toString() {
-        return "Caixa [id=" + id + ", valorDeAbertura=" + valorDeAbertura + ", valorDeFechamento=" + valorDeFechamento + ", dataHoraAbertura=" + dataHoraAbertura + ", dataHoraFechamento=" + dataHoraFechamento + ", obs=" + obs + ", status=" + status + ", funcionario=" + funcionario + "]";
+        return  "id                   = " + this.getId() +
+                "\nvalorDeAbertura    = " + this.getValorDeAbertura() +
+                "\nvalorDeFechamento  = " + this.getValorDeFechamento() +
+                "\ndataHoraAbertura   = " + this.getDataHoraAbertura() +
+                "\ndataHoraFechamento = " + this.getDataHoraFechamento() +
+                "\nobs                = " + this.getObs() +
+                "\nstatus             = " + this.getStatus() +
+                "\nfuncionario        = " + this.getFuncionario().getNome();
     }
 }

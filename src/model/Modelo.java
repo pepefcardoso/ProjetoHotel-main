@@ -4,16 +4,16 @@ public class Modelo {
 
     private int id;
     private String descricao;
-    private Status status;
+    private char status;
+
     private Marca marca;
 
     public Modelo() {
-        this.status = Status.ATIVO;
     }
 
-    public Modelo(int id, String descricao, Status status, Marca marca) {
+    public Modelo(int id, String descricao, char status, Marca marca) {
         this.id = id;
-        this.setDescricao(descricao);
+        this.descricao = descricao;
         this.status = status;
         this.marca = marca;
     }
@@ -31,18 +31,7 @@ public class Modelo {
     }
 
     public void setDescricao(String descricao) {
-         if (descricao == null || descricao.trim().isEmpty()) {
-            throw new IllegalArgumentException("A descrição não pode ser nula ou vazia.");
-        }
         this.descricao = descricao;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public Marca getMarca() {
@@ -52,9 +41,21 @@ public class Modelo {
     public void setMarca(Marca marca) {
         this.marca = marca;
     }
-    
+
+    public char getStatus() {
+        return status;
+    }
+
+    public void setStatus(char status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "Modelo [id=" + id + ", descricao=" + descricao + ", status=" + status + ", marca=" + marca.getDescricao() + "]";
+        return "id     = " + this.getId()
+                + "\nDescr. = " + this.getDescricao()
+                + "\nMarca  = " + this.getMarca().getDescricao()
+                + "\nStatus = " + this.getStatus();
     }
+
 }

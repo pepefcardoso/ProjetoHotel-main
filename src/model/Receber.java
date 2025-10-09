@@ -10,14 +10,13 @@ public class Receber {
     private Double acrescimo;
     private Double valorPago;
     private String obs;
-    private Status status;
+    private char status;
     private Check check;
 
     public Receber() {
-        this.status = Status.ATIVO;
     }
 
-    public Receber(Long id, LocalDateTime dataHoraCadastro, Double valorOriginal, Double desconto, Double acrescimo, Double valorPago, String obs, Status status, Check check) {
+    public Receber(Long id, LocalDateTime dataHoraCadastro, Double valorOriginal, Double desconto, Double acrescimo, Double valorPago, String obs, char status, Check check) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.valorOriginal = valorOriginal;
@@ -85,11 +84,11 @@ public class Receber {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -103,6 +102,16 @@ public class Receber {
 
     @Override
     public String toString() {
-        return "Receber [id=" + id + ", dataHoraCadastro=" + dataHoraCadastro + ", valorOriginal=" + valorOriginal + ", desconto=" + desconto + ", acrescimo=" + acrescimo + ", valorPago=" + valorPago + ", obs=" + obs + ", status=" + status + ", check=" + check + "]";
+        return "id               = " + this.getId() + 
+                "\nData/Hora Cad.  = " + this.getDataHoraCadastro() + 
+                "\nValor Original  = " + this.getValorOriginal() + 
+                "\nDesconto        = " + this.getDesconto() + 
+                "\nAcréscimo       = " + this.getAcrescimo() + 
+                "\nValor Pago      = " + this.getValorPago() + 
+                "\nObs             = " + this.getObs() + 
+                "\nStatus          = " + this.getStatus() + 
+                "\nCheck ID        = " + (this.getCheck() != null ? this.getCheck().getId() : "null");
     }
+
+
 }

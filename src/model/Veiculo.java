@@ -1,23 +1,31 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
+/**
+ *
+ * @author Usuario
+ */
 public class Veiculo {
-
     private int id;
     private String placa;
     private String cor;
-    private Status status;
+    private char status;
     private Modelo modelo;
+    private Pessoa proprietario;
 
     public Veiculo() {
-        this.status = Status.ATIVO;
     }
 
-    public Veiculo(int id, String placa, String cor, Status status, Modelo modelo) {
+    public Veiculo(int id, String placa, String cor, char status, Modelo modelo, Pessoa proprietario) {
         this.id = id;
         this.placa = placa;
         this.cor = cor;
         this.status = status;
         this.modelo = modelo;
+        this.proprietario = proprietario;
     }
 
     public int getId() {
@@ -44,11 +52,11 @@ public class Veiculo {
         this.cor = cor;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -60,8 +68,22 @@ public class Veiculo {
         this.modelo = modelo;
     }
 
+    public Pessoa getProprietario() {
+        return proprietario;
+    }
+
+    public void setProprietario(Pessoa proprietario) {
+        this.proprietario = proprietario;
+    }
+
     @Override
     public String toString() {
-        return "Veiculo [id=" + id + ", placa=" + placa + ", cor=" + cor + ", status=" + status + ", modelo=" + modelo.getDescricao() + "]";
+        return 
+        "id       = " + id + 
+        "\nplaca  = " + placa + 
+        "\ncor    = " + cor + 
+        "\nstatus = " + status + 
+        "\nmodelo = " + modelo;
     }
+    
 }

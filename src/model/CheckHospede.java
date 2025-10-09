@@ -4,15 +4,14 @@ public class CheckHospede {
     private int id;
     private String tipoHospede;
     private String obs;
-    private Status status;
+    private char status;
     private Check check;
     private Hospede hospede;
 
     public CheckHospede() {
-        this.status = Status.ATIVO;
     }
 
-    public CheckHospede(int id, String tipoHospede, String obs, Status status, Check check, Hospede hospede) {
+    public CheckHospede(int id, String tipoHospede, String obs, char status, Check check, Hospede hospede) {
         this.id = id;
         this.tipoHospede = tipoHospede;
         this.obs = obs;
@@ -45,11 +44,11 @@ public class CheckHospede {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -71,6 +70,11 @@ public class CheckHospede {
 
     @Override
     public String toString() {
-        return "CheckHospede [id=" + id + ", tipoHospede=" + tipoHospede + ", obs=" + obs + ", status=" + status + ", check=" + check + ", hospede=" + hospede + "]";
+        return "id           = " + this.getId() +
+                "\nTipo Hospede = " + this.getTipoHospede() +
+                "\nObs          = " + this.getObs() +
+                "\nStatus       = " + this.getStatus() +
+                "\nCheck ID     = " + this.getCheck().getId() +
+                "\nHospede      = " + this.getHospede().getNome();
     }
 }

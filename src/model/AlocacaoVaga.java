@@ -3,16 +3,15 @@ package model;
 public class AlocacaoVaga {
     private int id;
     private String obs;
-    private Status status;
+    private char status;
     private Check check;
     private Veiculo veiculo;
     private VagaEstacionamento vagaEstacionamento;
 
     public AlocacaoVaga() {
-        this.status = Status.ATIVO;
     }
 
-    public AlocacaoVaga(int id, String obs, Status status, Check check, Veiculo veiculo, VagaEstacionamento vagaEstacionamento) {
+    public AlocacaoVaga(int id, String obs, char status, Check check, Veiculo veiculo, VagaEstacionamento vagaEstacionamento) {
         this.id = id;
         this.obs = obs;
         this.status = status;
@@ -37,11 +36,11 @@ public class AlocacaoVaga {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -69,8 +68,13 @@ public class AlocacaoVaga {
         this.vagaEstacionamento = vagaEstacionamento;
     }
 
-    @Override
-    public String toString() {
-        return "AlocacaoVaga [id=" + id + ", obs=" + obs + ", status=" + status + ", check=" + check + ", veiculo=" + veiculo + ", vagaEstacionamento=" + vagaEstacionamento + "]";
+        @Override
+        public String toString() {
+        return "id              = " + this.getId()
+            + "\nObs            = " + this.getObs()
+            + "\nStatus         = " + this.getStatus()
+            + "\nCheck ID       = " + (this.getCheck() != null ? this.getCheck().getId() : "null") 
+            + "\nPlaca Veículo  = " + (this.getVeiculo() != null ? this.getVeiculo().getPlaca() : "null")
+            + "\nVaga Estac. ID = " + (this.getVagaEstacionamento() != null ? this.getVagaEstacionamento().getId() : "null");
+        }
     }
-}

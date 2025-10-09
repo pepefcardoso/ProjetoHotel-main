@@ -7,16 +7,15 @@ public class CheckQuarto {
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
     private String obs;
-    private Status status;
+    private char status;
     private Check check;
     private ReservaQuarto reservaQuarto;
     private Quarto quarto;
 
     public CheckQuarto() {
-        this.status = Status.ATIVO;
     }
 
-    public CheckQuarto(int id, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String obs, Status status, Check check, ReservaQuarto reservaQuarto, Quarto quarto) {
+    public CheckQuarto(int id, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String obs, char status, Check check, ReservaQuarto reservaQuarto, Quarto quarto) {
         this.id = id;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -59,11 +58,11 @@ public class CheckQuarto {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -93,6 +92,13 @@ public class CheckQuarto {
 
     @Override
     public String toString() {
-        return "CheckQuarto [id=" + id + ", dataHoraInicio=" + dataHoraInicio + ", dataHoraFim=" + dataHoraFim + ", obs=" + obs + ", status=" + status + ", check=" + check + ", reservaQuarto=" + reservaQuarto + ", quarto=" + quarto + "]";
+        return "id               = " + this.getId() +
+            "\nData/Hora Inicio  = " + this.getDataHoraInicio() +
+            "\nData/Hora Fim     = " + this.getDataHoraFim() +
+            "\nObs               = " + this.getObs() +
+            "\nStatus            = " + this.getStatus() +
+            "\nCheck ID          = " + (this.getCheck() != null ? this.getCheck().getId() : "null") +
+            "\nReservaQuarto ID  = " + (this.getReservaQuarto() != null ? this.getReservaQuarto().getId() : "null") +
+            "\nQuarto            = " + (this.getQuarto() != null ? this.getQuarto().getIdentificacao() : "null");
     }
 }

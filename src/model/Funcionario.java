@@ -1,18 +1,16 @@
 package model;
-
-import java.util.StringJoiner;
-
-public class Funcionario extends PessoaFisica {
-
+public class Funcionario extends Pessoa{
+   
     private String usuario;
     private String senha;
+    public static final String TIPO = "Funcionário";
 
     public Funcionario() {
-        super();
+  
     }
 
-    public Funcionario(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String obs, Status status, String cpf, String rg, String usuario, String senha) {
-        super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, obs, status, cpf, rg);
+    public Funcionario( int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg,String usuario, String senha, String obs, char status, char sexo) {
+        super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, cpf, rg, obs, status, sexo);
         this.usuario = usuario;
         this.senha = senha;
     }
@@ -35,9 +33,15 @@ public class Funcionario extends PessoaFisica {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Funcionario.class.getSimpleName() + "[", "]")
-                .add("pessoaFisica=" + super.toString())
-                .add("usuario='" + usuario + "'")
-                .toString();
+        return  "id   = " + super.toString() + 
+                "\nnome = " + this.getNome()+
+                "\nUsuário = " + this.getUsuario()+
+                "\nSenha   = " + this.getSenha();
     }
+    
+    
+    
+    
+    
+    
 }

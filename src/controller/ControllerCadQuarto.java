@@ -1,82 +1,199 @@
 package controller;
 
-import javax.swing.JOptionPane;
-import model.Quarto;
-import model.Status;
-import view.TelaCadastroQuarto;
-import view.buscas.TelaBuscaQuarto;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
-public class ControllerCadQuarto extends ControllerCadAbstract {
+import javax.swing.JOptionPane;
+
+import model.Quarto;
+import service.QuartoService;
+import utilities.Utilities;
+import view.TelaBuscaQuarto;
+import view.TelaCadastroQuarto;
+
+public final class ControllerCadQuarto implements ActionListener, InterfaceControllerCad<Quarto> {
+
+    private final TelaCadastroQuarto telaCadastroQuarto;
+    private final QuartoService quartoService;
+    private int codigo;
 
     public ControllerCadQuarto(TelaCadastroQuarto telaCadastroQuarto) {
-        super(telaCadastroQuarto, telaCadastroQuarto.getjPanelBotoes(), telaCadastroQuarto.getjPanelDados());
+        this.telaCadastroQuarto = telaCadastroQuarto;
+        this.quartoService = new QuartoService();
+        Utilities.setAlwaysDisabled(this.telaCadastroQuarto.getjTextFieldId(), true);
+        Utilities.setAlwaysDisabled(this.telaCadastroQuarto.getjComboBoxStatus(), true);
+        Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), true);
+        Utilities.limpaComponentes(this.telaCadastroQuarto.getjPanelDados(), false);
+
+        initListeners();
     }
 
     @Override
-    public void buscar() {
-        TelaBuscaQuarto telaBuscaQuarto = new TelaBuscaQuarto(null, true);
-        ControllerBuscaQuarto controllerBuscaQuarto = new ControllerBuscaQuarto(telaBuscaQuarto);
-        telaBuscaQuarto.setVisible(true);
+    public void initListeners() {
+        this.telaCadastroQuarto.getjButtonNovo().addActionListener(this);
+        this.telaCadastroQuarto.getjButtonCancelar().addActionListener(this);
+        this.telaCadastroQuarto.getjButtonGravar().addActionListener(this);
+        this.telaCadastroQuarto.getjButtonBuscar().addActionListener(this);
+        this.telaCadastroQuarto.getjButtonSair().addActionListener(this);
     }
 
     @Override
-    public void preencherObjeto() {
-        Quarto quarto = new Quarto();
-        TelaCadastroQuarto telaQuarto = (TelaCadastroQuarto) this.tela;
+    public void actionPerformed(ActionEvent evento) {
+        Object source = evento.getSource();
+        if (source == telaCadastroQuarto.getjButtonNovo()) {
+            handleNovo();
+            return;
+        }
+        if (source == telaCadastroQuarto.getjButtonCancelar()) {
+            handleCancelar();
+            return;
+        }
+        if (source == telaCadastroQuarto.getjButtonGravar()) {
+            handleGravar();
+            return;
+        }
+        if (source == telaCadastroQuarto.getjButtonBuscar()) {
+            handleBuscar();
+            return;
+        }
+        if (source == telaCadastroQuarto.getjButtonSair()) {
+            handleSair();
+        }
+    }
 
-        if (!telaQuarto.getjTextFieldId().getText().isEmpty()) {
+    @Override
+    public void handleNovo() {
+        Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), false);
+        Utilities.limpaComponentes(this.telaCadastroQuarto.getjPanelDados(), true);
+        this.telaCadastroQuarto.getjTextFieldDescricao().requestFocus();
+        this.telaCadastroQuarto.getjComboBoxStatus().setSelectedItem("Ativo");
+    }
+
+    @Override
+    public void handleCancelar() {
+        Utilities.ativaDesativa(this.telaCadastroQuarto.getjPanelBotoes(), true);
+        Utilities.limpaComponentes(this.telaCadastroQuarto.getjPanelDados(), false);
+    }
+
+    @Override
+    public boolean isFormularioValido() {
+        if (!utilities.ValidadorCampos.validarCampoTexto(telaCadastroQuarto.getjTextFieldDescricao().getText())) {
+            JOptionPane.showMessageDialog(null, "O campo Descrição é obrigatório.");
+            telaCadastroQuarto.getjTextFieldDescricao().requestFocus();
+            return false;
+        }
+        if (!utilities.ValidadorCampos.validarCampoNumero(telaCadastroQuarto.getjFormattedTextFieldCapacidade().getText())) {
+            JOptionPane.showMessageDialog(null, "O campo Capacidade de Hóspedes é inválido.");
+            telaCadastroQuarto.getjFormattedTextFieldCapacidade().requestFocus();
+            return false;
+        }
+        if (!utilities.ValidadorCampos.validarCampoNumero(telaCadastroQuarto.getjFormattedTextFieldMetragem().getText())) {
+            JOptionPane.showMessageDialog(null, "O campo Metragem é inválido.");
+            telaCadastroQuarto.getjFormattedTextFieldMetragem().requestFocus();
+            return false;
+        }
+        if (!utilities.ValidadorCampos.validarCampoNumero(telaCadastroQuarto.getjFormattedTextFieldAndar().getText())) {
+            JOptionPane.showMessageDialog(null, "O campo Andar é inválido.");
+            telaCadastroQuarto.getjFormattedTextFieldAndar().requestFocus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Override
+    public void handleGravar() {
+        if (!isFormularioValido()) {
+            return;
+        }
+        Quarto quarto = construirDoFormulario();
+
+        boolean isNovoCadastro = telaCadastroQuarto.getjTextFieldId().getText().trim().isEmpty();
+
+        if (isNovoCadastro) {
             try {
-                quarto.setId(Integer.parseInt(telaQuarto.getjTextFieldId().getText()));
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(tela, "O ID do quarto é inválido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException("Erro de validação no ID do Quarto.");
+                quartoService.Criar(quarto);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(telaCadastroQuarto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+            Utilities.ativaDesativa(telaCadastroQuarto.getjPanelBotoes(), true);
+            Utilities.limpaComponentes(telaCadastroQuarto.getjPanelDados(), false);
+            return;
         }
 
-        quarto.setDescricao(telaQuarto.getjTextFieldDescricao().getText());
-        quarto.setObs(telaQuarto.getjTextFieldObservacao().getText());
-        quarto.setIdentificacao(telaQuarto.getjTextFieldDescricaoidentificacao().getText());
-        quarto.setFlagAnimais(telaQuarto.getjCheckBoxFlagAnimais().isSelected());
+        quarto.setId(Integer.parseInt(telaCadastroQuarto.getjTextFieldId().getText()));
         try {
-            String capacidadeTexto = telaQuarto.getjFormattedTextFieldCapacidade().getText();
-            quarto.setCapacidadeHospedes(!capacidadeTexto.isEmpty() ? Integer.parseInt(capacidadeTexto) : 0);
-
-            String metragemTexto = telaQuarto.getjFormattedTextFieldMetragem().getText();
-            quarto.setMetragem(!metragemTexto.isEmpty() ? Float.parseFloat(metragemTexto.replace(",", ".")) : 0.0f);
-
-            String andarTexto = telaQuarto.getjFormattedTextFieldAndar().getText();
-            quarto.setAndar(!andarTexto.isEmpty() ? Integer.parseInt(andarTexto) : 0);
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(tela, "Os campos 'Capacidade', 'Metragem' e 'Andar' devem ser números válidos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-            throw new RuntimeException("Erro de validação nos campos numéricos do Quarto.");
+            quartoService.Atualizar(quarto);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(telaCadastroQuarto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        if (telaQuarto.getjComboBoxStatus().getSelectedIndex() == 0) {
-            quarto.setStatus(Status.ATIVO);
-        } else {
-            quarto.setStatus(Status.INATIVO);
-        }
-
-        System.out.println("Quarto a ser salvo: " + quarto);
+        Utilities.ativaDesativa(telaCadastroQuarto.getjPanelBotoes(), true);
+        Utilities.limpaComponentes(telaCadastroQuarto.getjPanelDados(), false);
     }
 
     @Override
-    public void preencherTela(Object objeto) {
-        Quarto quarto = (Quarto) objeto;
-        ((TelaCadastroQuarto) tela).getjTextFieldId().setText(String.valueOf(quarto.getId()));
-        ((TelaCadastroQuarto) tela).getjTextFieldDescricao().setText(quarto.getDescricao());
-        ((TelaCadastroQuarto) tela).getjTextFieldObservacao().setText(quarto.getObs());
-        ((TelaCadastroQuarto) tela).getjFormattedTextFieldCapacidade().setText(String.valueOf(quarto.getCapacidadeHospedes()));
-        ((TelaCadastroQuarto) tela).getjFormattedTextFieldMetragem().setText(String.valueOf(quarto.getMetragem()));
-        ((TelaCadastroQuarto) tela).getjFormattedTextFieldAndar().setText(String.valueOf(quarto.getAndar()));
-        ((TelaCadastroQuarto) tela).getjTextFieldDescricaoidentificacao().setText(quarto.getIdentificacao());
-        ((TelaCadastroQuarto) tela).getjCheckBoxFlagAnimais().setSelected(quarto.isFlagAnimais());
+    public Quarto construirDoFormulario() {
+        Quarto quarto = new Quarto();
+        quarto.setDescricao(telaCadastroQuarto.getjTextFieldDescricao().getText());
+        quarto.setAndar(Integer.parseInt(telaCadastroQuarto.getjFormattedTextFieldAndar().getText()));
+        quarto.setMetragem(Float.parseFloat(telaCadastroQuarto.getjFormattedTextFieldMetragem().getText()));
+        quarto.setCapacidadeHospedes(Integer.parseInt(telaCadastroQuarto.getjFormattedTextFieldCapacidade().getText()));
+        quarto.setObs(telaCadastroQuarto.getjTextFieldObservacao().getText());
+        quarto.setFlagAnimais(telaCadastroQuarto.getjCheckBoxFlagAnimais().isSelected());
+        quarto.setIdentificacao(telaCadastroQuarto.getjTextFieldDescricaoidentificacao().getText());
 
-        if (quarto.getStatus() == Status.ATIVO) {
-            ((TelaCadastroQuarto) tela).getjComboBoxStatus().setSelectedIndex(0);
-        } else {
-            ((TelaCadastroQuarto) tela).getjComboBoxStatus().setSelectedIndex(1);
+        Object statusSelecionado = telaCadastroQuarto.getjComboBoxStatus().getSelectedItem();
+        quarto.setStatus(
+            statusSelecionado != null && statusSelecionado.equals("Ativo") ? 'A' : 'I'
+        );
+
+        return quarto;
+    }
+
+    @Override
+    public void handleBuscar() {
+        codigo = 0;
+        TelaBuscaQuarto telaBuscaQuarto = new TelaBuscaQuarto(null, true);
+        @SuppressWarnings("unused")
+        ControllerBuscaQuarto controllerBuscaQuarto = new ControllerBuscaQuarto(telaBuscaQuarto, valor -> this.codigo = valor);
+        telaBuscaQuarto.setVisible(true);
+
+        if (codigo != 0) {
+            Utilities.ativaDesativa(telaCadastroQuarto.getjPanelBotoes(), false);
+            Utilities.limpaComponentes(telaCadastroQuarto.getjPanelDados(), true);
+
+            telaCadastroQuarto.getjTextFieldId().setText(String.valueOf(codigo));
+
+            Quarto quarto;
+            try {
+                quarto = new QuartoService().Carregar(codigo);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(telaCadastroQuarto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            telaCadastroQuarto.getjTextFieldDescricao().setText(quarto.getDescricao());
+            telaCadastroQuarto.getjFormattedTextFieldAndar().setText(String.valueOf(quarto.getAndar()));
+            telaCadastroQuarto.getjFormattedTextFieldMetragem().setText(String.valueOf(quarto.getMetragem()));
+            telaCadastroQuarto.getjFormattedTextFieldCapacidade().setText(String.valueOf(quarto.getCapacidadeHospedes()));
+            telaCadastroQuarto.getjTextFieldObservacao().setText(quarto.getObs());
+            telaCadastroQuarto.getjTextFieldDescricaoidentificacao().setText(quarto.getIdentificacao());
+            telaCadastroQuarto.getjCheckBoxFlagAnimais().setSelected(quarto.isFlagAnimais());
+
+            telaCadastroQuarto.getjComboBoxStatus().setSelectedItem(
+                quarto.getStatus() == 'A' ? "Ativo" : "Inativo"
+            );
+
+            telaCadastroQuarto.getjTextFieldDescricao().requestFocus();
         }
+    }
+
+    @Override
+    public void handleSair() {
+        telaCadastroQuarto.dispose();
     }
 }

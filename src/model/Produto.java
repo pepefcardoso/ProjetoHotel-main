@@ -1,20 +1,24 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
-import java.math.BigDecimal;
-
+/**
+ *
+ * @author Usuario
+ */
 public class Produto {
     private int id;
     private String descricao;
-    private BigDecimal valor;
+    private float valor;
     private String obs;
-    private Status status;
+    private char status;
 
     public Produto() {
-        this.status = Status.ATIVO;
-        this.valor = BigDecimal.ZERO;
     }
 
-    public Produto(int id, String descricao, BigDecimal valor, String obs, Status status) {
+    public Produto(int id, String descricao, float valor, String obs, char status) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -35,20 +39,14 @@ public class Produto {
     }
 
     public void setDescricao(String descricao) {
-        if (descricao == null || descricao.trim().isEmpty()) {
-            throw new IllegalArgumentException("A descrição não pode ser nula ou vazia.");
-        }
         this.descricao = descricao;
     }
 
-    public BigDecimal getValor() {
+    public float getValor() {
         return valor;
     }
 
-    public void setValor(BigDecimal valor) {
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("O valor não pode ser nulo ou negativo.");
-        }
+    public void setValor(float valor) {
         this.valor = valor;
     }
 
@@ -60,16 +58,21 @@ public class Produto {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Produto [id=" + id + ", descricao=" + descricao + ", valor=" + valor + ", status=" + status + "]";
+        return 
+        "id          = " + id + 
+        "\ndescricao = " + descricao + 
+        "\nvalor     = " + valor + 
+        "\nobs       = " + obs + 
+        "status      = " + status;
     }
 }

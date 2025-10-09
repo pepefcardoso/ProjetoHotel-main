@@ -1,18 +1,19 @@
+
 package model;
+
 
 public class Servico {
     private int id;
     private String descricao;
     private String obs;
-    private Status status;
+    private char status;
 
     public Servico() {
-        this.status = Status.ATIVO;
     }
 
-    public Servico(int id, String descricao, String obs, Status status) {
+    public Servico(int id, String descricao, String obs, char status) {
         this.id = id;
-        this.setDescricao(descricao);
+        this.descricao = descricao;
         this.obs = obs;
         this.status = status;
     }
@@ -30,9 +31,6 @@ public class Servico {
     }
 
     public void setDescricao(String descricao) {
-        if (descricao == null || descricao.trim().isEmpty()) {
-            throw new IllegalArgumentException("A descrição não pode ser nula ou vazia.");
-        }
         this.descricao = descricao;
     }
 
@@ -44,16 +42,24 @@ public class Servico {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Servico [id=" + id + ", descricao=" + descricao + ", status=" + status + "]";
+        return 
+        "id          = " + this.id + 
+        "\ndescricao = " + this.descricao + 
+        "\nobs       = " + this.obs + 
+        "\nstatus    = " + this.status;
     }
+    
+    
+    
+    
 }

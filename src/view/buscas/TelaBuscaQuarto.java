@@ -1,10 +1,19 @@
-package view.buscas;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package view;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+/**
+ *
+ * @author Usuario
+ */
 public class TelaBuscaQuarto extends javax.swing.JDialog {
 
     /**
@@ -21,6 +30,14 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
 
     public JButton getjButtonFiltar() {
         return jButtonFiltar;
+    }
+
+    public JButton getjButtonAtivar() {
+        return jButtonAtivar;
+    }
+
+    public JButton getjButtonInativar() {
+        return jButtonInativar;
     }
 
     public JButton getjButtonSair() {
@@ -68,6 +85,8 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
         jButtonCarregar = new javax.swing.JButton();
         jButtonSair = new javax.swing.JButton();
         jButtonFiltar = new javax.swing.JButton();
+        jButtonAtivar = new javax.swing.JButton();
+        jButtonInativar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Projeto de Gestão Hoteleira");
@@ -131,8 +150,7 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
 
         jPanelFiltros.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jCBFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Id", "Descrição", "Capacidade", "Metragem", "Identificação", "Andar", "Animais?", "Observação" }));
-        jCBFiltro.setSelectedIndex(-1);
+        jCBFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Id", "Descrição", "Capacidade", "Metragem", "Identificação", "Andar", "Observação" }));
         jCBFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCBFiltroActionPerformed(evt);
@@ -157,6 +175,24 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
         jButtonFiltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Find.png"))); // NOI18N
         jButtonFiltar.setText("Filtrar");
 
+        jButtonAtivar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/OK.png"))); // NOI18N
+        jButtonAtivar.setText("Ativar");
+        jButtonAtivar.setEnabled(false);
+        jButtonAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAtivarActionPerformed(evt);
+            }
+        });
+
+        jButtonInativar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Cancel.png"))); // NOI18N
+        jButtonInativar.setText("Inativar");
+        jButtonInativar.setEnabled(false);
+        jButtonInativar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInativarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelFiltrosLayout = new javax.swing.GroupLayout(jPanelFiltros);
         jPanelFiltros.setLayout(jPanelFiltrosLayout);
         jPanelFiltrosLayout.setHorizontalGroup(
@@ -164,7 +200,12 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
             .addGroup(jPanelFiltrosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonCarregar)
+                    .addGroup(jPanelFiltrosLayout.createSequentialGroup()
+                        .addComponent(jButtonCarregar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonAtivar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonInativar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelFiltrosLayout.createSequentialGroup()
                         .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jCBFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -197,7 +238,10 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonCarregar)
-                    .addComponent(jButtonSair))
+                    .addComponent(jButtonSair)
+                    .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonAtivar)
+                        .addComponent(jButtonInativar)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -231,6 +275,14 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
     private void jCBFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCBFiltroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCBFiltroActionPerformed
+
+    private void jButtonAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtivarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonAtivarActionPerformed
+
+    private void jButtonInativarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInativarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonInativarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -306,8 +358,10 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAtivar;
     private javax.swing.JButton jButtonCarregar;
     private javax.swing.JButton jButtonFiltar;
+    private javax.swing.JButton jButtonInativar;
     private javax.swing.JButton jButtonSair;
     private javax.swing.JComboBox<String> jCBFiltro;
     private javax.swing.JLabel jLabelFiltrar;

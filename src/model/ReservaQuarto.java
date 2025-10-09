@@ -7,15 +7,14 @@ public class ReservaQuarto {
     private LocalDateTime dataHoraInicio;
     private LocalDateTime dataHoraFim;
     private String obs;
-    private Status status;
+    private char status;
     private Reserva reserva;
     private Quarto quarto;
 
     public ReservaQuarto() {
-        this.status = Status.ATIVO;
     }
 
-    public ReservaQuarto(int id, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String obs, Status status, Reserva reserva, Quarto quarto) {
+    public ReservaQuarto(int id, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String obs, char status, Reserva reserva, Quarto quarto) {
         this.id = id;
         this.dataHoraInicio = dataHoraInicio;
         this.dataHoraFim = dataHoraFim;
@@ -57,11 +56,11 @@ public class ReservaQuarto {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -83,6 +82,13 @@ public class ReservaQuarto {
 
     @Override
     public String toString() {
-        return "ReservaQuarto [id=" + id + ", dataHoraInicio=" + dataHoraInicio + ", dataHoraFim=" + dataHoraFim + ", obs=" + obs + ", status=" + status + ", reserva=" + reserva + ", quarto=" + quarto + "]";
+        return "id               = " + this.getId() +
+            "\nData/Hora Inicio  = " + this.getDataHoraInicio() +
+            "\nData/Hora Fim     = " + this.getDataHoraFim() +
+            "\nObs               = " + this.getObs() +
+            "\nStatus            = " + this.getStatus() +
+            "\nReserva           = " + (this.getReserva() != null ? this.getReserva().toString() : "null") +
+            "\nQuarto            = " + (this.getQuarto() != null ? this.getQuarto().toString() : "null");
     }
 }
+

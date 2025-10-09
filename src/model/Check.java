@@ -8,15 +8,13 @@ public class Check {
     private LocalDateTime dataHoraEntrada;
     private LocalDateTime dataHoraSaida;
     private String obs;
-    private Status status;
+    private String status;
     private Reserva reserva;
 
     public Check() {
-        this.status = Status.ATIVO;
-
     }
 
-    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada, LocalDateTime dataHoraSaida, String obs, Status status, Reserva reserva) {
+    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada, LocalDateTime dataHoraSaida, String obs, String status, Reserva reserva) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.dataHoraEntrada = dataHoraEntrada;
@@ -66,11 +64,11 @@ public class Check {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -84,6 +82,12 @@ public class Check {
 
     @Override
     public String toString() {
-        return "Check [id=" + id + ", dataHoraCadastro=" + dataHoraCadastro + ", dataHoraEntrada=" + dataHoraEntrada + ", dataHoraSaida=" + dataHoraSaida + ", obs=" + obs + ", status=" + status + ", reserva=" + reserva + "]";
+        return "id              = " + this.getId()
+                + "\nData/Hora Cad. = " + this.getDataHoraCadastro()
+                + "\nData/Hora Ent. = " + this.getDataHoraEntrada()
+                + "\nData/Hora Sai. = " + this.getDataHoraSaida()
+                + "\nObs            = " + this.getObs()
+                + "\nStatus         = " + this.getStatus()
+                + "\nReserva ID     = " + this.getReserva().getId();
     }
 }

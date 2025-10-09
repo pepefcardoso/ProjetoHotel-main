@@ -8,23 +8,22 @@ public class MovimentoCaixa {
     private float valor;
     private String descricao;
     private String obs;
-    private Status status;
+    private char status;
     private Caixa caixa;
     private Receber receber;
 
     public MovimentoCaixa() {
-        this.status = Status.ATIVO;
     }
 
-    public MovimentoCaixa(int id, LocalDateTime dataHoraMovimento, float valor, String descricao, String obs, Status status, Caixa caixa, Receber receber) {
+    public MovimentoCaixa(int id, LocalDateTime dataHoraMovimento, float valor, String descricao, String obs, char status, Caixa caixa, Receber receber) {
+        this.receber = receber;
+        this.caixa = caixa;
         this.id = id;
         this.dataHoraMovimento = dataHoraMovimento;
         this.valor = valor;
         this.descricao = descricao;
         this.obs = obs;
         this.status = status;
-        this.caixa = caixa;
-        this.receber = receber;
     }
 
     public int getId() {
@@ -67,11 +66,11 @@ public class MovimentoCaixa {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -93,6 +92,13 @@ public class MovimentoCaixa {
 
     @Override
     public String toString() {
-        return "MovimentoCaixa [id=" + id + ", dataHoraMovimento=" + dataHoraMovimento + ", valor=" + valor + ", descricao=" + descricao + ", obs=" + obs + ", status=" + status + ", caixa=" + caixa + ", receber=" + receber + "]";
+        return "Id                     = " + this.getId() +
+                "\nData/Hora Movimento = " + this.getDataHoraMovimento() +
+                "\nValor               = " + this.getValor() +
+                "\nDesc.               = " + this.getDescricao() +
+                "\nObs                 = " + this.getObs() +
+                "\nStatus              = " + this.getStatus() +
+                "\nCaixa ID            = " + (caixa != null ? caixa.getId() : "N/A") +
+                "\nReceber ID          = " + (receber != null ? receber.getId() : "N/A");
     }
 }

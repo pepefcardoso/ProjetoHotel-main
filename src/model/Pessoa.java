@@ -1,8 +1,6 @@
 package model;
 
-import java.util.StringJoiner;
-
-public abstract class Pessoa {
+public class Pessoa {
 
     private int id;
     private String nome;
@@ -15,14 +13,16 @@ public abstract class Pessoa {
     private String cidade;
     private String complemento;
     private String dataCadastro;
+    private String cpf;
+    private String rg;
     private String obs;
-    private Status status;
+    private char status;
+    private char sexo;
 
     public Pessoa() {
-        this.status = Status.ATIVO;
     }
 
-    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String obs, Status status) {
+    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, String obs, char status, char sexo) {
         this.id = id;
         this.nome = nome;
         this.fone1 = fone1;
@@ -34,10 +34,12 @@ public abstract class Pessoa {
         this.cidade = cidade;
         this.complemento = complemento;
         this.dataCadastro = dataCadastro;
+        this.cpf = cpf;
+        this.rg = rg;
         this.obs = obs;
         this.status = status;
+        this.sexo = sexo;
     }
-
     public int getId() {
         return id;
     }
@@ -126,6 +128,22 @@ public abstract class Pessoa {
         this.dataCadastro = dataCadastro;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
     public String getObs() {
         return obs;
     }
@@ -134,23 +152,41 @@ public abstract class Pessoa {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
+        
         this.status = status;
+        
+    }
+
+
+    public char getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(char sexo) {
+        if ( (sexo == 'M') || (sexo == 'F') || (sexo == 'm') || (sexo == 'f') ) {
+            this.sexo = sexo;
+        }else {
+            this.sexo = 'M';
+        }
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Pessoa.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
-                .add("nome='" + nome + "'")
-                .add("fone1='" + fone1 + "'")
-                .add("fone2='" + fone2 + "'")
-                .add("email='" + email + "'")
-                .add("status=" + status)
-                .toString();
+        return  "id      = " + this.id + 
+                "\nnome   = " + this.nome +
+                "\nfone1  = " + this.fone1 +
+                "\nfone2  = " + this.fone2 +
+                "\nemail  = " + this.email +
+                "\nrg     = " + this.rg +
+                "\ncpf    = " + this.cpf +
+                "\nobs    = " + this.obs +
+                "\nstatus = " + this.status +
+                "\nsexo   = " + this.sexo;
     }
+
 }

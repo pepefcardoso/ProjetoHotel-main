@@ -4,15 +4,14 @@ public class Marca {
 
     private int id;
     private String descricao;
-    private Status status;
+    private char status;
 
     public Marca() {
-        this.status = Status.ATIVO;
     }
 
-    public Marca(int id, String descricao, Status status) {
+    public Marca(int id, String descricao, char status) {
         this.id = id;
-        this.setDescricao(descricao);
+        this.descricao = descricao;
         this.status = status;
     }
 
@@ -29,22 +28,22 @@ public class Marca {
     }
 
     public void setDescricao(String descricao) {
-        if (descricao == null || descricao.trim().isEmpty()) {
-            throw new IllegalArgumentException("A descrição não pode ser nula ou vazia.");
-        }
         this.descricao = descricao;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Marca [id=" + id + ", descricao=" + descricao + ", status=" + status + "]";
+        return    "id    = " + this.getId()
+                + "Desc. = " + this.getDescricao()
+                + "Status= " + this.getStatus();
     }
+
 }

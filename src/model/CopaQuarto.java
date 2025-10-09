@@ -7,16 +7,15 @@ public class CopaQuarto {
     private int id;
     private int quantidade;
     private LocalDateTime dataHoraPedido;
-    private Status status;
+    private char status;
     private String obs;
     private Produto produto;
     private Quarto quarto;
 
     public CopaQuarto() {
-        this.status = Status.ATIVO;
     }
 
-    public CopaQuarto(int id, int quantidade, LocalDateTime dataHoraPedido, Status status, String obs, Produto produto, Quarto quarto) {
+    public CopaQuarto(int id, int quantidade, LocalDateTime dataHoraPedido, char status, String obs, Produto produto, Quarto quarto) {
         this.id = id;
         this.quantidade = quantidade;
         this.dataHoraPedido = dataHoraPedido;
@@ -50,11 +49,11 @@ public class CopaQuarto {
         this.dataHoraPedido = dataHoraPedido;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
@@ -80,10 +79,5 @@ public class CopaQuarto {
 
     public void setQuarto(Quarto quarto) {
         this.quarto = quarto;
-    }
-
-    @Override
-    public String toString() {
-        return "CopaQuarto [id=" + id + ", quantidade=" + quantidade + ", dataHoraPedido=" + dataHoraPedido + ", status=" + status + ", obs=" + obs + ", produto=" + produto + ", quarto=" + quarto + "]";
     }
 }

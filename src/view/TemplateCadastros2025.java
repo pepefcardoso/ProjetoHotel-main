@@ -1,5 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package view;
 
+/**
+ *
+ * @author Usuario
+ */
 public class TemplateCadastros2025 extends javax.swing.JDialog {
 
     /**
@@ -85,7 +94,7 @@ public class TemplateCadastros2025 extends javax.swing.JDialog {
         jPanelBotoes.add(jButtonBuscar);
 
         jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Exit.png"))); // NOI18N
-        jButtonSair.setText("Fechar");
+        jButtonSair.setText("Sair");
         jPanelBotoes.add(jButtonSair);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

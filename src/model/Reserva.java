@@ -8,13 +8,12 @@ public class Reserva {
     private LocalDateTime dataPrevistaEntrada;
     private LocalDateTime dataPrevistaSaida;
     private String obs;
-    private Status status;
+    private char status;
 
     public Reserva() {
-        this.status = Status.ATIVO;
     }
 
-    public Reserva(int id, LocalDateTime dataHoraReserva, LocalDateTime dataPrevistaEntrada, LocalDateTime dataPrevistaSaida, String obs, Status status) {
+    public Reserva(int id, LocalDateTime dataHoraReserva, LocalDateTime dataPrevistaEntrada, LocalDateTime dataPrevistaSaida, String obs, char status) {
         this.id = id;
         this.dataHoraReserva = dataHoraReserva;
         this.dataPrevistaEntrada = dataPrevistaEntrada;
@@ -63,16 +62,21 @@ public class Reserva {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Reserva [id=" + id + ", dataHoraReserva=" + dataHoraReserva + ", dataPrevistaEntrada=" + dataPrevistaEntrada + ", dataPrevistaSaida=" + dataPrevistaSaida + ", obs=" + obs + ", status=" + status + "]";
+        return "id              = " + this.getId()
+                + "\nData/Hora Cad. = " + this.getDataHoraReserva()
+                + "\nData/Hora Ent. = " + this.getDataPrevistaEntrada()
+                + "\nData/Hora Sai. = " + this.getDataPrevistaSaida()
+                + "\nObs            = " + this.getObs()
+                + "\nStatus         = " + this.getStatus();
     }
 }

@@ -1,7 +1,6 @@
 package model;
 
 public class Quarto {
-
     private int id;
     private String descricao;
     private int capacidadeHospedes;
@@ -10,13 +9,12 @@ public class Quarto {
     private int andar;
     private boolean flagAnimais;
     private String obs;
-    private Status status;
+    private char status;
 
     public Quarto() {
-        this.status = Status.ATIVO;
     }
 
-    public Quarto(int id, String descricao, int capacidadeHospedes, float metragem, String identificacao, int andar, boolean flagAnimais, String obs, Status status) {
+    public Quarto(int id, String descricao, int capacidadeHospedes, float metragem, String identificacao, int andar, boolean flagAnimais, String obs, char status) {
         this.id = id;
         this.descricao = descricao;
         this.capacidadeHospedes = capacidadeHospedes;
@@ -92,16 +90,25 @@ public class Quarto {
         this.obs = obs;
     }
 
-    public Status getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Override
     public String toString() {
-        return "Quarto [id=" + id + ", descricao=" + descricao + ", capacidade=" + capacidadeHospedes + ", status=" + status + "]";
+        return 
+        "id                   = " + id + 
+        "\ndescricao          = " + descricao + 
+        "\ncapacidadeHospedes = " + capacidadeHospedes + 
+        "\nmetragem           = " + metragem + 
+        "\nidentificacao      = " + identificacao + 
+        "\nandar              = " + andar + 
+        "\nflagAnimais        = " + flagAnimais + 
+        "\nobs                = " + obs + 
+        "\nstatus             = " + status;
     }
 }
