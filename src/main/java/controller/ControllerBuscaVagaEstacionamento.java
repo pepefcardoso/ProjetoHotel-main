@@ -1,102 +1,52 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.function.Consumer;
 
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import model.VagaEstacionamento;
 import service.VagaEstacionamentoService;
 import view.TelaBuscaVaga;
 
-public final class ControllerBuscaVagaEstacionamento implements ActionListener, InterfaceControllerBusca<VagaEstacionamento> {
-
-    private final TelaBuscaVaga telaBuscaVaga;
-    private final VagaEstacionamentoService vagaService;
-    private final Consumer<Integer> atualizaCodigo;
-
-    public ControllerBuscaVagaEstacionamento(TelaBuscaVaga telaBuscaVaga, Consumer<Integer> atualizaCodigo) {
-        this.telaBuscaVaga = telaBuscaVaga;
-        this.vagaService = new VagaEstacionamentoService();
-        this.atualizaCodigo = atualizaCodigo;
-        initListeners();
-    }
-
-    @Override
-    public void initListeners() {
-        this.telaBuscaVaga.getjButtonCarregar().addActionListener(this);
-        this.telaBuscaVaga.getjButtonFiltar().addActionListener(this);
-        this.telaBuscaVaga.getjButtonSair().addActionListener(this);
-        this.telaBuscaVaga.getjButtonAtivar().addActionListener(this);
-        this.telaBuscaVaga.getjButtonInativar().addActionListener(this);
-        this.telaBuscaVaga.getjTableDados().getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && telaBuscaVaga.getjTableDados().getSelectedRow() != -1) {
-                handleSelecionarItem();
-            }
-        });
-    }
-
-    private void handleSelecionarItem() {
-        int row = telaBuscaVaga.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaVaga.getjTableDados().getValueAt(row, 4);
-        if (statusObj != null) {
-            char status = statusObj.toString().charAt(0);
-            telaBuscaVaga.getjButtonAtivar().setEnabled(status == 'I');
-            telaBuscaVaga.getjButtonInativar().setEnabled(status == 'A');
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent evento) {
-        Object source = evento.getSource();
-        if (source == telaBuscaVaga.getjButtonCarregar()) {
-            handleCarregar();
-            return;
-        }
-        if (source == telaBuscaVaga.getjButtonFiltar()) {
-            handleFiltrar();
-            return;
-        }
-        if (source == telaBuscaVaga.getjButtonSair()) {
-            handleSair();
-            return;
-        }
-        if (source == telaBuscaVaga.getjButtonAtivar()) {
-            handleAtivarInativar(true);
-            return;
-        }
-        if (source == telaBuscaVaga.getjButtonInativar()) {
-            handleAtivarInativar(false);
-        }
-    }
-
-    @Override
-    public void handleCarregar() {
-        if (telaBuscaVaga.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-        } else {
-            int codigo = (int) telaBuscaVaga.getjTableDados()
-                .getValueAt(telaBuscaVaga.getjTableDados().getSelectedRow(), 0);
-            atualizaCodigo.accept(codigo);
-            telaBuscaVaga.dispose();
-        }
-    }
+public final class ControllerBuscaVagaEstacionamento extends AbstractControllerBusca<VagaEstacionamento, TelaBuscaVaga> {
 
     private enum FiltroVaga {
         ID, DESCRICAO, OBSERVACAO, METRAGEM;
 
-        public static FiltroVaga fromIndex(int index) {
-            switch (index) {
-                case 0: return ID;
-                case 1: return DESCRICAO;
-                case 2: return OBSERVACAO;
-                case 3: return METRAGEM;
-                default: throw new IllegalArgumentException("Filtro inválido");
+        static FiltroVaga fromIndex(int index) {
+            if (index < 0 || index >= values().length) {
+                throw new IllegalArgumentException("Filtro inválido: " + index);
             }
+            return values()[index];
+        }
+    }
+
+    public ControllerBuscaVagaEstacionamento(TelaBuscaVaga view, Consumer<Integer> atualizaCodigo) {
+        super(view, new VagaEstacionamentoService(), atualizaCodigo);
+    }
+
+    @Override
+    protected void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws SQLException {
+        FiltroVaga filtro = FiltroVaga.fromIndex(filtroIndex);
+
+        switch (filtro) {
+            case ID:
+                carregarPorId(Integer.parseInt(filtroTexto), tabela);
+                break;
+            case DESCRICAO:
+                carregarPorAtributo("descricao", filtroTexto, tabela);
+                break;
+            case OBSERVACAO:
+                carregarPorAtributo("obs", filtroTexto, tabela);
+                break;
+            case METRAGEM:
+                carregarPorAtributo("metragem_vaga", filtroTexto, tabela);
+                break;
         }
     }
 
@@ -112,87 +62,52 @@ public final class ControllerBuscaVagaEstacionamento implements ActionListener, 
     }
 
     @Override
-    public void carregarPorAtributo(String atributo, String valor, DefaultTableModel tabela) throws SQLException {
-        List<VagaEstacionamento> listaVagas = vagaService.Carregar(atributo, valor);
-        for (VagaEstacionamento v : listaVagas) {
-            adicionarLinhaTabela(tabela, v);
-        }
+    protected JButton getButtonCarregar() {
+        return view.getjButtonCarregar();
     }
 
     @Override
-    public void handleFiltrar() {
-        if (telaBuscaVaga.getjTFFiltro().getText().trim().equalsIgnoreCase("")) {
-            JOptionPane.showMessageDialog(null, "Sem Dados para a Seleção...");
-            return;
-        }
-        DefaultTableModel tabela = (DefaultTableModel) telaBuscaVaga.getjTableDados().getModel();
-        tabela.setRowCount(0);
-
-        int filtroIndex = telaBuscaVaga.getjCBFiltro().getSelectedIndex();
-        String filtroTexto = telaBuscaVaga.getjTFFiltro().getText();
-
-        FiltroVaga filtro = FiltroVaga.fromIndex(filtroIndex);
-
-        try {
-            switch (filtro) {
-                case ID: {
-                    VagaEstacionamento vaga = vagaService.Carregar(Integer.parseInt(filtroTexto));
-                    if (vaga != null) {
-                        adicionarLinhaTabela(tabela, vaga);
-                    }
-                    break;
-                }
-                case DESCRICAO: {
-                    carregarPorAtributo("descricao", filtroTexto, tabela);
-                    break;
-                }
-                case OBSERVACAO: {
-                    carregarPorAtributo("obs", filtroTexto, tabela);
-                    break;
-                }
-                case METRAGEM: {
-                    carregarPorAtributo("metragem_vaga", filtroTexto, tabela);
-                    break;
-                }
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaVaga, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+    protected JButton getButtonFiltrar() {
+        return view.getjButtonFiltar();
     }
 
     @Override
-    public void handleSair() {
-        this.telaBuscaVaga.dispose();
+    protected JButton getButtonSair() {
+        return view.getjButtonSair();
     }
 
     @Override
-    public void handleAtivarInativar(boolean ativar) {
-        if (telaBuscaVaga.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-            return;
-        }
+    protected JButton getButtonAtivar() {
+        return view.getjButtonAtivar();
+    }
 
-        int codigo = (int) telaBuscaVaga.getjTableDados()
-            .getValueAt(telaBuscaVaga.getjTableDados().getSelectedRow(), 0);
+    @Override
+    protected JButton getButtonInativar() {
+        return view.getjButtonInativar();
+    }
 
-        char statusAtual = (char) telaBuscaVaga.getjTableDados()
-            .getValueAt(telaBuscaVaga.getjTableDados().getSelectedRow(), 4);
+    @Override
+    protected JTable getTable() {
+        return view.getjTableDados();
+    }
 
-        try {
-            if (statusAtual == (ativar ? 'A' : 'I')) {
-                JOptionPane.showMessageDialog(null, String.format("A Vaga já está %s.", ativar ? "Ativa" : "Inativa"));
-                return;
-            }
+    @Override
+    protected JTextField getTextFieldFiltro() {
+        return view.getjTFFiltro();
+    }
 
-            vagaService.AtivarInativar(codigo, ativar);
-            int selectedRow = telaBuscaVaga.getjTableDados().getSelectedRow();
-            DefaultTableModel tabela = (DefaultTableModel) telaBuscaVaga.getjTableDados().getModel();
-            tabela.setValueAt(ativar ? 'A' : 'I', selectedRow, 4);
-            telaBuscaVaga.getjButtonAtivar().setEnabled(!ativar);
-            telaBuscaVaga.getjButtonInativar().setEnabled(ativar);
+    @Override
+    protected JComboBox<?> getComboBoxFiltro() {
+        return view.getjCBFiltro();
+    }
 
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaVaga, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+    @Override
+    protected int getStatusColumnIndex() {
+        return 4;
+    }
+
+    @Override
+    protected String getNomeEntidade() {
+        return "A Vaga";
     }
 }

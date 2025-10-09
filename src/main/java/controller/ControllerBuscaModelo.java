@@ -1,101 +1,22 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.function.Consumer;
 
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import model.Modelo;
 import service.ModeloService;
 import view.TelaBuscaModelo;
 
-public final class ControllerBuscaModelo implements ActionListener, InterfaceControllerBusca<Modelo> {
+public final class ControllerBuscaModelo extends AbstractControllerBusca<Modelo, TelaBuscaModelo> {
 
-    private final TelaBuscaModelo telaBuscaModelo;
-    private final ModeloService modeloService;
-    private final Consumer<Integer> atualizaCodigo;
-
-    public ControllerBuscaModelo(TelaBuscaModelo telaBuscaModelo, Consumer<Integer> atualizaCodigo) {
-        this.telaBuscaModelo = telaBuscaModelo;
-        this.modeloService = new ModeloService();
-        this.atualizaCodigo = atualizaCodigo;
-        initListeners();
-    }
-
-    @Override
-    public void initListeners() {
-        this.telaBuscaModelo.getjButtonCarregar().addActionListener(this);
-        this.telaBuscaModelo.getjButtonFiltar().addActionListener(this);
-        this.telaBuscaModelo.getjButtonSair().addActionListener(this);
-        this.telaBuscaModelo.getjButtonAtivar().addActionListener(this);
-        this.telaBuscaModelo.getjButtonInativar().addActionListener(this);
-        this.telaBuscaModelo.getjTableDados().getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && telaBuscaModelo.getjTableDados().getSelectedRow() != -1) {
-                handleSelecionarItem();
-            }
-        });
-    }
-
-    private void handleSelecionarItem() {
-        int row = telaBuscaModelo.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaModelo.getjTableDados().getValueAt(row, 3);
-        if (statusObj != null) {
-            char status = statusObj.toString().charAt(0);
-            telaBuscaModelo.getjButtonAtivar().setEnabled(status == 'I');
-            telaBuscaModelo.getjButtonInativar().setEnabled(status == 'A');
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent evento) {
-        Object source = evento.getSource();
-        if (source == telaBuscaModelo.getjButtonCarregar()) {
-            handleCarregar();
-            return;
-        }
-        if (source == telaBuscaModelo.getjButtonFiltar()) {
-            handleFiltrar();
-            return;
-        }
-        if (source == telaBuscaModelo.getjButtonSair()) {
-            handleSair();
-            return;
-        }
-        if (source == telaBuscaModelo.getjButtonAtivar()) {
-            handleAtivarInativar(true);
-            return;
-        }
-        if (source == telaBuscaModelo.getjButtonInativar()) {
-            handleAtivarInativar(false);
-        }
-    }
-
-    @Override
-    public void handleCarregar() {
-        if (telaBuscaModelo.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-        } else {
-            int codigo = (int) telaBuscaModelo.getjTableDados()
-                .getValueAt(telaBuscaModelo.getjTableDados().getSelectedRow(), 0);
-            atualizaCodigo.accept(codigo);
-            telaBuscaModelo.dispose();
-        }
-    }
-
-    private enum FiltroModelo {
-        ID, DESCRICAO;
-
-        public static FiltroModelo fromIndex(int index) {
-            switch (index) {
-                case 0: return ID;
-                case 1: return DESCRICAO;
-                default: throw new IllegalArgumentException("Filtro inválido");
-            }
-        }
+    public ControllerBuscaModelo(TelaBuscaModelo view, Consumer<Integer> atualizaCodigo) {
+        super(view, new ModeloService(), atualizaCodigo);
     }
 
     @Override
@@ -109,81 +30,77 @@ public final class ControllerBuscaModelo implements ActionListener, InterfaceCon
     }
 
     @Override
-    public void carregarPorAtributo(String atributo, String valor, DefaultTableModel tabela) throws SQLException {
-        List<Modelo> listaModelos = modeloService.Carregar(atributo, valor);
-        for (Modelo m : listaModelos) {
-            adicionarLinhaTabela(tabela, m);
-        }
-    }
-
-    @Override
-    public void handleFiltrar() {
-        if (telaBuscaModelo.getjTFFiltro().getText().trim().equalsIgnoreCase("")) {
-            JOptionPane.showMessageDialog(null, "Sem Dados para a Seleção...");
-            return;
-        }
-        DefaultTableModel tabela = (DefaultTableModel) telaBuscaModelo.getjTableDados().getModel();
-        tabela.setRowCount(0);
-
-        int filtroIndex = telaBuscaModelo.getjCBFiltro().getSelectedIndex();
-        String filtroTexto = telaBuscaModelo.getjTFFiltro().getText();
-
+    protected void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws SQLException {
         FiltroModelo filtro = FiltroModelo.fromIndex(filtroIndex);
 
-        try {
-            switch (filtro) {
-                case ID: {
-                    Modelo modelo = modeloService.Carregar(Integer.parseInt(filtroTexto));
-                    if (modelo == null) {
-                        JOptionPane.showMessageDialog(telaBuscaModelo, "Nenhum modelo encontrado com o ID informado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-                    adicionarLinhaTabela(tabela, modelo);
-                    break;
-                }
-                case DESCRICAO: {
-                    carregarPorAtributo("descricao", filtroTexto, tabela);
-                    break;
-                }
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaModelo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        switch (filtro) {
+            case ID:
+                carregarPorId(Integer.parseInt(filtroTexto), tabela);
+                break;
+            case DESCRICAO:
+                carregarPorAtributo("descricao", filtroTexto, tabela);
+                break;
         }
     }
 
     @Override
-    public void handleSair() {
-        this.telaBuscaModelo.dispose();
+    protected JButton getButtonCarregar() {
+        return view.getjButtonCarregar();
     }
 
     @Override
-    public void handleAtivarInativar(boolean ativar) {
-        if (telaBuscaModelo.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-            return;
-        }
+    protected JButton getButtonFiltrar() {
+        return view.getjButtonFiltar();
+    }
 
-        int codigo = (int) telaBuscaModelo.getjTableDados()
-            .getValueAt(telaBuscaModelo.getjTableDados().getSelectedRow(), 0);
+    @Override
+    protected JButton getButtonSair() {
+        return view.getjButtonSair();
+    }
 
-        char statusAtual = (char) telaBuscaModelo.getjTableDados()
-            .getValueAt(telaBuscaModelo.getjTableDados().getSelectedRow(), 3);
+    @Override
+    protected JButton getButtonAtivar() {
+        return view.getjButtonAtivar();
+    }
 
-        try {
-            if (statusAtual == (ativar ? 'A' : 'I')) {
-                JOptionPane.showMessageDialog(null, String.format("O Modelo já está %s.", ativar ? "Ativo" : "Inativo"));
-                return;
+    @Override
+    protected JButton getButtonInativar() {
+        return view.getjButtonInativar();
+    }
+
+    @Override
+    protected JTable getTable() {
+        return view.getjTableDados();
+    }
+
+    @Override
+    protected JTextField getTextFieldFiltro() {
+        return view.getjTFFiltro();
+    }
+
+    @Override
+    protected JComboBox<?> getComboBoxFiltro() {
+        return view.getjCBFiltro();
+    }
+
+    @Override
+    protected int getStatusColumnIndex() {
+        return 3;
+    }
+
+    @Override
+    protected String getNomeEntidade() {
+        return "Modelo";
+    }
+
+    private enum FiltroModelo {
+        ID, DESCRICAO;
+
+        public static FiltroModelo fromIndex(int index) {
+            if (index >= 0 && index < values().length) {
+                return values()[index];
             }
-
-            modeloService.AtivarInativar(codigo, ativar);
-            int selectedRow = telaBuscaModelo.getjTableDados().getSelectedRow();
-            DefaultTableModel tabela = (DefaultTableModel) telaBuscaModelo.getjTableDados().getModel();
-            tabela.setValueAt(ativar ? 'A' : 'I', selectedRow, 3);
-            telaBuscaModelo.getjButtonAtivar().setEnabled(!ativar);
-            telaBuscaModelo.getjButtonInativar().setEnabled(ativar);
-
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaModelo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            throw new IllegalArgumentException("Índice de filtro inválido: " + index);
         }
     }
 }

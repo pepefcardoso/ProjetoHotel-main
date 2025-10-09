@@ -1,101 +1,49 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.function.Consumer;
 
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import model.Servico;
 import service.ServicoService;
 import view.TelaBuscaServico;
 
-public final class ControllerBuscaServico implements ActionListener, InterfaceControllerBusca<Servico> {
-
-    private final TelaBuscaServico telaBuscaServico;
-    private final ServicoService servicoService;
-    private final Consumer<Integer> atualizaCodigo;
-
-    public ControllerBuscaServico(TelaBuscaServico telaBuscaServico, Consumer<Integer> atualizaCodigo) {
-        this.telaBuscaServico = telaBuscaServico;
-        this.servicoService = new ServicoService();
-        this.atualizaCodigo = atualizaCodigo;
-        initListeners();
-    }
-
-    @Override
-    public void initListeners() {
-        this.telaBuscaServico.getjButtonCarregar().addActionListener(this);
-        this.telaBuscaServico.getjButtonFiltar().addActionListener(this);
-        this.telaBuscaServico.getjButtonSair().addActionListener(this);
-        this.telaBuscaServico.getjButtonAtivar().addActionListener(this);
-        this.telaBuscaServico.getjButtonInativar().addActionListener(this);
-        this.telaBuscaServico.getjTableDados().getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && telaBuscaServico.getjTableDados().getSelectedRow() != -1) {
-                handleSelecionarItem();
-            }
-        });
-    }
-
-    private void handleSelecionarItem() {
-        int row = telaBuscaServico.getjTableDados().getSelectedRow();
-        Object statusObj = telaBuscaServico.getjTableDados().getValueAt(row, 3);
-        if (statusObj != null) {
-            char status = statusObj.toString().charAt(0);
-            telaBuscaServico.getjButtonAtivar().setEnabled(status == 'I');
-            telaBuscaServico.getjButtonInativar().setEnabled(status == 'A');
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent evento) {
-        Object source = evento.getSource();
-        if (source == telaBuscaServico.getjButtonCarregar()) {
-            handleCarregar();
-            return;
-        }
-        if (source == telaBuscaServico.getjButtonFiltar()) {
-            handleFiltrar();
-            return;
-        }
-        if (source == telaBuscaServico.getjButtonSair()) {
-            handleSair();
-            return;
-        }
-        if (source == telaBuscaServico.getjButtonAtivar()) {
-            handleAtivarInativar(true);
-            return;
-        }
-        if (source == telaBuscaServico.getjButtonInativar()) {
-            handleAtivarInativar(false);
-        }
-    }
-
-    @Override
-    public void handleCarregar() {
-        if (telaBuscaServico.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-        } else {
-            int codigo = (int) telaBuscaServico.getjTableDados()
-                .getValueAt(telaBuscaServico.getjTableDados().getSelectedRow(), 0);
-            atualizaCodigo.accept(codigo);
-            telaBuscaServico.dispose();
-        }
-    }
+public final class ControllerBuscaServico extends AbstractControllerBusca<Servico, TelaBuscaServico> {
 
     private enum FiltroServico {
         ID, DESCRICAO, OBSERVACAO;
 
-        public static FiltroServico fromIndex(int index) {
-            switch (index) {
-                case 0: return ID;
-                case 1: return DESCRICAO;
-                case 2: return OBSERVACAO;
-                default: throw new IllegalArgumentException("Filtro inválido");
+        static FiltroServico fromIndex(int index) {
+            if (index < 0 || index >= values().length) {
+                throw new IllegalArgumentException("Filtro inválido: " + index);
             }
+            return values()[index];
+        }
+    }
+
+    public ControllerBuscaServico(TelaBuscaServico view, Consumer<Integer> atualizaCodigo) {
+        super(view, new ServicoService(), atualizaCodigo);
+    }
+
+    @Override
+    protected void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws SQLException {
+        FiltroServico filtro = FiltroServico.fromIndex(filtroIndex);
+
+        switch (filtro) {
+            case ID:
+                carregarPorId(Integer.parseInt(filtroTexto), tabela);
+                break;
+            case DESCRICAO:
+                carregarPorAtributo("descricao", filtroTexto, tabela);
+                break;
+            case OBSERVACAO:
+                carregarPorAtributo("obs", filtroTexto, tabela);
+                break;
         }
     }
 
@@ -110,82 +58,52 @@ public final class ControllerBuscaServico implements ActionListener, InterfaceCo
     }
 
     @Override
-    public void carregarPorAtributo(String atributo, String valor, DefaultTableModel tabela) throws SQLException {
-        List<Servico> listaServicos = servicoService.Carregar(atributo, valor);
-        for (Servico s : listaServicos) {
-            adicionarLinhaTabela(tabela, s);
-        }
+    protected JButton getButtonCarregar() {
+        return view.getjButtonCarregar();
     }
 
     @Override
-    public void handleFiltrar() {
-        if (telaBuscaServico.getjTFFiltro().getText().trim().equalsIgnoreCase("")) {
-            JOptionPane.showMessageDialog(null, "Sem Dados para a Seleção...");
-            return;
-        }
-        DefaultTableModel tabela = (DefaultTableModel) telaBuscaServico.getjTableDados().getModel();
-        tabela.setRowCount(0);
-
-        int filtroIndex = telaBuscaServico.getjCBFiltro().getSelectedIndex();
-        String filtroTexto = telaBuscaServico.getjTFFiltro().getText();
-
-        FiltroServico filtro = FiltroServico.fromIndex(filtroIndex);
-
-        try {
-            switch (filtro) {
-                case ID: {
-                    Servico servico = servicoService.Carregar(Integer.parseInt(filtroTexto));
-                    if (servico != null) {
-                        adicionarLinhaTabela(tabela, servico);
-                    }
-                    break;
-                }
-                case DESCRICAO: {
-                    carregarPorAtributo("descricao", filtroTexto, tabela);
-                    break;
-                }
-                case OBSERVACAO:
-                    carregarPorAtributo("obs", filtroTexto, tabela);
-                    break;
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaServico, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+    protected JButton getButtonFiltrar() {
+        return view.getjButtonFiltar();
     }
 
     @Override
-    public void handleSair() {
-        this.telaBuscaServico.dispose();
+    protected JButton getButtonSair() {
+        return view.getjButtonSair();
     }
 
     @Override
-    public void handleAtivarInativar(boolean ativar) {
-        if (telaBuscaServico.getjTableDados().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Não Existem Dados Selecionados para Edição!");
-            return;
-        }
+    protected JButton getButtonAtivar() {
+        return view.getjButtonAtivar();
+    }
 
-        int codigo = (int) telaBuscaServico.getjTableDados()
-            .getValueAt(telaBuscaServico.getjTableDados().getSelectedRow(), 0);
+    @Override
+    protected JButton getButtonInativar() {
+        return view.getjButtonInativar();
+    }
 
-        char statusAtual = (char) telaBuscaServico.getjTableDados()
-            .getValueAt(telaBuscaServico.getjTableDados().getSelectedRow(), 3);
+    @Override
+    protected JTable getTable() {
+        return view.getjTableDados();
+    }
 
-        try {
-            if (statusAtual == (ativar ? 'A' : 'I')) {
-                JOptionPane.showMessageDialog(null, String.format("O Serviço já está %s.", ativar ? "Ativo" : "Inativo"));
-                return;
-            }
+    @Override
+    protected JTextField getTextFieldFiltro() {
+        return view.getjTFFiltro();
+    }
 
-            servicoService.AtivarInativar(codigo, ativar);
-            int selectedRow = telaBuscaServico.getjTableDados().getSelectedRow();
-            DefaultTableModel tabela = (DefaultTableModel) telaBuscaServico.getjTableDados().getModel();
-            tabela.setValueAt(ativar ? 'A' : 'I', selectedRow, 3);
-            telaBuscaServico.getjButtonAtivar().setEnabled(!ativar);
-            telaBuscaServico.getjButtonInativar().setEnabled(ativar);
+    @Override
+    protected JComboBox<?> getComboBoxFiltro() {
+        return view.getjCBFiltro();
+    }
 
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaBuscaServico, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
+    @Override
+    protected int getStatusColumnIndex() {
+        return 3;
+    }
+
+    @Override
+    protected String getNomeEntidade() {
+        return "O Serviço";
     }
 }

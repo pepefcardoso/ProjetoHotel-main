@@ -1,10 +1,12 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.util.function.Consumer;
 
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import model.Produto;
 import service.ProdutoService;
@@ -12,168 +14,103 @@ import utilities.Utilities;
 import view.TelaBuscaProduto;
 import view.TelaCadastroProduto;
 
-public final class ControllerCadProduto implements ActionListener, InterfaceControllerCad<Produto> {
+public final class ControllerCadProduto extends AbstractControllerCad<Produto, TelaCadastroProduto> {
 
-    private final TelaCadastroProduto telaCadastroProduto;
-    private final ProdutoService produtoService;
-    private int codigo;
-
-    public ControllerCadProduto(TelaCadastroProduto telaCadastroProduto) {
-        this.telaCadastroProduto = telaCadastroProduto;
-        this.produtoService = new ProdutoService();
-        Utilities.setAlwaysDisabled(this.telaCadastroProduto.getjTextFieldId(), true);
-        Utilities.setAlwaysDisabled(this.telaCadastroProduto.getjComboBoxStatus(), true);
-        Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(this.telaCadastroProduto.getjPanelDados(), false);
-        Utilities.permiteLimparFormattedField(this.telaCadastroProduto.getjFormattedTextFieldValor());
-        initListeners();
-    }
-
-    @Override
-    public void initListeners() {
-        this.telaCadastroProduto.getjButtonNovo().addActionListener(this);
-        this.telaCadastroProduto.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonGravar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroProduto.getjButtonSair().addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent evento) {
-        Object source = evento.getSource();
-        if (source == telaCadastroProduto.getjButtonNovo()) {
-            handleNovo();
-            return;
-        }
-        if (source == telaCadastroProduto.getjButtonCancelar()) {
-            handleCancelar();
-            return;
-        }
-        if (source == telaCadastroProduto.getjButtonGravar()) {
-            handleGravar();
-            return;
-        }
-        if (source == telaCadastroProduto.getjButtonBuscar()) {
-            handleBuscar();
-            return;
-        }
-        if (source == telaCadastroProduto.getjButtonSair()) {
-            handleSair();
-        }
-    }
-
-    @Override
-    public void handleNovo() {
-        Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), false);
-        Utilities.limpaComponentes(this.telaCadastroProduto.getjPanelDados(), true);
-        this.telaCadastroProduto.getjTextFieldDescricao().requestFocus();
-        this.telaCadastroProduto.getjComboBoxStatus().setSelectedItem("Ativo");
-    }
-
-    @Override
-    public void handleCancelar() {
-        Utilities.ativaDesativa(this.telaCadastroProduto.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(this.telaCadastroProduto.getjPanelDados(), false);
+    public ControllerCadProduto(TelaCadastroProduto view) {
+        super(view, new ProdutoService());
+        Utilities.permiteLimparFormattedField(this.view.getjFormattedTextFieldValor());
     }
 
     @Override
     public boolean isFormularioValido() {
-        if (!utilities.ValidadorCampos.validarCampoTexto(telaCadastroProduto.getjTextFieldDescricao().getText())) {
-            JOptionPane.showMessageDialog(null, "O campo Descrição é obrigatório.");
-            telaCadastroProduto.getjTextFieldDescricao().requestFocus();
+        if (!validarCampoObrigatorio(view.getjTextFieldDescricao(), "Descrição")) {
             return false;
-        }
-        if (!utilities.ValidadorCampos.validarCampoNumero(telaCadastroProduto.getjFormattedTextFieldValor().getText())) {
-            JOptionPane.showMessageDialog(null, "O campo Valor é obrigatório.");
-            telaCadastroProduto.getjFormattedTextFieldValor().requestFocus();
+        } else if (!validarCampoObrigatorio(view.getjFormattedTextFieldValor(), "Valor")) {
             return false;
         }
         return true;
     }
 
     @Override
-    public void handleGravar() {
-        if (!isFormularioValido()) {
-            return;
-        }
-        Produto produto = construirDoFormulario();
-
-        boolean isNovoCadastro = telaCadastroProduto.getjTextFieldId().getText().trim().isEmpty();
-
-        if (isNovoCadastro) {
-            try {
-                produtoService.Criar(produto);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroProduto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            Utilities.ativaDesativa(telaCadastroProduto.getjPanelBotoes(), true);
-            Utilities.limpaComponentes(telaCadastroProduto.getjPanelDados(), false);
-            return;
-        }
-
-        produto.setId(Integer.parseInt(telaCadastroProduto.getjTextFieldId().getText()));
-        try {
-            produtoService.Atualizar(produto);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaCadastroProduto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Utilities.ativaDesativa(telaCadastroProduto.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(telaCadastroProduto.getjPanelDados(), false);
-    }
-
-    @Override
     public Produto construirDoFormulario() {
         Produto produto = new Produto();
-        produto.setDescricao(telaCadastroProduto.getjTextFieldDescricao().getText());
-        produto.setObs(telaCadastroProduto.getjTextFieldObservacao().getText());
-        produto.setValor(Float.parseFloat(telaCadastroProduto.getjFormattedTextFieldValor().getText()));
-
-        Object statusSelecionado = telaCadastroProduto.getjComboBoxStatus().getSelectedItem();
-        produto.setStatus(
-            statusSelecionado != null && statusSelecionado.equals("Ativo") ? 'A' : 'I'
-        );
-
+        produto.setDescricao(view.getjTextFieldDescricao().getText());
+        produto.setObs(view.getjTextFieldObservacao().getText());
+        produto.setValor(Float.parseFloat(view.getjFormattedTextFieldValor().getText()));
+        produto.setStatus(getStatusDoFormulario());
         return produto;
     }
 
     @Override
-    public void handleBuscar() {
-        codigo = 0;
-        TelaBuscaProduto telaBuscaProduto = new TelaBuscaProduto(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaProduto controllerBuscaProduto = new ControllerBuscaProduto(telaBuscaProduto, valor -> this.codigo = valor);
-        telaBuscaProduto.setVisible(true);
-
-        if (codigo != 0) {
-            Utilities.ativaDesativa(telaCadastroProduto.getjPanelBotoes(), false);
-            Utilities.limpaComponentes(telaCadastroProduto.getjPanelDados(), true);
-
-            telaCadastroProduto.getjTextFieldId().setText(String.valueOf(codigo));
-
-            Produto produto;
-            try {
-                produto = new ProdutoService().Carregar(codigo);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroProduto, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            telaCadastroProduto.getjTextFieldDescricao().setText(produto.getDescricao());
-            telaCadastroProduto.getjTextFieldObservacao().setText(produto.getObs());
-            telaCadastroProduto.getjFormattedTextFieldValor().setText(String.valueOf(produto.getValor()));
-            telaCadastroProduto.getjComboBoxStatus().setSelectedItem(
-                produto.getStatus() == 'A' ? "Ativo" : "Inativo"
-            );
-
-            telaCadastroProduto.getjTextFieldDescricao().requestFocus();
-        }
+    protected void preencherFormulario(Produto produto) {
+        view.getjTextFieldDescricao().setText(produto.getDescricao());
+        view.getjTextFieldObservacao().setText(produto.getObs());
+        view.getjFormattedTextFieldValor().setText(String.valueOf(produto.getValor()));
+        view.getjComboBoxStatus().setSelectedItem(produto.getStatus() == 'A' ? "Ativo" : "Inativo");
     }
 
     @Override
-    public void handleSair() {
-        telaCadastroProduto.dispose();
+    protected void setId(Produto entidade, int id) {
+        entidade.setId(id);
+    }
+
+    @Override
+    protected JDialog criarTelaBusca() {
+        return new TelaBuscaProduto(null, true);
+    }
+
+    @Override
+    protected void criarControllerBusca(JDialog telaBusca, Consumer<Integer> callback) {
+        new ControllerBuscaProduto((TelaBuscaProduto) telaBusca, callback);
+    }
+
+    @Override
+    protected JTextField getTextFieldId() {
+        return view.getjTextFieldId();
+    }
+
+    @Override
+    protected JComboBox<String> getComboBoxStatus() {
+        return view.getjComboBoxStatus();
+    }
+
+    @Override
+    protected JPanel getPanelBotoes() {
+        return view.getjPanelBotoes();
+    }
+
+    @Override
+    protected JPanel getPanelDados() {
+        return view.getjPanelDados();
+    }
+
+    @Override
+    protected JButton getButtonNovo() {
+        return view.getjButtonNovo();
+    }
+
+    @Override
+    protected JButton getButtonCancelar() {
+        return view.getjButtonCancelar();
+    }
+
+    @Override
+    protected JButton getButtonGravar() {
+        return view.getjButtonGravar();
+    }
+
+    @Override
+    protected JButton getButtonBuscar() {
+        return view.getjButtonBuscar();
+    }
+
+    @Override
+    protected JButton getButtonSair() {
+        return view.getjButtonSair();
+    }
+
+    @Override
+    protected void focarPrimeiroCampo() {
+        view.getjTextFieldDescricao().requestFocus();
     }
 }

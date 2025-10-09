@@ -1,10 +1,15 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import model.Fornecedor;
 import model.Funcionario;
@@ -12,379 +17,287 @@ import model.Hospede;
 import model.Modelo;
 import model.Pessoa;
 import model.Veiculo;
+import service.FornecedorService;
 import service.FuncionarioService;
 import service.HospedeService;
+import service.ModeloService;
 import service.VeiculoService;
 import utilities.Utilities;
+import view.TelaBuscaFornecedor;
 import view.TelaBuscaFuncionario;
 import view.TelaBuscaHospede;
 import view.TelaBuscaModelo;
 import view.TelaBuscaVeiculo;
 import view.TelaCadastroVeiculo;
 
-public final class ControllerCadVeiculo implements ActionListener, InterfaceControllerCad<Veiculo> {
+public final class ControllerCadVeiculo extends AbstractControllerCad<Veiculo, TelaCadastroVeiculo> {
 
-    private final TelaCadastroVeiculo telaCadastroVeiculo;
-    private final VeiculoService veiculoService;
-    private int codigoVeiculo;
-    private int codigoModelo;
-    private int codigoProprietario;
-    private String tipoProprietarioSelecionado;
     private Modelo modeloRelacionado;
     private Pessoa proprietarioRelacionado;
+    private String tipoProprietarioSelecionado;
+    private int codigoRelacionado;
 
-    public ControllerCadVeiculo(TelaCadastroVeiculo telaCadastroVeiculo) {
-        this.telaCadastroVeiculo = telaCadastroVeiculo;
-        this.veiculoService = new VeiculoService();
-        Utilities.setAlwaysDisabled(this.telaCadastroVeiculo.getjTextFieldId(), true);
-        Utilities.setAlwaysDisabled(this.telaCadastroVeiculo.getjComboBoxStatus(), true);
-        Utilities.setAlwaysDisabled(this.telaCadastroVeiculo.getjFormattedTextFieldModelo(), true);
-        Utilities.setAlwaysDisabled(this.telaCadastroVeiculo.getjFormattedTextFieldProprietario(), true);
+    public ControllerCadVeiculo(TelaCadastroVeiculo view) {
+        super(view, new VeiculoService());
         this.preencherTiposProprietario();
-        Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(this.telaCadastroVeiculo.getjPanelDados(), false);
-        initListeners();
     }
 
     @Override
-    public void initListeners() {
-        this.telaCadastroVeiculo.getjButtonNovo().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonGravar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonSair().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonRelacionarModelo().addActionListener(this);
-        this.telaCadastroVeiculo.getjButtonRelacionarProprietario().addActionListener(this);
-        telaCadastroVeiculo.getjComboBoxTipoProprietario().addItemListener(e -> {
-            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-                handleTipoProprietario();
+    protected void inicializarView() {
+        super.inicializarView();
+        Utilities.setAlwaysDisabled(view.getjFormattedTextFieldModelo(), true);
+        Utilities.setAlwaysDisabled(view.getjFormattedTextFieldProprietario(), true);
+    }
+
+    @Override
+    protected void configurarListenersAdicionais() {
+        view.getjButtonRelacionarModelo().addActionListener(this);
+        view.getjButtonRelacionarProprietario().addActionListener(this);
+        view.getjComboBoxTipoProprietario().addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                handleTipoProprietarioChange();
             }
-        });        
+        });
     }
 
     @Override
-    public void actionPerformed(ActionEvent evento) {
-        Object source = evento.getSource();
-        if (source == telaCadastroVeiculo.getjButtonNovo()) {
-            handleNovo();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonCancelar()) {
-            handleCancelar();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonGravar()) {
-            handleGravar();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonBuscar()) {
-            handleBuscar();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonSair()) {
-            handleSair();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonRelacionarModelo()) {
+    protected void handleAcoesAdicionais(ActionEvent evento) {
+        if (evento.getSource() == view.getjButtonRelacionarModelo()) {
             handleRelacionarModelo();
-            return;
-        }
-        if (source == telaCadastroVeiculo.getjButtonRelacionarProprietario()) {
+        } else if (evento.getSource() == view.getjButtonRelacionarProprietario()) {
             handleRelacionarProprietario();
         }
     }
 
-    public void preencherTiposProprietario() {
-        telaCadastroVeiculo.getjComboBoxTipoProprietario().removeAllItems();
-        telaCadastroVeiculo.getjComboBoxTipoProprietario().addItem(Hospede.TIPO);
-        telaCadastroVeiculo.getjComboBoxTipoProprietario().addItem(Funcionario.TIPO);
-        telaCadastroVeiculo.getjComboBoxTipoProprietario().addItem(Fornecedor.TIPO);
-    }
-
-    @Override
-    public void handleNovo() {
-        Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), false);
-        Utilities.limpaComponentes(this.telaCadastroVeiculo.getjPanelDados(), true);
-        this.telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-        this.telaCadastroVeiculo.getjComboBoxStatus().setSelectedItem("Ativo");
-    }
-
-    @Override
-    public void handleCancelar() {
-        Utilities.ativaDesativa(this.telaCadastroVeiculo.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(this.telaCadastroVeiculo.getjPanelDados(), false);
-        this.modeloRelacionado = null;
-        this.proprietarioRelacionado = null;
-    }
-
     @Override
     public boolean isFormularioValido() {
-        if (proprietarioRelacionado == null) {
-            JOptionPane.showMessageDialog(null, "Selecione um Proprietário para o Veículo.");
-            telaCadastroVeiculo.getjButtonRelacionarProprietario().requestFocus();
+        if (!validarCampoObrigatorio(view.getjTextFieldPlaca(), "Placa")) {
             return false;
         }
-        if (!utilities.ValidadorCampos.validarPlaca(telaCadastroVeiculo.getjTextFieldPlaca().getText())) {
-            JOptionPane.showMessageDialog(null, "O campo Placa é inválido (7 caracteres).");
-            telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
+        if (!utilities.ValidadorCampos.validarPlaca(view.getjTextFieldPlaca().getText())) {
+            showMessage("O campo Placa é inválido (deve ter 7 caracteres).");
+            view.getjTextFieldPlaca().requestFocus();
             return false;
         }
-        if (!utilities.ValidadorCampos.validarCampoTexto(telaCadastroVeiculo.getjTextFieldCor().getText())) {
-            JOptionPane.showMessageDialog(null, "O campo Cor é obrigatório.");
-            telaCadastroVeiculo.getjTextFieldCor().requestFocus();
+        if (!validarCampoObrigatorio(view.getjTextFieldCor(), "Cor")) {
             return false;
         }
         if (modeloRelacionado == null) {
-            JOptionPane.showMessageDialog(null, "Selecione um Modelo para o Veículo.");
-            telaCadastroVeiculo.getjButtonRelacionarModelo().requestFocus();
+            showMessage("É obrigatório selecionar um Modelo para o veículo.");
+            view.getjButtonRelacionarModelo().requestFocus();
+            return false;
+        }
+        if (proprietarioRelacionado == null) {
+            showMessage("É obrigatório selecionar um Proprietário para o veículo.");
+            view.getjButtonRelacionarProprietario().requestFocus();
             return false;
         }
         return true;
     }
 
     @Override
-    public void handleGravar() {
-        if (!isFormularioValido()) {
-            return;
-        }
-        Veiculo veiculo = construirDoFormulario();
-
-        boolean isNovoCadastro = telaCadastroVeiculo.getjTextFieldId().getText().trim().isEmpty();
-
-        if (isNovoCadastro) {
-            try {
-                veiculoService.Criar(veiculo);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), true);
-            Utilities.limpaComponentes(telaCadastroVeiculo.getjPanelDados(), false);
-            return;
-        }
-
-        veiculo.setId(Integer.parseInt(telaCadastroVeiculo.getjTextFieldId().getText()));
-        try {
-            veiculoService.Atualizar(veiculo);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(telaCadastroVeiculo.getjPanelDados(), false);
-    }
-
-    @Override
     public Veiculo construirDoFormulario() {
         Veiculo veiculo = new Veiculo();
-        veiculo.setPlaca(telaCadastroVeiculo.getjTextFieldPlaca().getText());
-        veiculo.setCor(telaCadastroVeiculo.getjTextFieldCor().getText());
-
-        Object statusSelecionado = telaCadastroVeiculo.getjComboBoxStatus().getSelectedItem();
-        veiculo.setStatus(
-            statusSelecionado != null && statusSelecionado.equals("Ativo") ? 'A' : 'I'
-        );
-
+        veiculo.setPlaca(view.getjTextFieldPlaca().getText());
+        veiculo.setCor(view.getjTextFieldCor().getText());
+        veiculo.setStatus(getStatusDoFormulario());
         veiculo.setModelo(modeloRelacionado);
         veiculo.setProprietario(proprietarioRelacionado);
-
         return veiculo;
     }
 
-    public void handleTipoProprietario() {
-        String selectedItem = (String) telaCadastroVeiculo.getjComboBoxTipoProprietario().getSelectedItem();
-        if (selectedItem == null || selectedItem.equals(tipoProprietarioSelecionado)) {
-            return;
+    @Override
+    protected void preencherFormulario(Veiculo veiculo) {
+        view.getjTextFieldPlaca().setText(veiculo.getPlaca());
+        view.getjTextFieldCor().setText(veiculo.getCor());
+        view.getjComboBoxStatus().setSelectedItem(veiculo.getStatus() == 'A' ? "Ativo" : "Inativo");
+
+        this.modeloRelacionado = veiculo.getModelo();
+        view.getjFormattedTextFieldModelo().setText(getModeloFormat(this.modeloRelacionado));
+
+        this.proprietarioRelacionado = veiculo.getProprietario();
+        if (this.proprietarioRelacionado instanceof Hospede) {
+            view.getjComboBoxTipoProprietario().setSelectedItem(Hospede.TIPO);
+        } else if (this.proprietarioRelacionado instanceof Funcionario) {
+            view.getjComboBoxTipoProprietario().setSelectedItem(Funcionario.TIPO);
+        } else if (this.proprietarioRelacionado instanceof Fornecedor) {
+            view.getjComboBoxTipoProprietario().setSelectedItem(Fornecedor.TIPO);
         }
-        telaCadastroVeiculo.getjFormattedTextFieldProprietario().setText("");
-        tipoProprietarioSelecionado = selectedItem;
-        telaCadastroVeiculo.getjLabelProprietario().setText(selectedItem);
+        view.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(this.proprietarioRelacionado));
     }
 
-    public void handleRelacionarProprietario() {
-        if (tipoProprietarioSelecionado == null) {
-            JOptionPane.showMessageDialog(null, "Selecione o Tipo de Proprietário.");
-            telaCadastroVeiculo.getjComboBoxTipoProprietario().requestFocus();
+    @Override
+    protected void limparRelacionamentos() {
+        this.modeloRelacionado = null;
+        this.proprietarioRelacionado = null;
+        this.tipoProprietarioSelecionado = null;
+        view.getjComboBoxTipoProprietario().setSelectedIndex(-1);
+        view.getjFormattedTextFieldProprietario().setText("");
+        view.getjFormattedTextFieldModelo().setText("");
+        view.getjLabelProprietario().setText("Proprietário");
+    }
+
+    private void handleRelacionarModelo() {
+        this.codigoRelacionado = 0;
+        TelaBuscaModelo telaBusca = new TelaBuscaModelo(null, true);
+        new ControllerBuscaModelo(telaBusca, val -> this.codigoRelacionado = val);
+        telaBusca.setVisible(true);
+
+        if (this.codigoRelacionado != 0) {
+            try {
+                this.modeloRelacionado = new ModeloService().Carregar(this.codigoRelacionado);
+                view.getjFormattedTextFieldModelo().setText(getModeloFormat(this.modeloRelacionado));
+            } catch (SQLException ex) {
+                showError(ex.getMessage());
+            }
+        }
+    }
+
+    private void handleRelacionarProprietario() {
+        if (this.tipoProprietarioSelecionado == null) {
+            showMessage("Selecione o Tipo de Proprietário antes de buscar.");
+            view.getjComboBoxTipoProprietario().requestFocus();
             return;
         }
-        codigoProprietario = 0;
 
-        switch (tipoProprietarioSelecionado) {
+        this.codigoRelacionado = 0;
+
+        switch (this.tipoProprietarioSelecionado) {
             case Hospede.TIPO:
-                relacionarProprietarioTelaHospede();
+                abrirBuscaProprietario(new TelaBuscaHospede(null, true));
                 break;
             case Funcionario.TIPO:
-                relacionarProprietarioTelaFuncionario();
+                abrirBuscaProprietario(new TelaBuscaFuncionario(null, true));
                 break;
             case Fornecedor.TIPO:
-                relacionarProprietarioTelaFornecedor();
-                break;
-            default:
-                JOptionPane.showMessageDialog(null, "Tipo de Proprietário inválido.");
+                abrirBuscaProprietario(new TelaBuscaFornecedor(null, true));
                 break;
         }
-        
-    }
 
-    private void relacionarProprietarioTelaHospede() {
-        
-        TelaBuscaHospede telaBuscaProprietario = new TelaBuscaHospede(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaHospede controllerBuscaProprietario = new ControllerBuscaHospede(telaBuscaProprietario, codigo -> this.codigoProprietario = codigo);
-        telaBuscaProprietario.setVisible(true);
-
-        if (codigoProprietario != 0) {
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), false);
-            this.telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-            this.telaCadastroVeiculo.getjComboBoxStatus().setSelectedItem("Ativo");
-
-            Pessoa proprietario;
+        if (this.codigoRelacionado != 0) {
             try {
-                proprietario = new HospedeService().Carregar(codigoProprietario);
+                switch (this.tipoProprietarioSelecionado) {
+                    case Hospede.TIPO:
+                        this.proprietarioRelacionado = new HospedeService().Carregar(this.codigoRelacionado);
+                        break;
+                    case Funcionario.TIPO:
+                        this.proprietarioRelacionado = new FuncionarioService().Carregar(this.codigoRelacionado);
+                        break;
+                    case Fornecedor.TIPO:
+                        this.proprietarioRelacionado = new FornecedorService().Carregar(this.codigoRelacionado);
+                        break;
+                }
+                view.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(this.proprietarioRelacionado));
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
+                showError(ex.getMessage());
             }
-
-            this.proprietarioRelacionado = proprietario;
-            telaCadastroVeiculo.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(proprietarioRelacionado));
         }
     }
 
-    private void relacionarProprietarioTelaFuncionario() {
-
-        TelaBuscaFuncionario telaBuscaProprietario = new TelaBuscaFuncionario(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaFuncionario controllerBuscaProprietario = new ControllerBuscaFuncionario(telaBuscaProprietario, codigo -> this.codigoProprietario = codigo);
-        telaBuscaProprietario.setVisible(true);
-
-        if (codigoProprietario != 0) {
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), false);
-            this.telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-            this.telaCadastroVeiculo.getjComboBoxStatus().setSelectedItem("Ativo");
-
-            Pessoa proprietario;
-            try {
-                proprietario = new FuncionarioService().Carregar(codigoProprietario);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            this.proprietarioRelacionado = proprietario;
-            telaCadastroVeiculo.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(proprietarioRelacionado));
+    private void abrirBuscaProprietario(JDialog telaBusca) {
+        if (telaBusca instanceof TelaBuscaHospede) {
+            new ControllerBuscaHospede((TelaBuscaHospede) telaBusca, val -> this.codigoRelacionado = val);
+        } else if (telaBusca instanceof TelaBuscaFuncionario) {
+            new ControllerBuscaFuncionario((TelaBuscaFuncionario) telaBusca, val -> this.codigoRelacionado = val);
+        } else if (telaBusca instanceof TelaBuscaFornecedor) {
+            new ControllerBuscaFornecedor((TelaBuscaFornecedor) telaBusca, val -> this.codigoRelacionado = val);
         }
+        telaBusca.setVisible(true);
     }
 
-    private void relacionarProprietarioTelaFornecedor() {
-        
-        TelaBuscaFuncionario telaBuscaProprietario = new TelaBuscaFuncionario(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaFuncionario controllerBuscaProprietario = new ControllerBuscaFuncionario(telaBuscaProprietario, codigo -> this.codigoProprietario = codigo);
-        telaBuscaProprietario.setVisible(true);
-
-        if (codigoProprietario != 0) {
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), false);
-            this.telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-
-            Pessoa proprietario;
-            try {
-                proprietario = new FuncionarioService().Carregar(codigoProprietario);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            this.proprietarioRelacionado = proprietario;
-            telaCadastroVeiculo.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(proprietarioRelacionado));
-        }
+    private void preencherTiposProprietario() {
+        view.getjComboBoxTipoProprietario().removeAllItems();
+        view.getjComboBoxTipoProprietario().addItem(Hospede.TIPO);
+        view.getjComboBoxTipoProprietario().addItem(Funcionario.TIPO);
+        view.getjComboBoxTipoProprietario().addItem(Fornecedor.TIPO);
+        view.getjComboBoxTipoProprietario().setSelectedIndex(-1);
     }
 
-    private String getProprietarioFormat(Pessoa proprietario) {
-        if (proprietario == null) {
-            return "";
+    private void handleTipoProprietarioChange() {
+        Object selectedItem = view.getjComboBoxTipoProprietario().getSelectedItem();
+        if (selectedItem == null) {
+            return;
         }
-        return String.format("%d - %s", proprietario.getId(), proprietario.getNome());
-    }
 
-    public void handleRelacionarModelo() {
-        codigoModelo = 0;
-        TelaBuscaModelo telaBuscaModelo = new TelaBuscaModelo(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaModelo controllerBuscaModelo = new ControllerBuscaModelo(telaBuscaModelo, codigo -> this.codigoModelo = codigo);
-        telaBuscaModelo.setVisible(true);
-
-        if (codigoModelo != 0) {
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), false);
-            this.telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-
-            Modelo modelo;
-            try {
-                modelo = new service.ModeloService().Carregar(codigoModelo);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            this.modeloRelacionado = modelo;
-            telaCadastroVeiculo.getjFormattedTextFieldModelo().setText(getModeloFormat(modeloRelacionado));
+        String tipoSelecionado = selectedItem.toString();
+        if (!tipoSelecionado.equals(this.tipoProprietarioSelecionado)) {
+            this.proprietarioRelacionado = null;
+            view.getjFormattedTextFieldProprietario().setText("");
+            this.tipoProprietarioSelecionado = tipoSelecionado;
+            view.getjLabelProprietario().setText(this.tipoProprietarioSelecionado);
         }
     }
 
     private String getModeloFormat(Modelo modelo) {
-        if (modelo == null) {
-            return "";
-        }
-        return String.format("%d - %s", modelo.getId(), modelo.getDescricao());
+        return (modelo == null) ? "" : String.format("%d - %s", modelo.getId(), modelo.getDescricao());
+    }
+
+    private String getProprietarioFormat(Pessoa proprietario) {
+        return (proprietario == null) ? "" : String.format("%d - %s", proprietario.getId(), proprietario.getNome());
     }
 
     @Override
-    public void handleBuscar() {
-        codigoVeiculo = 0;
-        TelaBuscaVeiculo telaBuscaVeiculo = new TelaBuscaVeiculo(null, true);
-        @SuppressWarnings("unused")
-        ControllerBuscaVeiculo controllerBuscaVeiculo = new ControllerBuscaVeiculo(telaBuscaVeiculo, codigo -> this.codigoVeiculo = codigo);
-        telaBuscaVeiculo.setVisible(true);
-
-        if (codigoVeiculo != 0) {
-            Utilities.ativaDesativa(telaCadastroVeiculo.getjPanelBotoes(), false);
-            Utilities.limpaComponentes(telaCadastroVeiculo.getjPanelDados(), true);
-            telaCadastroVeiculo.getjTextFieldId().setText(String.valueOf(codigoVeiculo));
-
-            Veiculo veiculo;
-            try {
-                veiculo = new VeiculoService().Carregar(codigoVeiculo);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(telaCadastroVeiculo, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            telaCadastroVeiculo.getjTextFieldPlaca().setText(veiculo.getPlaca());
-            telaCadastroVeiculo.getjTextFieldCor().setText(veiculo.getCor());
-            telaCadastroVeiculo.getjComboBoxStatus().setSelectedItem(
-                veiculo.getStatus() == 'A' ? "Ativo" : "Inativo"
-            );
-
-            this.modeloRelacionado = veiculo.getModelo();
-            telaCadastroVeiculo.getjFormattedTextFieldModelo().setText(getModeloFormat(modeloRelacionado));
-            this.proprietarioRelacionado = veiculo.getProprietario();
-            
-            if (proprietarioRelacionado instanceof Hospede) {
-                telaCadastroVeiculo.getjComboBoxTipoProprietario().setSelectedItem(Hospede.TIPO);
-            } else if (proprietarioRelacionado instanceof Funcionario) {
-                telaCadastroVeiculo.getjComboBoxTipoProprietario().setSelectedItem(Funcionario.TIPO);
-            } else if (proprietarioRelacionado instanceof Fornecedor) {
-                telaCadastroVeiculo.getjComboBoxTipoProprietario().setSelectedItem(Fornecedor.TIPO);
-            }
-            
-            telaCadastroVeiculo.getjFormattedTextFieldProprietario().setText(getProprietarioFormat(proprietarioRelacionado));
-            telaCadastroVeiculo.getjTextFieldPlaca().requestFocus();
-        }
+    protected void setId(Veiculo entidade, int id) {
+        entidade.setId(id);
     }
 
     @Override
-    public void handleSair() {
-        telaCadastroVeiculo.dispose();
+    protected JDialog criarTelaBusca() {
+        return new TelaBuscaVeiculo(null, true);
+    }
+
+    @Override
+    protected void criarControllerBusca(JDialog telaBusca, Consumer<Integer> callback) {
+        new ControllerBuscaVeiculo((TelaBuscaVeiculo) telaBusca, callback);
+    }
+
+    @Override
+    protected JTextField getTextFieldId() {
+        return view.getjTextFieldId();
+    }
+
+    @Override
+    protected JComboBox<String> getComboBoxStatus() {
+        return view.getjComboBoxStatus();
+    }
+
+    @Override
+    protected JPanel getPanelBotoes() {
+        return view.getjPanelBotoes();
+    }
+
+    @Override
+    protected JPanel getPanelDados() {
+        return view.getjPanelDados();
+    }
+
+    @Override
+    protected JButton getButtonNovo() {
+        return view.getjButtonNovo();
+    }
+
+    @Override
+    protected JButton getButtonCancelar() {
+        return view.getjButtonCancelar();
+    }
+
+    @Override
+    protected JButton getButtonGravar() {
+        return view.getjButtonGravar();
+    }
+
+    @Override
+    protected JButton getButtonBuscar() {
+        return view.getjButtonBuscar();
+    }
+
+    @Override
+    protected JButton getButtonSair() {
+        return view.getjButtonSair();
+    }
+
+    @Override
+    protected void focarPrimeiroCampo() {
+        view.getjTextFieldPlaca().requestFocus();
     }
 }
