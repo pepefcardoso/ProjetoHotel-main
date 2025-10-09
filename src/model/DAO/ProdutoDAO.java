@@ -5,9 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
 import model.Produto;
-import util.AppLogger;
+import utilities.AppLogger;
 
 public class ProdutoDAO implements InterfaceDAO<Produto> {
     @Override

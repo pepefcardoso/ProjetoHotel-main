@@ -6,9 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Hospede;
-import util.AppLogger;
+import utilities.AppLogger;
 
 public class HospedeDAO implements InterfaceDAO<Hospede> {
 

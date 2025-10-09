@@ -5,9 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
 import model.Servico;
-import util.AppLogger;
+import utilities.AppLogger;
 
 public class ServicoDAO implements InterfaceDAO<Servico> {
     @Override
