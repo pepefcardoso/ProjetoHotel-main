@@ -58,7 +58,18 @@ public final class ControllerCadHospede extends AbstractControllerCad<Hospede, T
             return false;
         }
 
-        // Adicione outras validações conforme necessário
+        if (cpfPreenchido && !utilities.ValidadorCampos.validarCpf(view.getjFormattedTextFieldCpf().getText())) {
+            showMessage("O campo CPF é inválido.");
+            view.getjFormattedTextFieldCpf().requestFocus();
+            return false;
+        }
+
+        if (cnpjPreenchido && !utilities.ValidadorCampos.validarCnpj(view.getjFormattedTextFieldCnpj().getText())) {
+            showMessage("O campo CNPJ é inválido.");
+            view.getjFormattedTextFieldCnpj().requestFocus();
+            return false;
+        }
+
         return true;
     }
 

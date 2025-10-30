@@ -14,26 +14,26 @@ public class Utilities {
 
     public static final String ALWAYS_DISABLED = "alwaysDisabled";
 
-    public static void ativaDesativaButton(JButton button, boolean ativa){
-        if("0".equals(button.getActionCommand())){
+    public static void ativaDesativaButton(JButton button, boolean ativa) {
+        if ("0".equals(button.getActionCommand())) {
             button.setEnabled(ativa);
         } else {
             button.setEnabled(!ativa);
         }
     }
-    
-    public static void ativaDesativa(JPanel painel, boolean ativa){
-        
+
+    public static void ativaDesativa(JPanel painel, boolean ativa) {
+
         Component[] vetComponentes = painel.getComponents();
         for (Component componenteAtual : vetComponentes) {
-            
-            if(componenteAtual instanceof JButton){
+
+            if (componenteAtual instanceof JButton) {
                 ativaDesativaButton((JButton) componenteAtual, ativa);
             }
         }
     }
 
-    public static void permiteLimparFormattedField(JFormattedTextField formattedTextField){
+    public static void permiteLimparFormattedField(JFormattedTextField formattedTextField) {
         formattedTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -52,7 +52,7 @@ public class Utilities {
         Object alwaysDisabledObj = component.getClientProperty(Utilities.ALWAYS_DISABLED);
         return alwaysDisabledObj instanceof Boolean ? (Boolean) alwaysDisabledObj : false;
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static void limpaComponentes(JPanel painel, boolean ativa) {
         Component[] vetComponentes = painel.getComponents();
@@ -73,10 +73,10 @@ public class Utilities {
             } else if (componenteAtual instanceof JPasswordField) {
                 ((JPasswordField) componenteAtual).setText("");
                 componenteAtual.setEnabled(ativa);
-            } else if(componenteAtual instanceof JButton){
+            } else if (componenteAtual instanceof JButton) {
                 ativaDesativaButton((JButton) componenteAtual, !ativa);
             }
-            
+
             boolean alwaysDisabled = isAlwaysDisabled((JComponent) componenteAtual);
             if (componenteAtual instanceof JPanel) {
                 limpaComponentes((JPanel) componenteAtual, alwaysDisabled ? false : ativa);
@@ -94,9 +94,9 @@ public class Utilities {
         String apenasNumeros = apenasNumeros(numero);
         if (apenasNumeros.length() == 11) {
             return String.format("(%s) %s-%s",
-                apenasNumeros.substring(0, 2),
-                apenasNumeros.substring(2, 7),
-                apenasNumeros.substring(7, 11)
+                    apenasNumeros.substring(0, 2),
+                    apenasNumeros.substring(2, 7),
+                    apenasNumeros.substring(7, 11)
             );
         }
         return numero;
@@ -106,8 +106,8 @@ public class Utilities {
         String apenasNumeros = apenasNumeros(numero);
         if (apenasNumeros.length() == 8) {
             return String.format("%s-%s",
-                apenasNumeros.substring(0, 5),
-                apenasNumeros.substring(5, 8)
+                    apenasNumeros.substring(0, 5),
+                    apenasNumeros.substring(5, 8)
             );
         }
         return numero;
@@ -117,10 +117,10 @@ public class Utilities {
         String apenasNumeros = apenasNumeros(numero);
         if (apenasNumeros.length() == 11) {
             return String.format("%s.%s.%s-%s",
-                apenasNumeros.substring(0, 3),
-                apenasNumeros.substring(3, 6),
-                apenasNumeros.substring(6, 9),
-                apenasNumeros.substring(9, 11)
+                    apenasNumeros.substring(0, 3),
+                    apenasNumeros.substring(3, 6),
+                    apenasNumeros.substring(6, 9),
+                    apenasNumeros.substring(9, 11)
             );
         }
         return numero;
@@ -130,11 +130,11 @@ public class Utilities {
         String apenasNumeros = apenasNumeros(numero);
         if (apenasNumeros.length() == 14) {
             return String.format("%s.%s.%s/%s-%s",
-                apenasNumeros.substring(0, 2),
-                apenasNumeros.substring(2, 5),
-                apenasNumeros.substring(5, 8),
-                apenasNumeros.substring(8, 12),
-                apenasNumeros.substring(12, 14)
+                    apenasNumeros.substring(0, 2),
+                    apenasNumeros.substring(2, 5),
+                    apenasNumeros.substring(5, 8),
+                    apenasNumeros.substring(8, 12),
+                    apenasNumeros.substring(12, 14)
             );
         }
         return numero;
