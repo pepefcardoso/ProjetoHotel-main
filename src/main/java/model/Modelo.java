@@ -1,11 +1,29 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "modelo")
 public class Modelo {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String descricao;
+
+    @Column(length = 1)
     private char status;
 
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
     private Marca marca;
 
     public Modelo() {
@@ -54,8 +72,7 @@ public class Modelo {
     public String toString() {
         return "id     = " + this.getId()
                 + "\nDescr. = " + this.getDescricao()
-                + "\nMarca  = " + this.getMarca().getDescricao()
+                + "\nMarca  = " + (this.getMarca() != null ? this.getMarca().getDescricao() : "null")
                 + "\nStatus = " + this.getStatus();
     }
-
 }

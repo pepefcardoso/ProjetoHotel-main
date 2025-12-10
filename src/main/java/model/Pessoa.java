@@ -1,10 +1,23 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public class Pessoa {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String nome;
+
+    @Column(name = "fone")
     private String fone1;
+
     private String fone2;
     private String email;
     private String cep;
@@ -12,11 +25,20 @@ public class Pessoa {
     private String bairro;
     private String cidade;
     private String complemento;
+
+    @Column(name = "data_cadastro")
     private String dataCadastro;
+
     private String cpf;
     private String rg;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
+
+    @Column(length = 1)
     private char sexo;
 
     public Pessoa() {
@@ -40,6 +62,7 @@ public class Pessoa {
         this.status = status;
         this.sexo = sexo;
     }
+
     public int getId() {
         return id;
     }
@@ -157,36 +180,32 @@ public class Pessoa {
     }
 
     public void setStatus(char status) {
-        
         this.status = status;
-        
     }
-
 
     public char getSexo() {
         return sexo;
     }
 
     public void setSexo(char sexo) {
-        if ( (sexo == 'M') || (sexo == 'F') || (sexo == 'm') || (sexo == 'f') ) {
+        if ((sexo == 'M') || (sexo == 'F') || (sexo == 'm') || (sexo == 'f')) {
             this.sexo = sexo;
-        }else {
+        } else {
             this.sexo = 'M';
         }
     }
 
     @Override
     public String toString() {
-        return  "id      = " + this.id + 
-                "\nnome   = " + this.nome +
-                "\nfone1  = " + this.fone1 +
-                "\nfone2  = " + this.fone2 +
-                "\nemail  = " + this.email +
-                "\nrg     = " + this.rg +
-                "\ncpf    = " + this.cpf +
-                "\nobs    = " + this.obs +
-                "\nstatus = " + this.status +
-                "\nsexo   = " + this.sexo;
+        return "id       = " + this.id
+                + "\nnome   = " + this.nome
+                + "\nfone1  = " + this.fone1
+                + "\nfone2  = " + this.fone2
+                + "\nemail  = " + this.email
+                + "\nrg     = " + this.rg
+                + "\ncpf    = " + this.cpf
+                + "\nobs    = " + this.obs
+                + "\nstatus = " + this.status
+                + "\nsexo   = " + this.sexo;
     }
-
 }

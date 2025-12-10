@@ -1,9 +1,23 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "marca")
 public class Marca {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String descricao;
+
+    @Column(length = 1)
     private char status;
 
     public Marca() {
@@ -41,9 +55,8 @@ public class Marca {
 
     @Override
     public String toString() {
-        return    "id    = " + this.getId()
+        return "id    = " + this.getId()
                 + "Desc. = " + this.getDescricao()
                 + "Status= " + this.getStatus();
     }
-
 }

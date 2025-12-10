@@ -2,14 +2,42 @@ package model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "movimento_caixa")
 public class MovimentoCaixa {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "data_hora_movimento")
     private LocalDateTime dataHoraMovimento;
+
     private float valor;
+
     private String descricao;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
+
+    @ManyToOne
+    @JoinColumn(name = "caixa_id")
     private Caixa caixa;
+
+    @ManyToOne
+    @JoinColumn(name = "receber_id")
     private Receber receber;
 
     public MovimentoCaixa() {
@@ -92,13 +120,13 @@ public class MovimentoCaixa {
 
     @Override
     public String toString() {
-        return "Id                     = " + this.getId() +
-                "\nData/Hora Movimento = " + this.getDataHoraMovimento() +
-                "\nValor               = " + this.getValor() +
-                "\nDesc.               = " + this.getDescricao() +
-                "\nObs                 = " + this.getObs() +
-                "\nStatus              = " + this.getStatus() +
-                "\nCaixa ID            = " + (caixa != null ? caixa.getId() : "N/A") +
-                "\nReceber ID          = " + (receber != null ? receber.getId() : "N/A");
+        return "Id                     = " + this.getId()
+                + "\nData/Hora Movimento = " + this.getDataHoraMovimento()
+                + "\nValor               = " + this.getValor()
+                + "\nDesc.               = " + this.getDescricao()
+                + "\nObs                 = " + this.getObs()
+                + "\nStatus              = " + this.getStatus()
+                + "\nCaixa ID            = " + (caixa != null ? caixa.getId() : "N/A")
+                + "\nReceber ID          = " + (receber != null ? receber.getId() : "N/A");
     }
 }

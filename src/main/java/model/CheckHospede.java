@@ -1,11 +1,37 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "check_hospede")
 public class CheckHospede {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "tipo_hospede")
     private String tipoHospede;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
+
+    @ManyToOne
+    @JoinColumn(name = "check_id")
     private Check check;
+
+    @ManyToOne
+    @JoinColumn(name = "hospede_id")
     private Hospede hospede;
 
     public CheckHospede() {
@@ -70,11 +96,11 @@ public class CheckHospede {
 
     @Override
     public String toString() {
-        return "id           = " + this.getId() +
-                "\nTipo Hospede = " + this.getTipoHospede() +
-                "\nObs          = " + this.getObs() +
-                "\nStatus       = " + this.getStatus() +
-                "\nCheck ID     = " + this.getCheck().getId() +
-                "\nHospede      = " + this.getHospede().getNome();
+        return "id           = " + this.getId()
+                + "\nTipo Hospede = " + this.getTipoHospede()
+                + "\nObs          = " + this.getObs()
+                + "\nStatus       = " + this.getStatus()
+                + "\nCheck ID     = " + (this.getCheck() != null ? this.getCheck().getId() : "null")
+                + "\nHospede      = " + (this.getHospede() != null ? this.getHospede().getNome() : "null");
     }
 }

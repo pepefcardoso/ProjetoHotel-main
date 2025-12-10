@@ -1,18 +1,28 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author Usuario
- */
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "produto_copa")
 public class Produto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String descricao;
+
     private float valor;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
 
     public Produto() {
@@ -68,11 +78,10 @@ public class Produto {
 
     @Override
     public String toString() {
-        return 
-        "id          = " + id + 
-        "\ndescricao = " + descricao + 
-        "\nvalor     = " + valor + 
-        "\nobs       = " + obs + 
-        "status      = " + status;
+        return "id           = " + id
+                + "\ndescricao = " + descricao
+                + "\nvalor     = " + valor
+                + "\nobs       = " + obs
+                + "status      = " + status;
     }
 }

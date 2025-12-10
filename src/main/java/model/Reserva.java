@@ -2,12 +2,34 @@ package model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "reserva")
 public class Reserva {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "data_hora_reserva")
     private LocalDateTime dataHoraReserva;
+
+    @Column(name = "data_prevista_entrada")
     private LocalDateTime dataPrevistaEntrada;
+
+    @Column(name = "data_prevista_saida")
     private LocalDateTime dataPrevistaSaida;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
 
     public Reserva() {

@@ -2,13 +2,40 @@ package model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "checks")
 public class Check {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "data_hora_cadastro")
     private LocalDateTime dataHoraCadastro;
+
+    @Column(name = "data_hora_entrada")
     private LocalDateTime dataHoraEntrada;
+
+    @Column(name = "data_hora_saida")
     private LocalDateTime dataHoraSaida;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 20)
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "reserva_id")
     private Reserva reserva;
 
     public Check() {
@@ -88,6 +115,6 @@ public class Check {
                 + "\nData/Hora Sai. = " + this.getDataHoraSaida()
                 + "\nObs            = " + this.getObs()
                 + "\nStatus         = " + this.getStatus()
-                + "\nReserva ID     = " + this.getReserva().getId();
+                + "\nReserva ID     = " + (this.getReserva() != null ? this.getReserva().getId() : "null");
     }
 }

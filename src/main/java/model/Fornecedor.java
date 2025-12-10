@@ -1,16 +1,29 @@
 package model;
-public class Fornecedor extends Pessoa{
-    
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "fornecedor")
+public class Fornecedor extends Pessoa {
+
+    @Column(name = "razao_social")
     private String razaoSocial;
+
     private String cnpj;
+
+    @Column(name = "inscricao_estadual")
     private String inscricaoEstadual;
+
     private String contato;
+
     public static final String TIPO = "Fornecedor";
 
     public Fornecedor() {
     }
 
-    public Fornecedor( int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg,String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status, char sexo) {
+    public Fornecedor(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status, char sexo) {
         super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, cpf, rg, obs, status, sexo);
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
@@ -52,17 +65,10 @@ public class Fornecedor extends Pessoa{
 
     @Override
     public String toString() {
-        return  super.toString() + 
-                "\ncnpj   = " + this.getCnpj()+
-                "\nCep    = " + this.getCnpj()+
-                "\nCidade = " + this.getCidade()+
-                "\nBairro = " + this.getBairro()+
-                "\nLogradouro = " + this.getLogradouro()+
-                "\nComplemento= " + this.getComplemento()+
-                "\nContato    = " + this.getContato()+
-                "\nStatus = " + this.getStatus();
+        return super.toString()
+                + "\ncnpj   = " + this.getCnpj()
+                + "\nRazão Social = " + this.getRazaoSocial()
+                + "\nContato    = " + this.getContato()
+                + "\nStatus     = " + this.getStatus();
     }
-    
-    
-
 }

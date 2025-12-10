@@ -1,14 +1,38 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "quarto")
 public class Quarto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String descricao;
+
+    @Column(name = "capacidade_hospedes")
     private int capacidadeHospedes;
+
     private float metragem;
+
     private String identificacao;
+
     private int andar;
+
+    @Column(name = "flag_animais")
     private boolean flagAnimais;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
 
     public Quarto() {
@@ -100,15 +124,14 @@ public class Quarto {
 
     @Override
     public String toString() {
-        return 
-        "id                   = " + id + 
-        "\ndescricao          = " + descricao + 
-        "\ncapacidadeHospedes = " + capacidadeHospedes + 
-        "\nmetragem           = " + metragem + 
-        "\nidentificacao      = " + identificacao + 
-        "\nandar              = " + andar + 
-        "\nflagAnimais        = " + flagAnimais + 
-        "\nobs                = " + obs + 
-        "\nstatus             = " + status;
+        return "id                   = " + id
+                + "\ndescricao          = " + descricao
+                + "\ncapacidadeHospedes = " + capacidadeHospedes
+                + "\nmetragem           = " + metragem
+                + "\nidentificacao      = " + identificacao
+                + "\nandar              = " + andar
+                + "\nflagAnimais        = " + flagAnimais
+                + "\nobs                = " + obs
+                + "\nstatus             = " + status;
     }
 }

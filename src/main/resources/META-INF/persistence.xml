@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+    version="3.0">
+
+    <persistence-unit name="HotelPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>model.Pessoa</class>
+        <class>model.Hospede</class>
+        <class>model.Funcionario</class>
+        <class>model.Fornecedor</class>
+        <class>model.Marca</class>
+        <class>model.Modelo</class>
+        <class>model.Veiculo</class>
+        <class>model.Quarto</class>
+        <class>model.Produto</class>
+        <class>model.Servico</class>
+        <class>model.VagaEstacionamento</class>
+        <class>model.Reserva</class>
+        <class>model.ReservaQuarto</class>
+        <class>model.Check</class>
+        <class>model.CheckHospede</class>
+        <class>model.CheckQuarto</class>
+        <class>model.AlocacaoVaga</class>
+        <class>model.CopaQuarto</class>
+        <class>model.Caixa</class>
+        <class>model.MovimentoCaixa</class>
+        <class>model.Receber</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+            <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.format_sql" value="true" />
+            <property name="hibernate.use_sql_comments" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
+            <property name="hibernate.connection.pool_size" value="10" />
+            <property name="hibernate.connection.autocommit" value="false" />
+            <property name="hibernate.jdbc.batch_size" value="20" />
+            <property name="hibernate.order_inserts" value="true" />
+            <property name="hibernate.order_updates" value="true" />
+            <property name="hibernate.jdbc.batch_versioned_data" value="true" />
+            <property name="hibernate.enable_lazy_load_no_trans" value="true" />
+            <property name="hibernate.cache.use_second_level_cache" value="false" />
+            <property name="hibernate.cache.use_query_cache" value="false" />
+            <property name="hibernate.jdbc.time_zone" value="UTC" />
+            <property name="hibernate.show_sql" value="false" />
+        </properties>
+    </persistence-unit>
+</persistence>

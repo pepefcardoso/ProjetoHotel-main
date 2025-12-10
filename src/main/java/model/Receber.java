@@ -2,15 +2,44 @@ package model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "receber")
 public class Receber {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "data_hora_cadastro")
     private LocalDateTime dataHoraCadastro;
+
+    @Column(name = "valor_original")
     private Double valorOriginal;
+
     private Double desconto;
+
     private Double acrescimo;
+
+    @Column(name = "valor_pago")
     private Double valorPago;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
+
+    @ManyToOne
+    @JoinColumn(name = "check_id")
     private Check check;
 
     public Receber() {
@@ -102,16 +131,14 @@ public class Receber {
 
     @Override
     public String toString() {
-        return "id               = " + this.getId() + 
-                "\nData/Hora Cad.  = " + this.getDataHoraCadastro() + 
-                "\nValor Original  = " + this.getValorOriginal() + 
-                "\nDesconto        = " + this.getDesconto() + 
-                "\nAcréscimo       = " + this.getAcrescimo() + 
-                "\nValor Pago      = " + this.getValorPago() + 
-                "\nObs             = " + this.getObs() + 
-                "\nStatus          = " + this.getStatus() + 
-                "\nCheck ID        = " + (this.getCheck() != null ? this.getCheck().getId() : "null");
+        return "id               = " + this.getId()
+                + "\nData/Hora Cad.  = " + this.getDataHoraCadastro()
+                + "\nValor Original  = " + this.getValorOriginal()
+                + "\nDesconto        = " + this.getDesconto()
+                + "\nAcréscimo       = " + this.getAcrescimo()
+                + "\nValor Pago      = " + this.getValorPago()
+                + "\nObs             = " + this.getObs()
+                + "\nStatus          = " + this.getStatus()
+                + "\nCheck ID        = " + (this.getCheck() != null ? this.getCheck().getId() : "null");
     }
-
-
 }

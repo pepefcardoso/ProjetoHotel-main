@@ -1,15 +1,20 @@
 package model;
-public class Funcionario extends Pessoa{
-   
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "funcionario")
+public class Funcionario extends Pessoa {
+
     private String usuario;
     private String senha;
     public static final String TIPO = "Funcionário";
 
     public Funcionario() {
-  
     }
 
-    public Funcionario( int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg,String usuario, String senha, String obs, char status, char sexo) {
+    public Funcionario(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, String usuario, String senha, String obs, char status, char sexo) {
         super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, cpf, rg, obs, status, sexo);
         this.usuario = usuario;
         this.senha = senha;
@@ -33,15 +38,9 @@ public class Funcionario extends Pessoa{
 
     @Override
     public String toString() {
-        return  "id   = " + super.toString() + 
-                "\nnome = " + this.getNome()+
-                "\nUsuário = " + this.getUsuario()+
-                "\nSenha   = " + this.getSenha();
+        return "id   = " + super.toString()
+                + "\nnome = " + this.getNome()
+                + "\nUsuário = " + this.getUsuario()
+                + "\nSenha   = " + this.getSenha();
     }
-    
-    
-    
-    
-    
-    
 }

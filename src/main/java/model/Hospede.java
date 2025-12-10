@@ -1,15 +1,29 @@
 package model;
-public class Hospede extends Pessoa{
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "hospede")
+public class Hospede extends Pessoa {
+
+    @Column(name = "razao_social")
     private String razaoSocial;
+
     private String cnpj;
+
+    @Column(name = "inscricao_estadual")
     private String inscricaoEstadual;
+
     private String contato;
+
     public static final String TIPO = "Hóspede";
 
     public Hospede() {
     }
 
-    public Hospede( int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, char sexo, String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status) {
+    public Hospede(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, char sexo, String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status) {
         super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, cpf, rg, obs, status, sexo);
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
@@ -51,20 +65,15 @@ public class Hospede extends Pessoa{
 
     @Override
     public String toString() {
-        return  super.toString() + 
-                "\nRazao Social = " + this.getRazaoSocial()+
-                "\ncnpj   = " + this.getCnpj()+
-                "\nCep    = " + this.getCep()+
-                "\nCidade = " + this.getCidade()+
-                "\nBairro = " + this.getBairro()+
-                "\nLogradouro = " + this.getLogradouro()+
-                "\nComplemento= " + this.getComplemento()+
-                "\nContato    = " + this.getContato()+
-                "\nStatus = " + this.getStatus();
+        return super.toString()
+                + "\nRazao Social = " + this.getRazaoSocial()
+                + "\ncnpj   = " + this.getCnpj()
+                + "\nCep    = " + this.getCep()
+                + "\nCidade = " + this.getCidade()
+                + "\nBairro = " + this.getBairro()
+                + "\nLogradouro = " + this.getLogradouro()
+                + "\nComplemento= " + this.getComplemento()
+                + "\nContato    = " + this.getContato()
+                + "\nStatus = " + this.getStatus();
     }
-    
-    
-    
-    
-    
 }

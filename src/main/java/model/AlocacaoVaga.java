@@ -1,11 +1,38 @@
 package model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "alocacao_vaga")
 public class AlocacaoVaga {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(columnDefinition = "TEXT")
     private String obs;
+
+    @Column(length = 1)
     private char status;
+
+    @ManyToOne
+    @JoinColumn(name = "check_id")
     private Check check;
+
+    @ManyToOne
+    @JoinColumn(name = "veiculo_id")
     private Veiculo veiculo;
+
+    @ManyToOne
+    @JoinColumn(name = "vaga_estacionamento_id")
     private VagaEstacionamento vagaEstacionamento;
 
     public AlocacaoVaga() {
@@ -68,13 +95,13 @@ public class AlocacaoVaga {
         this.vagaEstacionamento = vagaEstacionamento;
     }
 
-        @Override
-        public String toString() {
-        return "id              = " + this.getId()
-            + "\nObs            = " + this.getObs()
-            + "\nStatus         = " + this.getStatus()
-            + "\nCheck ID       = " + (this.getCheck() != null ? this.getCheck().getId() : "null") 
-            + "\nPlaca Veículo  = " + (this.getVeiculo() != null ? this.getVeiculo().getPlaca() : "null")
-            + "\nVaga Estac. ID = " + (this.getVagaEstacionamento() != null ? this.getVagaEstacionamento().getId() : "null");
-        }
+    @Override
+    public String toString() {
+        return "id             = " + this.getId()
+                + "\nObs            = " + this.getObs()
+                + "\nStatus         = " + this.getStatus()
+                + "\nCheck ID       = " + (this.getCheck() != null ? this.getCheck().getId() : "null")
+                + "\nPlaca Veículo  = " + (this.getVeiculo() != null ? this.getVeiculo().getPlaca() : "null")
+                + "\nVaga Estac. ID = " + (this.getVagaEstacionamento() != null ? this.getVagaEstacionamento().getId() : "null");
     }
+}

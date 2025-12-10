@@ -1,20 +1,44 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author Usuario
- */
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+@Entity
+@Table(name = "veiculo")
 public class Veiculo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String placa;
     private String cor;
+
+    @Column(length = 1)
     private char status;
+
+    @ManyToOne
+    @JoinColumn(name = "modelo_id")
     private Modelo modelo;
-    private Pessoa proprietario;
+
+    @ManyToOne
+    @JoinColumn(name = "funcionario_id")
+    private Funcionario funcionario;
+
+    @ManyToOne
+    @JoinColumn(name = "fornecedor_id")
+    private Fornecedor fornecedor;
+
+    @ManyToOne
+    @JoinColumn(name = "hospede_id")
+    private Hospede hospede;
 
     public Veiculo() {
     }
@@ -25,7 +49,7 @@ public class Veiculo {
         this.cor = cor;
         this.status = status;
         this.modelo = modelo;
-        this.proprietario = proprietario;
+        this.setProprietario(proprietario);
     }
 
     public int getId() {
@@ -68,22 +92,70 @@ public class Veiculo {
         this.modelo = modelo;
     }
 
+    @Transient
     public Pessoa getProprietario() {
-        return proprietario;
+        if (this.funcionario != null) {
+            return this.funcionario;
+        }
+        if (this.fornecedor != null) {
+            return this.fornecedor;
+        }
+        if (this.hospede != null) {
+            return this.hospede;
+        }
+        return null;
     }
 
+    @Transient
     public void setProprietario(Pessoa proprietario) {
-        this.proprietario = proprietario;
+        this.funcionario = null;
+        this.fornecedor = null;
+        this.hospede = null;
+
+        if (proprietario instanceof Funcionario) {
+            this.funcionario = (Funcionario) proprietario;
+        } else if (proprietario instanceof Fornecedor) {
+            this.fornecedor = (Fornecedor) proprietario;
+        } else if (proprietario instanceof Hospede) {
+            this.hospede = (Hospede) proprietario;
+        }
+    }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    public Fornecedor getFornecedor() {
+        return fornecedor;
+    }
+
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
+    }
+
+    public Hospede getHospede() {
+        return hospede;
+    }
+
+    public void setHospede(Hospede hospede) {
+        this.hospede = hospede;
     }
 
     @Override
     public String toString() {
-        return 
-        "id       = " + id + 
-        "\nplaca  = " + placa + 
-        "\ncor    = " + cor + 
-        "\nstatus = " + status + 
-        "\nmodelo = " + modelo;
+        String proprietarioStr = getProprietario() != null
+                ? getProprietario().getClass().getSimpleName() + " (ID: " + getProprietario().getId() + ")"
+                : "null";
+
+        return "id       = " + id
+                + "\nplaca  = " + placa
+                + "\ncor    = " + cor
+                + "\nstatus = " + status
+                + "\nmodelo = " + (modelo != null ? modelo.getDescricao() : "null")
+                + "\nProprietário = " + proprietarioStr;
     }
-    
 }
