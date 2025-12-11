@@ -93,11 +93,10 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setResizable(false);
 
-        jPaneltitulo.setBackground(new java.awt.Color(153, 255, 102));
+        jPaneltitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPaneltitulo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabelTitulo.setForeground(new java.awt.Color(0, 51, 204));
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTitulo.setText("Quartos");
         jLabelTitulo.setToolTipText("");
@@ -236,12 +235,13 @@ public class TelaBuscaQuarto extends javax.swing.JDialog {
                     .addComponent(jTFFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonFiltar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCarregar)
-                    .addComponent(jButtonSair)
+                .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonAtivar)
-                        .addComponent(jButtonInativar)))
+                        .addComponent(jButtonInativar))
+                    .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonCarregar)
+                        .addComponent(jButtonSair)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 

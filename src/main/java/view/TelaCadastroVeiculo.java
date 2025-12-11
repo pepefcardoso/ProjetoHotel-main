@@ -213,7 +213,7 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
         setTitle("Cadastro de Veiculos");
         setResizable(false);
 
-        jPanelTitulo.setBackground(new java.awt.Color(153, 153, 255));
+        jPanelTitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPanelTitulo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
@@ -283,6 +283,7 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
 
         jLabelModelo.setText("Modelo");
 
+        jComboBoxTipoProprietario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pessoa Física", "Pessoa Jurídica" }));
         jComboBoxTipoProprietario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxTipoProprietarioActionPerformed(evt);

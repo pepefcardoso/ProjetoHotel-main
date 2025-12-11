@@ -259,7 +259,7 @@ public class TelaCadastroFuncionario extends javax.swing.JDialog {
         setTitle("Cadastro de Funcionários");
         setResizable(false);
 
-        jPanelTitulo.setBackground(new java.awt.Color(153, 153, 255));
+        jPanelTitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPanelTitulo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
@@ -443,7 +443,6 @@ public class TelaCadastroFuncionario extends javax.swing.JDialog {
                         .addGroup(jPanelDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldNome)
                             .addGroup(jPanelDadosLayout.createSequentialGroup()
-                                .addGap(0, 0, 0)
                                 .addComponent(jLabelNome)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

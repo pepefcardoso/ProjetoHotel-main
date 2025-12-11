@@ -48,7 +48,7 @@
     <Container class="javax.swing.JPanel" name="jPaneltitulo">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="66" green="ff" red="99" type="rgb"/>
+          <Color blue="99" green="cc" red="ff" type="rgb"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
@@ -73,10 +73,7 @@
         <Component class="javax.swing.JLabel" name="jLabelTitulo">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Times New Roman" size="14" style="1"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="cc" green="33" red="0" type="rgb"/>
+              <Font name="Arial" size="18" style="1"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="Fornecedores"/>
@@ -212,9 +209,9 @@
                       <Group type="102" attributes="0">
                           <Component id="jButtonCarregar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButtonAtivar" pref="100" max="32767" attributes="0"/>
+                          <Component id="jButtonAtivar" pref="97" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonInativar" pref="100" max="32767" attributes="0"/>
+                          <Component id="jButtonInativar" pref="97" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="477" max="-2" attributes="0"/>
                           <Component id="jButtonSair" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -229,7 +226,6 @@
                                   <Component id="jTFFiltro" min="-2" pref="249" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jButtonFiltar" min="-2" pref="96" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
@@ -258,12 +254,14 @@
                       <Component id="jButtonFiltar" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jButtonCarregar" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButtonSair" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="jButtonInativar" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButtonAtivar" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jButtonCarregar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonSair" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>

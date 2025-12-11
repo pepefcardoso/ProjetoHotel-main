@@ -463,7 +463,7 @@ public class TelaCadastroFornecedor extends javax.swing.JDialog {
         setTitle("Cadastro de Fornecedor");
         setResizable(false);
 
-        jPanelTitulo.setBackground(new java.awt.Color(153, 153, 255));
+        jPanelTitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPanelTitulo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N

@@ -93,11 +93,10 @@ public class TelaBuscaFuncionario extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setResizable(false);
 
-        jPaneltitulo.setBackground(new java.awt.Color(153, 255, 102));
+        jPaneltitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPaneltitulo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabelTitulo.setForeground(new java.awt.Color(0, 51, 204));
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTitulo.setText("Funcionario");
         jLabelTitulo.setToolTipText("");

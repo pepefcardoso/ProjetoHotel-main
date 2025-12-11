@@ -152,11 +152,10 @@ public class TelaBuscaFornecedor extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setResizable(false);
 
-        jPaneltitulo.setBackground(new java.awt.Color(153, 255, 102));
+        jPaneltitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPaneltitulo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabelTitulo.setForeground(new java.awt.Color(0, 51, 204));
+        jLabelTitulo.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTitulo.setText("Fornecedores");
         jLabelTitulo.setToolTipText("");
@@ -264,9 +263,9 @@ public class TelaBuscaFornecedor extends javax.swing.JDialog {
                     .addGroup(jPanelFiltrosLayout.createSequentialGroup()
                         .addComponent(jButtonCarregar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonAtivar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                        .addComponent(jButtonAtivar, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonInativar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                        .addComponent(jButtonInativar, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                         .addGap(477, 477, 477)
                         .addComponent(jButtonSair))
                     .addGroup(jPanelFiltrosLayout.createSequentialGroup()
@@ -278,8 +277,7 @@ public class TelaBuscaFornecedor extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTFFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonFiltar, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jButtonFiltar, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanelFiltrosLayout.createSequentialGroup()
                                 .addGap(8, 8, 8)
                                 .addComponent(jLabelValor)
@@ -299,12 +297,13 @@ public class TelaBuscaFornecedor extends javax.swing.JDialog {
                     .addComponent(jTFFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonFiltar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCarregar)
-                    .addComponent(jButtonSair)
+                .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButtonInativar)
-                        .addComponent(jButtonAtivar)))
+                        .addComponent(jButtonAtivar))
+                    .addGroup(jPanelFiltrosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonCarregar)
+                        .addComponent(jButtonSair)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
