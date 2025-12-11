@@ -1,6 +1,5 @@
 package controller;
 
-import java.sql.SQLException;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -36,7 +35,7 @@ public final class ControllerBuscaFornecedor extends AbstractControllerBusca<For
     }
 
     @Override
-    protected void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws SQLException {
+    protected void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws Exception {
         FiltroFornecedor filtro = FiltroFornecedor.fromIndex(filtroIndex);
 
         switch (filtro) {
@@ -50,7 +49,7 @@ public final class ControllerBuscaFornecedor extends AbstractControllerBusca<For
                 carregarPorAtributo("cpf", filtroTexto, tabela);
                 break;
             case RAZAO_SOCIAL:
-                carregarPorAtributo("razao_social", filtroTexto, tabela);
+                carregarPorAtributo("razaoSocial", filtroTexto, tabela);
                 break;
             case CNPJ:
                 carregarPorAtributo("cnpj", filtroTexto, tabela);
@@ -59,7 +58,7 @@ public final class ControllerBuscaFornecedor extends AbstractControllerBusca<For
                 carregarPorAtributo("obs", filtroTexto, tabela);
                 break;
             case TELEFONE:
-                carregarPorAtributo("fone", filtroTexto, tabela);
+                carregarPorAtributo("fone1", filtroTexto, tabela);
                 break;
             case EMAIL:
                 carregarPorAtributo("email", filtroTexto, tabela);

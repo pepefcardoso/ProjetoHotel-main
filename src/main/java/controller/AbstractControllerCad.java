@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -104,8 +103,9 @@ public abstract class AbstractControllerCad<T, V extends JDialog> implements Act
             Utilities.limpaComponentes(getPanelDados(), false);
             limparRelacionamentos();
 
-        } catch (SQLException ex) {
-            showError(ex.getMessage());
+        } catch (Exception ex) {
+            showError("Erro ao salvar: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -128,10 +128,15 @@ public abstract class AbstractControllerCad<T, V extends JDialog> implements Act
 
         try {
             T entidade = service.Carregar(codigo);
-            preencherFormulario(entidade);
-            focarPrimeiroCampo();
-        } catch (SQLException ex) {
-            showError(ex.getMessage());
+            if (entidade != null) {
+                preencherFormulario(entidade);
+                focarPrimeiroCampo();
+            } else {
+                showError("Entidade não encontrada!");
+                handleCancelar();
+            }
+        } catch (Exception ex) {
+            showError("Erro ao carregar dados: " + ex.getMessage());
             handleCancelar();
         }
     }
@@ -201,14 +206,11 @@ public abstract class AbstractControllerCad<T, V extends JDialog> implements Act
     protected abstract void criarControllerBusca(JDialog telaBusca, Consumer<Integer> callback);
 
     protected void configurarListenersAdicionais() {
-        // Implementação opcional para subclasses
     }
 
     protected void handleAcoesAdicionais(ActionEvent evento) {
-        // Implementação opcional para subclasses
     }
 
     protected void limparRelacionamentos() {
-        // Implementação opcional para subclasses com relacionamentos
     }
 }

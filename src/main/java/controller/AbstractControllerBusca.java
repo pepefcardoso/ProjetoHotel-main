@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -101,17 +100,19 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
 
         try {
             executarFiltro(filtroIndex, filtroTexto, tabela);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             showError(ex.getMessage());
-        } catch (NumberFormatException ex) {
-            showError("Valor inválido para o filtro selecionado.");
         }
     }
 
     @Override
-    public void carregarPorAtributo(String atributo, String valor, DefaultTableModel tabela) throws SQLException {
-        List<T> lista = service.Carregar(atributo, valor);
-        lista.forEach(item -> adicionarLinhaTabela(tabela, item));
+    public void carregarPorAtributo(String atributo, String valor, DefaultTableModel tabela) {
+        try {
+            List<T> lista = service.Carregar(atributo, valor);
+            lista.forEach(item -> adicionarLinhaTabela(tabela, item));
+        } catch (Exception e) {
+            showError("Erro ao carregar dados: " + e.getMessage());
+        }
     }
 
     @Override
@@ -139,8 +140,10 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
         try {
             service.AtivarInativar(codigo, ativar);
             atualizarStatusNaTabela(selectedRow, ativar);
-        } catch (SQLException ex) {
-            showError(ex.getMessage());
+            showMessage(String.format("%s %s com sucesso!",
+                    getNomeEntidade(), ativar ? "ativado" : "inativado"));
+        } catch (Exception ex) {
+            showError("Erro ao alterar status: " + ex.getMessage());
         }
     }
 
@@ -151,10 +154,14 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
         getButtonInativar().setEnabled(ativar);
     }
 
-    protected void carregarPorId(int id, DefaultTableModel tabela) throws SQLException {
-        T entidade = service.Carregar(id);
-        if (entidade != null) {
-            adicionarLinhaTabela(tabela, entidade);
+    protected void carregarPorId(int id, DefaultTableModel tabela) {
+        try {
+            T entidade = service.Carregar(id);
+            if (entidade != null) {
+                adicionarLinhaTabela(tabela, entidade);
+            }
+        } catch (Exception e) {
+            showError("Erro ao carregar por ID: " + e.getMessage());
         }
     }
 
@@ -186,5 +193,5 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
 
     protected abstract String getNomeEntidade();
 
-    protected abstract void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws SQLException;
+    protected abstract void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws Exception;
 }
