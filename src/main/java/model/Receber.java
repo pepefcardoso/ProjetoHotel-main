@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -22,15 +23,17 @@ public class Receber {
     @Column(name = "data_hora_cadastro")
     private LocalDateTime dataHoraCadastro;
 
-    @Column(name = "valor_original")
-    private Double valorOriginal;
+    @Column(name = "valor_original", precision = 10, scale = 2)
+    private BigDecimal valorOriginal;
 
-    private Double desconto;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal desconto;
 
-    private Double acrescimo;
+    @Column(precision = 10, scale = 2) 
+    private BigDecimal acrescimo;
 
-    @Column(name = "valor_pago")
-    private Double valorPago;
+    @Column(name = "valor_pago", precision = 10, scale = 2)
+    private BigDecimal valorPago;
 
     @Column(columnDefinition = "TEXT")
     private String obs;
@@ -45,7 +48,7 @@ public class Receber {
     public Receber() {
     }
 
-    public Receber(int id, LocalDateTime dataHoraCadastro, Double valorOriginal, Double desconto, Double acrescimo, Double valorPago, String obs, char status, Check check) {
+    public Receber(int id, LocalDateTime dataHoraCadastro, BigDecimal valorOriginal, BigDecimal desconto, BigDecimal acrescimo, BigDecimal valorPago, String obs, char status, Check check) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.valorOriginal = valorOriginal;
@@ -73,35 +76,35 @@ public class Receber {
         this.dataHoraCadastro = dataHoraCadastro;
     }
 
-    public Double getValorOriginal() {
+    public BigDecimal getValorOriginal() {
         return valorOriginal;
     }
 
-    public void setValorOriginal(Double valorOriginal) {
+    public void setValorOriginal(BigDecimal valorOriginal) {
         this.valorOriginal = valorOriginal;
     }
 
-    public Double getDesconto() {
+    public BigDecimal getDesconto() {
         return desconto;
     }
 
-    public void setDesconto(Double desconto) {
+    public void setDesconto(BigDecimal desconto) {
         this.desconto = desconto;
     }
 
-    public Double getAcrescimo() {
+    public BigDecimal getAcrescimo() {
         return acrescimo;
     }
 
-    public void setAcrescimo(Double acrescimo) {
+    public void setAcrescimo(BigDecimal acrescimo) {
         this.acrescimo = acrescimo;
     }
 
-    public Double getValorPago() {
+    public BigDecimal getValorPago() {
         return valorPago;
     }
 
-    public void setValorPago(Double valorPago) {
+    public void setValorPago(BigDecimal valorPago) {
         this.valorPago = valorPago;
     }
 

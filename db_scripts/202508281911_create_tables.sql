@@ -15,11 +15,11 @@ DROP TABLE IF EXISTS `Hotel`.`caixa` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`caixa` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `valor_de_abertura` FLOAT NOT NULL,
-  `valor_de_fechamento` FLOAT NOT NULL,
+  `valor_de_abertura` DECIMAL(10, 2) NOT NULL,
+  `valor_de_fechamento` DECIMAL(10, 2) NOT NULL,
   `data_hora_abertura` DATETIME NOT NULL,
   `data_hora_fechamento` DATETIME NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `funcionario_id` INT NULL,
   PRIMARY KEY (`id`))
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`quarto` (
   `identificacao` VARCHAR(45) NOT NULL,
   `andar` INT NOT NULL,
   `flag_animais` BOOLEAN NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check_quarto` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `data_hora_inicio` DATETIME NOT NULL,
   `data_hora_fim` DATETIME NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `quarto_id` INT NOT NULL,
   `check_id` INT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`reserva` (
   `data_hora_reserva` DATETIME NOT NULL,
   `data_prevista_entrada` DATETIME NOT NULL,
   `data_prevista_saida` DATETIME NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `check_id` INT NULL,
   PRIMARY KEY (`id`))
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check` (
   `data_hora_cadastro` DATETIME NOT NULL,
   `data_hora_entrada` DATETIME NOT NULL,
   `data_hora_saida` DATETIME NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `check_quarto_id` INT NOT NULL,
   `reserva_id` INT NULL,
@@ -134,11 +134,11 @@ DROP TABLE IF EXISTS `Hotel`.`receber` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`receber` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `data_hora_cadastro` DATETIME NOT NULL,
-  `valor_original` FLOAT NOT NULL,
-  `desconto` FLOAT NOT NULL,
-  `acrescimo` FLOAT NOT NULL,
-  `valor_pago` FLOAT NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `valor_original` DECIMAL(10, 2) NOT NULL,
+  `desconto` DECIMAL(10, 2) NOT NULL,
+  `acrescimo` DECIMAL(10, 2) NOT NULL,
+  `valor_pago` DECIMAL(10, 2) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `check_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -160,7 +160,7 @@ DROP TABLE IF EXISTS `Hotel`.`movimento_caixa` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`movimento_caixa` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `data_hora_movimento` DATETIME NOT NULL,
-  `valor` FLOAT NOT NULL,
+  `valor` DECIMAL(10, 2) NOT NULL,
   `descricao` VARCHAR(100) NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
   `status` CHAR(1) NOT NULL,
@@ -359,7 +359,7 @@ DROP TABLE IF EXISTS `Hotel`.`vaga_estacionamento` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`vaga_estacionamento` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `metragem_vaga` FLOAT NOT NULL,
   `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
@@ -373,7 +373,7 @@ DROP TABLE IF EXISTS `Hotel`.`alocacao_vaga` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`alocacao_vaga` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `veiculo_id` INT NOT NULL,
   `vaga_estacionamento_id` INT NOT NULL,
@@ -409,7 +409,7 @@ DROP TABLE IF EXISTS `Hotel`.`check_hospede` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`check_hospede` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tipo_hospede` VARCHAR(45) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `check_id` INT NOT NULL,
   `hospede_id` INT NOT NULL,
@@ -439,7 +439,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`reserva_quarto` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `data_hora_inicio` DATETIME NOT NULL,
   `data_hora_fim` DATETIME NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `reserva_id` INT NOT NULL,
   `quarto_id` INT NOT NULL,
@@ -476,8 +476,8 @@ DROP TABLE IF EXISTS `Hotel`.`produto_copa` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`produto_copa` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
-  `valor` FLOAT NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `valor` DECIMAL(10, 2) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -492,7 +492,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`copa_quarto` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `quantidade` INT NOT NULL,
   `data_hora_pedido` DATETIME NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NOT NULL,
   `quarto_id` INT NOT NULL, 
   `produto_id` INT NULL,
@@ -521,7 +521,7 @@ DROP TABLE IF EXISTS `Hotel`.`servico` ;
 CREATE TABLE IF NOT EXISTS `Hotel`.`servico` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
+  `obs` TEXT NOT NULL,
   `status` CHAR(1) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;

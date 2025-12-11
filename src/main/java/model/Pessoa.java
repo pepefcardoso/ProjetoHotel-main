@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class Pessoa {
@@ -27,7 +28,7 @@ public class Pessoa {
     private String complemento;
 
     @Column(name = "data_cadastro")
-    private String dataCadastro;
+    private LocalDateTime dataCadastro;
 
     private String cpf;
     private String rg;

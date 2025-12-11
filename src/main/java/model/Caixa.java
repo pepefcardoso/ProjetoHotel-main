@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -19,11 +20,11 @@ public class Caixa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "valor_abertura")
-    private float valorDeAbertura;
+    @Column(name = "valor_de_abertura", precision = 10, scale = 2)
+    private BigDecimal valorDeAbertura;
 
-    @Column(name = "valor_fechamento")
-    private float valorDeFechamento;
+    @Column(name = "valor_de_fechamento", precision = 10, scale = 2)
+    private BigDecimal valorDeFechamento;
 
     @Column(name = "data_hora_abertura")
     private LocalDateTime dataHoraAbertura;
@@ -44,7 +45,7 @@ public class Caixa {
     public Caixa() {
     }
 
-    public Caixa(int id, float valorDeAbertura, float valorDeFechamento, LocalDateTime dataHoraAbertura, LocalDateTime dataHoraFechamento, String obs, char status, Funcionario funcionario) {
+    public Caixa(int id, BigDecimal valorDeAbertura, BigDecimal valorDeFechamento, LocalDateTime dataHoraAbertura, LocalDateTime dataHoraFechamento, String obs, char status, Funcionario funcionario) {
         this.id = id;
         this.valorDeAbertura = valorDeAbertura;
         this.valorDeFechamento = valorDeFechamento;
@@ -63,19 +64,19 @@ public class Caixa {
         this.id = id;
     }
 
-    public float getValorDeAbertura() {
+    public BigDecimal getValorDeAbertura() {
         return valorDeAbertura;
     }
 
-    public void setValorDeAbertura(float valorDeAbertura) {
+    public void setValorDeAbertura(BigDecimal valorDeAbertura) {
         this.valorDeAbertura = valorDeAbertura;
     }
 
-    public float getValorDeFechamento() {
+    public BigDecimal getValorDeFechamento() {
         return valorDeFechamento;
     }
 
-    public void setValorDeFechamento(float valorDeFechamento) {
+    public void setValorDeFechamento(BigDecimal valorDeFechamento) {
         this.valorDeFechamento = valorDeFechamento;
     }
 

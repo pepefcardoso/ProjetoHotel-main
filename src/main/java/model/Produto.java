@@ -1,5 +1,7 @@
 package model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +19,8 @@ public class Produto {
 
     private String descricao;
 
-    private float valor;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal valor;
 
     @Column(columnDefinition = "TEXT")
     private String obs;
@@ -28,7 +31,7 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(int id, String descricao, float valor, String obs, char status) {
+    public Produto(int id, String descricao, BigDecimal valor, String obs, char status) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -52,11 +55,11 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public float getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 

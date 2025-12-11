@@ -32,6 +32,10 @@ public class Reserva {
     @Column(length = 1)
     private char status;
 
+    @ManyToOne
+    @JoinColumn(name = "check_id")
+    private Check check;
+
     public Reserva() {
     }
 

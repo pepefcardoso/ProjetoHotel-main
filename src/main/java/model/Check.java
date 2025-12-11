@@ -31,12 +31,16 @@ public class Check {
     @Column(columnDefinition = "TEXT")
     private String obs;
 
-    @Column(length = 20)
+    @Column(length = 1)
     private String status;
 
     @ManyToOne
     @JoinColumn(name = "reserva_id")
     private Reserva reserva;
+
+    @ManyToOne
+    @JoinColumn(name = "check_quarto_id", nullable = false)
+    private CheckQuarto checkQuarto;
 
     public Check() {
     }

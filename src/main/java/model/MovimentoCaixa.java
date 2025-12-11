@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -22,7 +23,8 @@ public class MovimentoCaixa {
     @Column(name = "data_hora_movimento")
     private LocalDateTime dataHoraMovimento;
 
-    private float valor;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal valor;
 
     private String descricao;
 
@@ -43,7 +45,7 @@ public class MovimentoCaixa {
     public MovimentoCaixa() {
     }
 
-    public MovimentoCaixa(int id, LocalDateTime dataHoraMovimento, float valor, String descricao, String obs, char status, Caixa caixa, Receber receber) {
+    public MovimentoCaixa(int id, LocalDateTime dataHoraMovimento, BigDecimal valor, String descricao, String obs, char status, Caixa caixa, Receber receber) {
         this.receber = receber;
         this.caixa = caixa;
         this.id = id;
@@ -70,11 +72,11 @@ public class MovimentoCaixa {
         this.dataHoraMovimento = dataHoraMovimento;
     }
 
-    public float getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 
