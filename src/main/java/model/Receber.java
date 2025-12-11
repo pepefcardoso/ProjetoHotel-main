@@ -17,7 +17,7 @@ public class Receber {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "data_hora_cadastro")
     private LocalDateTime dataHoraCadastro;
@@ -45,7 +45,7 @@ public class Receber {
     public Receber() {
     }
 
-    public Receber(Long id, LocalDateTime dataHoraCadastro, Double valorOriginal, Double desconto, Double acrescimo, Double valorPago, String obs, char status, Check check) {
+    public Receber(int id, LocalDateTime dataHoraCadastro, Double valorOriginal, Double desconto, Double acrescimo, Double valorPago, String obs, char status, Check check) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.valorOriginal = valorOriginal;
@@ -57,11 +57,11 @@ public class Receber {
         this.check = check;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

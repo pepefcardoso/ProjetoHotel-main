@@ -28,6 +28,7 @@
         <class>model.Caixa</class>
         <class>model.MovimentoCaixa</class>
         <class>model.Receber</class>
+        <class>model.OrdemServico</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
