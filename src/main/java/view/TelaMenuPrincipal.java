@@ -5,6 +5,11 @@
  */
 package view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+
 import controller.ControllerCadFornecedor;
 import controller.ControllerCadFuncionario;
 import controller.ControllerCadHospede;
@@ -15,6 +20,7 @@ import controller.ControllerCadQuarto;
 import controller.ControllerCadServico;
 import controller.ControllerCadVagaEstacionamento;
 import controller.ControllerCadVeiculo;
+import model.DAO.JPAUtil;
 
 /**
  *
@@ -142,12 +148,12 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 532, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 532, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 383, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 383, Short.MAX_VALUE)
         );
 
         pack();
@@ -157,76 +163,76 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
     private void jMenuItemSairActionPerformed(java.awt.event.ActionEvent _evt) {//GEN-FIRST:event_jMenuItemSairActionPerformed
         dispose();
     }//GEN-LAST:event_jMenuItemSairActionPerformed
-    
+
     @SuppressWarnings("unused")
     private void jMenuItemHospedeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemHospedeActionPerformed
-        TelaCadastroHospede telaCadastroHospede = new TelaCadastroHospede(null,true);
+        TelaCadastroHospede telaCadastroHospede = new TelaCadastroHospede(null, true);
         ControllerCadHospede controllerCadHospede = new ControllerCadHospede(telaCadastroHospede);
         telaCadastroHospede.setVisible(true);
     }//GEN-LAST:event_jMenuItemHospedeActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemFornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFornecedorActionPerformed
-        TelaCadastroFornecedor telaCadastroFornecedor = new TelaCadastroFornecedor(null,true);
+        TelaCadastroFornecedor telaCadastroFornecedor = new TelaCadastroFornecedor(null, true);
         ControllerCadFornecedor controllerCadFornecedor = new ControllerCadFornecedor(telaCadastroFornecedor);
         telaCadastroFornecedor.setVisible(true);
     }//GEN-LAST:event_jMenuItemFornecedorActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFuncionarioActionPerformed
-        TelaCadastroFuncionario telaCadastroFuncionario = new TelaCadastroFuncionario(null,true);
+        TelaCadastroFuncionario telaCadastroFuncionario = new TelaCadastroFuncionario(null, true);
         ControllerCadFuncionario controllerCadFuncionario = new ControllerCadFuncionario(telaCadastroFuncionario);
         telaCadastroFuncionario.setVisible(true);
     }//GEN-LAST:event_jMenuItemFuncionarioActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemQuartoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemQuartoActionPerformed
-        TelaCadastroQuarto telaCadastroQuarto = new TelaCadastroQuarto(null,true);
+        TelaCadastroQuarto telaCadastroQuarto = new TelaCadastroQuarto(null, true);
         ControllerCadQuarto controllerCadQuarto = new ControllerCadQuarto(telaCadastroQuarto);
         telaCadastroQuarto.setVisible(true);
-    }//GEN-LAST:event_jMenuItemQuartoActionPerformed
+    }//GEN-LAST:EVENT_jMenuItemQuartoActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemVeiculoActionPerformed
-        TelaCadastroVeiculo telaCadastroVeiculo = new TelaCadastroVeiculo(null,true);
+        TelaCadastroVeiculo telaCadastroVeiculo = new TelaCadastroVeiculo(null, true);
         ControllerCadVeiculo controllerCadVeiculo = new ControllerCadVeiculo(telaCadastroVeiculo);
         telaCadastroVeiculo.setVisible(true);
     }//GEN-LAST:event_jMenuItemVeiculoActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemModeloActionPerformed
-        TelaCadastroModelo telaCadastroModelo = new TelaCadastroModelo(null,true);
+        TelaCadastroModelo telaCadastroModelo = new TelaCadastroModelo(null, true);
         ControllerCadModelo controllerCadModelo = new ControllerCadModelo(telaCadastroModelo);
         telaCadastroModelo.setVisible(true);
     }//GEN-LAST:event_jMenuItemModeloActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMarcaActionPerformed
-        TelaCadastroMarca telaCadastroMarca = new TelaCadastroMarca(null,true);
+        TelaCadastroMarca telaCadastroMarca = new TelaCadastroMarca(null, true);
         ControllerCadMarca controllerCadMarca = new ControllerCadMarca(telaCadastroMarca);
         telaCadastroMarca.setVisible(true);
     }//GEN-LAST:event_jMenuItemMarcaActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemServicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemServicoActionPerformed
-        TelaCadastroServico telaCadastroServico = new TelaCadastroServico(null,true);
+        TelaCadastroServico telaCadastroServico = new TelaCadastroServico(null, true);
         ControllerCadServico controllerCadServico = new ControllerCadServico(telaCadastroServico);
         telaCadastroServico.setVisible(true);
     }//GEN-LAST:event_jMenuItemServicoActionPerformed
 
     @SuppressWarnings("unused")
     private void jMenuItemVeiculo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemVeiculo1ActionPerformed
-        TelaCadastroVagaEstacionamento telaCadastroVagaEstacionamento = new TelaCadastroVagaEstacionamento(null,true);
+        TelaCadastroVagaEstacionamento telaCadastroVagaEstacionamento = new TelaCadastroVagaEstacionamento(null, true);
         ControllerCadVagaEstacionamento controllerCadVagaEstacionamento = new ControllerCadVagaEstacionamento(telaCadastroVagaEstacionamento);
         telaCadastroVagaEstacionamento.setVisible(true);
     }//GEN-LAST:event_jMenuItemVeiculo1ActionPerformed
 
     @SuppressWarnings("unused")
-    private void jMenuItemProdutoActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        TelaCadastroProduto telaCadastroProduto = new TelaCadastroProduto(null,true);
+    private void jMenuItemProdutoActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaCadastroProduto telaCadastroProduto = new TelaCadastroProduto(null, true);
         ControllerCadProduto controllerCadProduto = new ControllerCadProduto(telaCadastroProduto);
         telaCadastroProduto.setVisible(true);
-    }                                                
+    }
 
     /**
      * @param args the command line arguments
@@ -248,13 +254,18 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(TelaMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new TelaMenuPrincipal().setVisible(true);
-        });
+        //</editor-fold>
+        try {
+            JPAUtil.getEntityManager().close();
+
+            java.awt.EventQueue.invokeLater(() -> {
+                new TelaMenuPrincipal().setVisible(true);
+            });
+        } catch (ExceptionInInitializerError | IllegalStateException t) {
+            Logger.getLogger(TelaMenuPrincipal.class.getName()).log(Level.SEVERE, "Falha ao inicializar o JPA. Verifique a conexão com o banco de dados e o arquivo .env.", t);
+            JOptionPane.showMessageDialog(null, "Erro Crítico: Não foi possível conectar ao Banco de Dados.\nVerifique o arquivo .env e o status do banco.", "Erro de Inicialização JPA", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
