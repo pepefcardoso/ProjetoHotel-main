@@ -1,1 +1,0 @@
-ALTER TABLE produto_copa CHANGE decricao descricao VARCHAR(100) NOT NULL;

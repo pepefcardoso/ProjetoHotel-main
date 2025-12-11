@@ -1,5 +1,3 @@
--- MySQL Workbench Forward Engineering
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -7,15 +5,11 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema Hotel
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema Hotel
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `Hotel` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `Hotel` DEFAULT CHARACTER SET utf8mb4 ;
 USE `Hotel` ;
 
 -- -----------------------------------------------------
--- Table `Hotel`.`caixa`
+-- Tabela `Hotel`.`caixa`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`caixa` ;
 
@@ -26,13 +20,13 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`caixa` (
   `data_hora_abertura` DATETIME NOT NULL,
   `data_hora_fechamento` DATETIME NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
+  `funcionario_id` INT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
--- Table `Hotel`.`quarto`
+-- Tabela `Hotel`.`quarto`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`quarto` ;
 
@@ -43,15 +37,14 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`quarto` (
   `metragem` FLOAT NOT NULL,
   `identificacao` VARCHAR(45) NOT NULL,
   `andar` INT NOT NULL,
-  `flag_animais` TINYINT NOT NULL,
+  `flag_animais` BOOLEAN NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
--- Table `Hotel`.`check_quarto`
+-- Tabela `Hotel`.`check_quarto`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`check_quarto` ;
 
@@ -60,8 +53,10 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check_quarto` (
   `data_hora_inicio` DATETIME NOT NULL,
   `data_hora_fim` DATETIME NOT NULL,
   `obs` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `quarto_id` INT NOT NULL,
+  `check_id` INT NULL,
+  `reserva_quarto_id` INT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_check_quarto_quarto1`
     FOREIGN KEY (`quarto_id`)
@@ -72,9 +67,27 @@ ENGINE = InnoDB;
 
 CREATE INDEX `fk_check_quarto_quarto1_idx` ON `Hotel`.`check_quarto` (`quarto_id` ASC) ;
 
+-- -----------------------------------------------------
+-- Tabela `Hotel`.`reserva`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Hotel`.`reserva` ;
+
+CREATE TABLE IF NOT EXISTS `Hotel`.`reserva` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `data_hora_reserva` DATETIME NOT NULL,
+  `data_prevista_entrada` DATETIME NOT NULL,
+  `data_prevista_saida` DATETIME NOT NULL,
+  `obs` VARCHAR(45) NOT NULL,
+  `status` CHAR(1) NOT NULL,
+  `check_id` INT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_reserva_check1_idx` ON `Hotel`.`reserva` (`check_id` ASC) ;
+
 
 -- -----------------------------------------------------
--- Table `Hotel`.`check`
+-- Tabela `Hotel`.`check`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`check` ;
 
@@ -84,21 +97,37 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check` (
   `data_hora_entrada` DATETIME NOT NULL,
   `data_hora_saida` DATETIME NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `check_quarto_id` INT NOT NULL,
+  `reserva_id` INT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_check_check_quarto1`
     FOREIGN KEY (`check_quarto_id`)
     REFERENCES `Hotel`.`check_quarto` (`id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_check_reserva1` -- Nova FK
+    FOREIGN KEY (`reserva_id`)
+    REFERENCES `Hotel`.`reserva` (`id`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_check_check_quarto1_idx` ON `Hotel`.`check` (`check_quarto_id` ASC) ;
+CREATE INDEX `fk_check_reserva1_idx` ON `Hotel`.`check` (`reserva_id` ASC) ;
+
+ALTER TABLE `Hotel`.`check_quarto`
+  ADD CONSTRAINT `fk_check_quarto_check1`
+    FOREIGN KEY (`check_id`)
+    REFERENCES `Hotel`.`check` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+CREATE INDEX `fk_check_quarto_check1_idx` ON `Hotel`.`check_quarto` (`check_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`receber`
+-- Tabela `Hotel`.`receber`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`receber` ;
 
@@ -110,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`receber` (
   `acrescimo` FLOAT NOT NULL,
   `valor_pago` FLOAT NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `check_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_receber_check1`
@@ -124,7 +153,7 @@ CREATE INDEX `fk_receber_check1_idx` ON `Hotel`.`receber` (`check_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`movimento_caixa`
+-- Tabela `Hotel`.`movimento_caixa`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`movimento_caixa` ;
 
@@ -134,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`movimento_caixa` (
   `valor` FLOAT NOT NULL,
   `descricao` VARCHAR(100) NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `caixa_id` INT NOT NULL,
   `receber_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -151,32 +180,30 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`movimento_caixa` (
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_movimento_caixa_caixa_idx` ON `Hotel`.`movimento_caixa` (`caixa_id` ASC) ;
-
 CREATE INDEX `fk_movimento_caixa_receber1_idx` ON `Hotel`.`movimento_caixa` (`receber_id` ASC) ;
 
-
 -- -----------------------------------------------------
--- Table `Hotel`.`marca`
+-- Tabela `Hotel`.`marca`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`marca` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`marca` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`modelo`
+-- Tabela `Hotel`.`modelo`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`modelo` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`modelo` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `marca_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_modelo_marca1`
@@ -190,94 +217,93 @@ CREATE INDEX `fk_modelo_marca1_idx` ON `Hotel`.`modelo` (`marca_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`funcionario`
+-- Tabela `Hotel`.`funcionario`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`funcionario` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`funcionario` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(100) NOT NULL,
-  `fone` VARCHAR(14) NOT NULL,
-  `fone2` VARCHAR(14) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
-  `cep` VARCHAR(10) NOT NULL,
-  `logradouro` VARCHAR(100) NOT NULL,
-  `bairro` VARCHAR(45) NOT NULL,
-  `cidade` VARCHAR(45) NOT NULL,
-  `complemento` VARCHAR(100) NOT NULL,
+  `nome` VARCHAR(255) NOT NULL,
+  `fone` VARCHAR(255) NOT NULL,
+  `fone2` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `cep` VARCHAR(255) NOT NULL,
+  `logradouro` VARCHAR(255) NOT NULL,
+  `bairro` VARCHAR(255) NOT NULL,
+  `cidade` VARCHAR(255) NOT NULL,
+  `complemento` VARCHAR(255) NOT NULL,
   `data_cadastro` DATETIME NOT NULL,
-  `cpf` VARCHAR(14) NOT NULL,
-  `rg` VARCHAR(14) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
-  `usuario` VARCHAR(45) NOT NULL,
-  `senha` VARCHAR(45) NOT NULL,
+  `cpf` VARCHAR(255) NOT NULL,
+  `rg` VARCHAR(255) NOT NULL,
+  `obs` TEXT NOT NULL,
+  `status` CHAR(1) DEFAULT 'A' NOT NULL,
+  `usuario` VARCHAR(255) NOT NULL,
+  `senha` VARCHAR(255) NOT NULL,
+  `sexo` CHAR(1) DEFAULT 'M',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`fornecedor`
+-- Tabela `Hotel`.`fornecedor`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`fornecedor` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`fornecedor` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(100) NOT NULL,
-  `fone` VARCHAR(14) NOT NULL,
-  `fone2` VARCHAR(14) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
-  `cep` VARCHAR(10) NOT NULL,
-  `logradouro` VARCHAR(100) NOT NULL,
-  `bairro` VARCHAR(45) NOT NULL,
-  `cidade` VARCHAR(45) NOT NULL,
-  `complemento` VARCHAR(100) NOT NULL,
-  `data_cadastro` DATETIME NOT NULL,
-  `cpf` VARCHAR(14) NOT NULL,
-  `rg` VARCHAR(14) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
-  `usuario` VARCHAR(45) NOT NULL,
-  `senha` VARCHAR(45) NOT NULL,
-  `razao_social` VARCHAR(100) NOT NULL,
-  `cnpj` VARCHAR(18) NOT NULL,
-  `inscricao_estadual` VARCHAR(15) NOT NULL,
-  `contato` VARCHAR(100) NOT NULL,
+  `nome` VARCHAR(255) NOT NULL,
+  `fone` VARCHAR(255) NOT NULL,
+  `fone2` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `cep` VARCHAR(255) NOT NULL,
+  `logradouro` VARCHAR(255) NOT NULL,
+  `bairro` VARCHAR(255) NOT NULL,
+  `cidade` VARCHAR(255) NOT NULL,
+  `complemento` VARCHAR(255) NOT NULL,
+  `data_cadastro` DATETIME NULL,
+  `cpf` VARCHAR(255) NULL,
+  `rg` VARCHAR(255) NULL,
+  `obs` TEXT NOT NULL,
+  `status` CHAR(1) DEFAULT 'A' NOT NULL,
+  `razao_social` VARCHAR(255) NULL,
+  `cnpj` VARCHAR(255) NULL,
+  `inscricao_estadual` VARCHAR(255) NULL,
+  `contato` VARCHAR(255) NULL,
+  `sexo` CHAR(1) DEFAULT 'M',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
--- Table `Hotel`.`hospede`
+-- Tabela `Hotel`.`hospede`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`hospede` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`hospede` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `nome` VARCHAR(100) NOT NULL,
-  `fone` VARCHAR(14) NOT NULL,
-  `fone2` VARCHAR(14) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
-  `cep` VARCHAR(10) NOT NULL,
-  `logradouro` VARCHAR(100) NOT NULL,
-  `bairro` VARCHAR(45) NOT NULL,
-  `cidade` VARCHAR(45) NOT NULL,
-  `complemento` VARCHAR(100) NOT NULL,
-  `data_cadastro` DATETIME NOT NULL,
-  `cpf` VARCHAR(14) NOT NULL,
-  `rg` VARCHAR(14) NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
-  `razao_social` VARCHAR(100) NOT NULL,
-  `cnpj` VARCHAR(18) NOT NULL,
-  `inscricao_estadual` VARCHAR(15) NOT NULL,
-  `contato` VARCHAR(100) NOT NULL,
+  `nome` VARCHAR(255) NOT NULL,
+  `fone` VARCHAR(255) NOT NULL,
+  `fone2` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `cep` VARCHAR(255) NOT NULL,
+  `logradouro` VARCHAR(255) NOT NULL,
+  `bairro` VARCHAR(255) NOT NULL,
+  `cidade` VARCHAR(255) NOT NULL,
+  `complemento` VARCHAR(255) NOT NULL,
+  `data_cadastro` DATETIME NULL,
+  `cpf` VARCHAR(255) NULL,
+  `rg` VARCHAR(255) NULL,
+  `obs` TEXT NOT NULL,
+  `status` CHAR(1) DEFAULT 'A' NOT NULL,
+  `razao_social` VARCHAR(255) NULL,
+  `cnpj` VARCHAR(255) NULL,
+  `inscricao_estadual` VARCHAR(255) NULL,
+  `contato` VARCHAR(255) NULL,
+  `sexo` CHAR(1) DEFAULT 'M',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
--- Table `Hotel`.`veiculo`
+-- Tabela `Hotel`.`veiculo`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`veiculo` ;
 
@@ -286,11 +312,17 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`veiculo` (
   `placa` VARCHAR(7) NOT NULL,
   `cor` VARCHAR(45) NOT NULL,
   `modelo_id` INT NOT NULL,
-  `funcionario_id` INT NOT NULL,
-  `fornecedor_id` INT NOT NULL,
-  `hospede_id` INT NOT NULL,
-  `status` VARCHAR(1) NULL,
+  `funcionario_id` INT NULL,
+  `fornecedor_id` INT NULL,
+  `hospede_id` INT NULL,
+  `status` CHAR(1) NULL,
   PRIMARY KEY (`id`),
+  CONSTRAINT `chk_proprietario_unico`
+    CHECK (
+        (funcionario_id IS NOT NULL AND fornecedor_id IS NULL AND hospede_id IS NULL) OR
+        (funcionario_id IS NULL AND fornecedor_id IS NOT NULL AND hospede_id IS NULL) OR
+        (funcionario_id IS NULL AND fornecedor_id IS NULL AND hospede_id IS NOT NULL)
+    ),
   CONSTRAINT `fk_veiculo_modelo1`
     FOREIGN KEY (`modelo_id`)
     REFERENCES `Hotel`.`modelo` (`id`)
@@ -314,16 +346,13 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`veiculo` (
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_veiculo_modelo1_idx` ON `Hotel`.`veiculo` (`modelo_id` ASC) ;
-
 CREATE INDEX `fk_veiculo_funcionario1_idx` ON `Hotel`.`veiculo` (`funcionario_id` ASC) ;
-
 CREATE INDEX `fk_veiculo_fornecedor1_idx` ON `Hotel`.`veiculo` (`fornecedor_id` ASC) ;
-
 CREATE INDEX `fk_veiculo_hospede1_idx` ON `Hotel`.`veiculo` (`hospede_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`vaga_estacionamento`
+-- Tabela `Hotel`.`vaga_estacionamento`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`vaga_estacionamento` ;
 
@@ -332,20 +361,20 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`vaga_estacionamento` (
   `descricao` VARCHAR(100) NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
   `metragem_vaga` FLOAT NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`alocacao_vaga`
+-- Tabela `Hotel`.`alocacao_vaga`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`alocacao_vaga` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`alocacao_vaga` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `veiculo_id` INT NOT NULL,
   `vaga_estacionamento_id` INT NOT NULL,
   `check_id` INT NOT NULL,
@@ -368,14 +397,12 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`alocacao_vaga` (
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_alocacao_vaga_veiculo1_idx` ON `Hotel`.`alocacao_vaga` (`veiculo_id` ASC) ;
-
 CREATE INDEX `fk_alocacao_vaga_vaga_estacionamento1_idx` ON `Hotel`.`alocacao_vaga` (`vaga_estacionamento_id` ASC) ;
-
 CREATE INDEX `fk_alocacao_vaga_check1_idx` ON `Hotel`.`alocacao_vaga` (`check_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`check_hospede`
+-- Tabela `Hotel`.`check_hospede`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`check_hospede` ;
 
@@ -383,7 +410,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check_hospede` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tipo_hospede` VARCHAR(45) NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `check_id` INT NOT NULL,
   `hospede_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -400,36 +427,11 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`check_hospede` (
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_check_hospede_check1_idx` ON `Hotel`.`check_hospede` (`check_id` ASC) ;
-
 CREATE INDEX `fk_check_hospede_hospede1_idx` ON `Hotel`.`check_hospede` (`hospede_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`reserva`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Hotel`.`reserva` ;
-
-CREATE TABLE IF NOT EXISTS `Hotel`.`reserva` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `data_hora_reserva` DATETIME NOT NULL,
-  `data_prevista_entrada` DATE NOT NULL,
-  `data_prevista_saida` DATE NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(45) NOT NULL,
-  `check_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_reserva_check1`
-    FOREIGN KEY (`check_id`)
-    REFERENCES `Hotel`.`check` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-CREATE INDEX `fk_reserva_check1_idx` ON `Hotel`.`reserva` (`check_id` ASC) ;
-
-
--- -----------------------------------------------------
--- Table `Hotel`.`reserva_quarto`
+-- Tabela `Hotel`.`reserva_quarto`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`reserva_quarto` ;
 
@@ -438,7 +440,7 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`reserva_quarto` (
   `data_hora_inicio` DATETIME NOT NULL,
   `data_hora_fim` DATETIME NOT NULL,
   `obs` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(45) NOT NULL,
+  `status` CHAR(1) NOT NULL,
   `reserva_id` INT NOT NULL,
   `quarto_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -455,58 +457,64 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`reserva_quarto` (
 ENGINE = InnoDB;
 
 CREATE INDEX `fk_reserva_quarto_reserva1_idx` ON `Hotel`.`reserva_quarto` (`reserva_id` ASC) ;
-
 CREATE INDEX `fk_reserva_quarto_quarto1_idx` ON `Hotel`.`reserva_quarto` (`quarto_id` ASC) ;
 
-
--- -----------------------------------------------------
--- Table `Hotel`.`copa_quarto`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Hotel`.`copa_quarto` ;
-
-CREATE TABLE IF NOT EXISTS `Hotel`.`copa_quarto` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `quantidade` FLOAT NOT NULL,
-  `data_hora_pedido` DATETIME NOT NULL,
-  `obs` VARCHAR(45) NOT NULL,
-  `status` VARCHAR(45) NOT NULL,
-  `check_quarto_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_copa_quarto_check_quarto1`
-    FOREIGN KEY (`check_quarto_id`)
-    REFERENCES `Hotel`.`check_quarto` (`id`)
+ALTER TABLE `Hotel`.`check_quarto`
+  ADD CONSTRAINT `fk_check_quarto_reserva_quarto1`
+    FOREIGN KEY (`reserva_quarto_id`)
+    REFERENCES `Hotel`.`reserva_quarto` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+    ON UPDATE NO ACTION;
 
-CREATE INDEX `fk_copa_quarto_check_quarto1_idx` ON `Hotel`.`copa_quarto` (`check_quarto_id` ASC) ;
-
+CREATE INDEX `fk_check_quarto_reserva_quarto1_idx` ON `Hotel`.`check_quarto` (`reserva_quarto_id` ASC) ;
 
 -- -----------------------------------------------------
--- Table `Hotel`.`produto_copa`
+-- Tabela `Hotel`.`produto_copa`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`produto_copa` ;
 
 CREATE TABLE IF NOT EXISTS `Hotel`.`produto_copa` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `decricao` VARCHAR(100) NOT NULL,
+  `descricao` VARCHAR(100) NOT NULL,
   `valor` FLOAT NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
-  `copa_quarto_id` INT NOT NULL,
+  `status` CHAR(1) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Tabela `Hotel`.`copa_quarto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Hotel`.`copa_quarto` ;
+
+CREATE TABLE IF NOT EXISTS `Hotel`.`copa_quarto` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `quantidade` INT NOT NULL,
+  `data_hora_pedido` DATETIME NOT NULL,
+  `obs` VARCHAR(45) NOT NULL,
+  `status` CHAR(1) NOT NULL,
+  `quarto_id` INT NOT NULL, 
+  `produto_id` INT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_produto_copa_copa_quarto1`
-    FOREIGN KEY (`copa_quarto_id`)
-    REFERENCES `Hotel`.`copa_quarto` (`id`)
+  CONSTRAINT `fk_copa_quarto_quarto1`
+    FOREIGN KEY (`quarto_id`)
+    REFERENCES `Hotel`.`quarto` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_copa_quarto_produto_copa1`
+    FOREIGN KEY (`produto_id`)
+    REFERENCES `Hotel`.`produto_copa` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_produto_copa_copa_quarto1_idx` ON `Hotel`.`produto_copa` (`copa_quarto_id` ASC) ;
+CREATE INDEX `fk_copa_quarto_quarto1_idx` ON `Hotel`.`copa_quarto` (`quarto_id` ASC) ;
+CREATE INDEX `fk_copa_quarto_produto_copa1_idx` ON `Hotel`.`copa_quarto` (`produto_id` ASC) ;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`servico`
+-- Tabela `Hotel`.`servico`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Hotel`.`servico` ;
 
@@ -514,50 +522,85 @@ CREATE TABLE IF NOT EXISTS `Hotel`.`servico` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(100) NOT NULL,
   `obs` VARCHAR(100) NOT NULL,
-  `STATUS` VARCHAR(1) NULL,
+  `status` CHAR(1) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Hotel`.`oderm_servico`
+-- Tabela `Hotel`.`ordem_servico`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Hotel`.`oderm_servico` ;
+DROP TABLE IF EXISTS `Hotel`.`ordem_servico` ;
 
-CREATE TABLE IF NOT EXISTS `Hotel`.`oderm_servico` (
+CREATE TABLE IF NOT EXISTS `Hotel`.`ordem_servico` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `data_hora_cadastro` DATETIME NOT NULL,
-  `data_hora_prevista_inicio` DATETIME NOT NULL,
-  `data_hora_prevista_termino` DATETIME NOT NULL,
-  `obs` VARCHAR(100) NOT NULL,
-  `status` VARCHAR(1) NOT NULL,
-  `check_id` INT NOT NULL,
-  `servico_id` INT NOT NULL,
-  `quarto_id` INT NOT NULL,
+  `data_hora_cadastro` DATETIME NULL,
+  `data_hora_prevista_inicio` DATETIME NULL,
+  `data_hora_prevista_termino` DATETIME NULL,
+  `obs` TEXT NULL,
+  `status` CHAR(1) NULL,
+  `check_id` INT NULL,
+  `servico_id` INT NULL,
+  `quarto_id` INT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_oderm_servico_check1`
+  CONSTRAINT `fk_ordem_servico_check1`
     FOREIGN KEY (`check_id`)
     REFERENCES `Hotel`.`check` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_oderm_servico_servico1`
+  CONSTRAINT `fk_ordem_servico_servico1`
     FOREIGN KEY (`servico_id`)
     REFERENCES `Hotel`.`servico` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_oderm_servico_quarto1`
+  CONSTRAINT `fk_ordem_servico_quarto1`
     FOREIGN KEY (`quarto_id`)
     REFERENCES `Hotel`.`quarto` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB;
 
-CREATE INDEX `fk_oderm_servico_check1_idx` ON `Hotel`.`oderm_servico` (`check_id` ASC) ;
+CREATE INDEX `fk_ordem_servico_check1_idx` ON `Hotel`.`ordem_servico` (`check_id` ASC) ;
+CREATE INDEX `fk_ordem_servico_servico1_idx` ON `Hotel`.`ordem_servico` (`servico_id` ASC) ;
+CREATE INDEX `fk_ordem_servico_quarto1_idx` ON `Hotel`.`ordem_servico` (`quarto_id` ASC) ;
 
-CREATE INDEX `fk_oderm_servico_servico1_idx` ON `Hotel`.`oderm_servico` (`servico_id` ASC) ;
 
-CREATE INDEX `fk_oderm_servico_quarto1_idx` ON `Hotel`.`oderm_servico` (`quarto_id` ASC) ;
+DROP TRIGGER IF EXISTS `set_data_cadastro_funcionario`;
+DELIMITER $$
+CREATE TRIGGER `set_data_cadastro_funcionario` BEFORE INSERT ON `funcionario`
+FOR EACH ROW
+BEGIN
+    SET NEW.data_cadastro = IFNULL(NEW.data_cadastro, NOW());
+END$$
+DELIMITER ;
 
+DROP TRIGGER IF EXISTS `set_data_cadastro_hospede`;
+DELIMITER $$
+CREATE TRIGGER `set_data_cadastro_hospede` BEFORE INSERT ON `hospede`
+FOR EACH ROW
+BEGIN
+    SET NEW.data_cadastro = IFNULL(NEW.data_cadastro, NOW());
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `set_data_cadastro_fornecedor`;
+DELIMITER $$
+CREATE TRIGGER `set_data_cadastro_fornecedor` BEFORE INSERT ON `fornecedor`
+FOR EACH ROW
+BEGIN
+    SET NEW.data_cadastro = IFNULL(NEW.data_cadastro, NOW());
+END$$
+DELIMITER ;
+
+ALTER TABLE `Hotel`.`caixa`
+  ADD CONSTRAINT `fk_caixa_funcionario1`
+    FOREIGN KEY (`funcionario_id`)
+    REFERENCES `Hotel`.`funcionario` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+CREATE INDEX `fk_caixa_funcionario1_idx` ON `Hotel`.`caixa` (`funcionario_id` ASC) ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
