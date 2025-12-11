@@ -1,5 +1,7 @@
 package controller;
 
+import java.math.BigDecimal;
+
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -34,9 +36,14 @@ public final class ControllerCadProduto extends AbstractControllerCad<Produto, T
     @Override
     public Produto construirDoFormulario() {
         Produto produto = new Produto();
+        
+        String valorText = view.getjFormattedTextFieldValor().getText()
+                               .replaceAll("\\.", "")
+                               .replaceAll(",", ".");
+
         produto.setDescricao(view.getjTextFieldDescricao().getText());
         produto.setObs(view.getjTextFieldObservacao().getText());
-        produto.setValor(Float.parseFloat(view.getjFormattedTextFieldValor().getText()));
+        produto.setValor(new BigDecimal(valorText)); 
         produto.setStatus(getStatusDoFormulario());
         return produto;
     }
@@ -53,7 +60,7 @@ public final class ControllerCadProduto extends AbstractControllerCad<Produto, T
     protected void setId(Produto entidade, int id) {
         entidade.setId(id);
     }
-
+    
     @Override
     protected JDialog criarTelaBusca() {
         return new TelaBuscaProduto(null, true);

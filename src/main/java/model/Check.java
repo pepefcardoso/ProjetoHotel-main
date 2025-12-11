@@ -32,7 +32,7 @@ public class Check {
     private String obs;
 
     @Column(length = 1)
-    private String status;
+    private char status;
 
     @ManyToOne
     @JoinColumn(name = "reserva_id")
@@ -45,7 +45,7 @@ public class Check {
     public Check() {
     }
 
-    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada, LocalDateTime dataHoraSaida, String obs, String status, Reserva reserva) {
+    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada, LocalDateTime dataHoraSaida, String obs, char status, Reserva reserva) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.dataHoraEntrada = dataHoraEntrada;
@@ -95,11 +95,11 @@ public class Check {
         this.obs = obs;
     }
 
-    public String getStatus() {
+   public char getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 

@@ -113,7 +113,7 @@ public final class ControllerCadFuncionario extends AbstractControllerCad<Funcio
 
     @Override
     protected void preencherFormulario(Funcionario funcionario) {
-        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarDataFromSqlData(funcionario.getDataCadastro()));
+        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarData(funcionario.getDataCadastro()));
         view.getjTextFieldNome().setText(funcionario.getNome());
         view.getjFormattedTextFieldCpf().setText(funcionario.getCpf());
         view.getjTextFieldRg().setText(funcionario.getRg());

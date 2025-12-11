@@ -1,6 +1,8 @@
 package utilities;
 
 import java.awt.Component;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -13,6 +15,7 @@ import javax.swing.JTextField;
 public class Utilities {
 
     public static final String ALWAYS_DISABLED = "alwaysDisabled";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static void ativaDesativaButton(JButton button, boolean ativa) {
         if ("0".equals(button.getActionCommand())) {
@@ -142,10 +145,17 @@ public class Utilities {
 
     public static String getDataHoje() {
         java.time.LocalDate hoje = java.time.LocalDate.now();
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return hoje.format(formatter);
+        return hoje.format(DATE_FORMATTER);
+    }
+    
+    public static String formatarData(LocalDateTime dateTime) {
+        if (dateTime != null) {
+            return dateTime.format(DATE_FORMATTER);
+        }
+        return "";
     }
 
+    @Deprecated
     public static String formatarDataFromSqlData(String data) {
         if (data != null && data.matches("\\d{4}-\\d{2}-\\d{2}")) {
             String[] partes = data.split("-");

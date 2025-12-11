@@ -123,7 +123,7 @@ public final class ControllerCadFornecedor extends AbstractControllerCad<Fornece
 
     @Override
     protected void preencherFormulario(Fornecedor fornecedor) {
-        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarDataFromSqlData(fornecedor.getDataCadastro()));
+        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarData(fornecedor.getDataCadastro()));
         view.getjTextFieldNomeFantasia().setText(fornecedor.getNome());
         view.getjTextFieldRazaoSocial().setText(fornecedor.getRazaoSocial());
         view.getjFormattedTextFieldCpf().setText(Utilities.formatarCpf(fornecedor.getCpf()));

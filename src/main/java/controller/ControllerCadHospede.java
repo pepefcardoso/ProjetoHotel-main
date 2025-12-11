@@ -103,7 +103,7 @@ public final class ControllerCadHospede extends AbstractControllerCad<Hospede, T
 
     @Override
     protected void preencherFormulario(Hospede hospede) {
-        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarDataFromSqlData(hospede.getDataCadastro()));
+        view.getjFormattedTextFieldDataCadastro().setText(Utilities.formatarData(hospede.getDataCadastro()));
         view.getjTextFieldNomeFantasia().setText(hospede.getNome());
         view.getjTextFieldRazaoSocial().setText(hospede.getRazaoSocial());
         view.getjFormattedTextFieldCpf().setText(Utilities.formatarCpf(hospede.getCpf()));

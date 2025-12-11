@@ -45,7 +45,7 @@ public class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, String dataCadastro, String cpf, String rg, String obs, char status, char sexo) {
+    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, LocalDateTime dataCadastro, String cpf, String rg, String obs, char status, char sexo) { // Corrigido para LocalDateTime
         this.id = id;
         this.nome = nome;
         this.fone1 = fone1;
@@ -144,11 +144,11 @@ public class Pessoa {
         this.complemento = complemento;
     }
 
-    public String getDataCadastro() {
+    public LocalDateTime getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(String dataCadastro) {
+    public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 
