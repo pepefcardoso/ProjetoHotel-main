@@ -174,6 +174,12 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
 
     @Override
     public boolean isFormularioValido() {
+        if (quartoSelecionado == null) {
+            showMessage("Selecione um quarto para a reserva.");
+            view.getjButtonBuscarQuarto().requestFocus();
+            return false;
+        }
+
         String entrada = view.getjFormattedTextFieldPrevisaoEntrada().getText();
         String saida = view.getjFormattedTextFieldDataPrevisaoSaida().getText();
 
