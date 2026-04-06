@@ -15,13 +15,15 @@ import javax.swing.table.DefaultTableModel;
 
 import service.InterfaceService;
 
-public abstract class AbstractControllerBusca<T, V extends JDialog> implements ActionListener, InterfaceControllerBusca<T> {
+public abstract class AbstractControllerBusca<T, V extends JDialog>
+        implements ActionListener, InterfaceControllerBusca<T> {
 
     protected final V view;
     protected final InterfaceService<T> service;
     protected final Consumer<Integer> atualizaCodigo;
 
-    protected AbstractControllerBusca(V view, InterfaceService<T> service, Consumer<Integer> atualizaCodigo) {
+    protected AbstractControllerBusca(V view, InterfaceService<T> service,
+                                      Consumer<Integer> atualizaCodigo) {
         this.view = view;
         this.service = service;
         this.atualizaCodigo = atualizaCodigo;
@@ -45,8 +47,7 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
 
     protected void handleSelecionarItem() {
         int row = getTable().getSelectedRow();
-        int statusColumnIndex = getStatusColumnIndex();
-        Object statusObj = getTable().getValueAt(row, statusColumnIndex);
+        Object statusObj = getTable().getValueAt(row, getStatusColumnIndex());
 
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
@@ -59,17 +60,11 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
     public void actionPerformed(ActionEvent evento) {
         Object source = evento.getSource();
 
-        if (source == getButtonCarregar()) {
-            handleCarregar();
-        } else if (source == getButtonFiltrar()) {
-            handleFiltrar();
-        } else if (source == getButtonSair()) {
-            handleSair();
-        } else if (source == getButtonAtivar()) {
-            handleAtivarInativar(true);
-        } else if (source == getButtonInativar()) {
-            handleAtivarInativar(false);
-        }
+        if      (source == getButtonCarregar())  handleCarregar();
+        else if (source == getButtonFiltrar())   handleFiltrar();
+        else if (source == getButtonSair())      handleSair();
+        else if (source == getButtonAtivar())    handleAtivarInativar(true);
+        else if (source == getButtonInativar())  handleAtivarInativar(false);
     }
 
     @Override
@@ -79,7 +74,13 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
             return;
         }
 
-        int codigo = (int) getTable().getValueAt(getTable().getSelectedRow(), 0);
+        int selectedRow = getTable().getSelectedRow();
+        if (selectedRow == -1) {
+            showMessage("Selecione um registro na tabela.");
+            return;
+        }
+
+        int codigo = (int) getTable().getValueAt(selectedRow, 0);
         atualizaCodigo.accept(codigo);
         view.dispose();
     }
@@ -100,6 +101,8 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
 
         try {
             executarFiltro(filtroIndex, filtroTexto, tabela);
+        } catch (NumberFormatException ex) {
+            showError("O valor informado para o filtro ID deve ser numérico.");
         } catch (Exception ex) {
             showError(ex.getMessage());
         }
@@ -128,8 +131,19 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
         }
 
         int selectedRow = getTable().getSelectedRow();
+        if (selectedRow == -1) {
+            showMessage("Selecione um registro na tabela.");
+            return;
+        }
+
         int codigo = (int) getTable().getValueAt(selectedRow, 0);
-        char statusAtual = (char) getTable().getValueAt(selectedRow, getStatusColumnIndex());
+
+        Object statusVal = getTable().getValueAt(selectedRow, getStatusColumnIndex());
+        if (statusVal == null) {
+            showError("Status do registro não encontrado.");
+            return;
+        }
+        char statusAtual = statusVal.toString().charAt(0);
 
         if (statusAtual == (ativar ? 'A' : 'I')) {
             showMessage(String.format("%s já está %s.",
@@ -159,6 +173,8 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
             T entidade = service.Carregar(id);
             if (entidade != null) {
                 adicionarLinhaTabela(tabela, entidade);
+            } else {
+                showMessage("Nenhum registro encontrado com o ID informado.");
             }
         } catch (Exception e) {
             showError("Erro ao carregar por ID: " + e.getMessage());
@@ -173,25 +189,17 @@ public abstract class AbstractControllerBusca<T, V extends JDialog> implements A
         JOptionPane.showMessageDialog(view, message, "Erro", JOptionPane.ERROR_MESSAGE);
     }
 
-    protected abstract JButton getButtonCarregar();
-
-    protected abstract JButton getButtonFiltrar();
-
-    protected abstract JButton getButtonSair();
-
-    protected abstract JButton getButtonAtivar();
-
-    protected abstract JButton getButtonInativar();
-
-    protected abstract JTable getTable();
-
-    protected abstract JTextField getTextFieldFiltro();
-
+    protected abstract JButton      getButtonCarregar();
+    protected abstract JButton      getButtonFiltrar();
+    protected abstract JButton      getButtonSair();
+    protected abstract JButton      getButtonAtivar();
+    protected abstract JButton      getButtonInativar();
+    protected abstract JTable       getTable();
+    protected abstract JTextField   getTextFieldFiltro();
     protected abstract JComboBox<?> getComboBoxFiltro();
+    protected abstract int          getStatusColumnIndex();
+    protected abstract String       getNomeEntidade();
 
-    protected abstract int getStatusColumnIndex();
-
-    protected abstract String getNomeEntidade();
-
-    protected abstract void executarFiltro(int filtroIndex, String filtroTexto, DefaultTableModel tabela) throws Exception;
+    protected abstract void executarFiltro(int filtroIndex, String filtroTexto,
+                                           DefaultTableModel tabela) throws Exception;
 }
