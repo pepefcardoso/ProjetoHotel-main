@@ -63,16 +63,25 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
             return;
         }
 
-        Reserva reserva = construirDoFormulario();
         boolean isNovoCadastro = view.getjTextFieldId().getText().trim().isEmpty();
 
         try {
+            Reserva reserva;
+
             if (isNovoCadastro) {
+                reserva = construirDoFormulario();
                 service.Criar(reserva);
                 salvarReservaQuarto(reserva);
                 showMessage("Reserva criada com sucesso!");
             } else {
-                setId(reserva, Integer.parseInt(view.getjTextFieldId().getText()));
+                int id = Integer.parseInt(view.getjTextFieldId().getText());
+                reserva = service.Carregar(id);
+
+                reserva.setDataPrevistaEntrada(parseData(view.getjFormattedTextFieldPrevisaoEntrada().getText()));
+                reserva.setDataPrevistaSaida(parseData(view.getjFormattedTextFieldDataPrevisaoSaida().getText()));
+                reserva.setObs(view.getjTextFieldObservacao().getText());
+                reserva.setStatus(getStatusDoFormulario());
+
                 service.Atualizar(reserva);
                 atualizarReservaQuarto(reserva);
                 showMessage("Reserva atualizada com sucesso!");
@@ -107,31 +116,35 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
     }
 
     /**
-     * Na edição: se o usuário selecionou um quarto diferente (ou novo), remove
-     * o vínculo anterior e cria um novo.
+     * Correção: Atualiza as datas corretamente caso o quarto continue o mesmo
+     * ou desativa os relacionamentos antigos caso o quarto tenha sido trocado.
      */
     private void atualizarReservaQuarto(Reserva reserva) throws Exception {
         if (quartoSelecionado == null) {
             return;
         }
 
-        try {
-            List<ReservaQuarto> existentes
-                    = reservaQuartoService.findByReservaId(reserva.getId());
+        boolean encontrouQuarto = false;
+        List<ReservaQuarto> existentes = reservaQuartoService.findByReservaId(reserva.getId());
 
+        if (existentes != null) {
             for (ReservaQuarto rq : existentes) {
-                if (rq.getQuarto() == null
-                        || rq.getQuarto().getId() != quartoSelecionado.getId()) {
+                if (rq.getQuarto() != null && rq.getQuarto().getId() == quartoSelecionado.getId()) {
+                    rq.setDataHoraInicio(reserva.getDataPrevistaEntrada());
+                    rq.setDataHoraFim(reserva.getDataPrevistaSaida());
+                    rq.setStatus('A');
+                    reservaQuartoService.Atualizar(rq);
+                    encontrouQuarto = true;
+                } else if (rq.getStatus() == 'A') {
                     rq.setStatus('I');
                     reservaQuartoService.Atualizar(rq);
-                } else {
-                    return;
                 }
             }
-        } catch (Exception ignored) {
         }
 
-        salvarReservaQuarto(reserva);
+        if (!encontrouQuarto) {
+            salvarReservaQuarto(reserva);
+        }
     }
 
     @Override
@@ -212,10 +225,8 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
     public Reserva construirDoFormulario() {
         Reserva reserva = new Reserva();
         reserva.setDataHoraReserva(LocalDateTime.now());
-        reserva.setDataPrevistaEntrada(
-                parseData(view.getjFormattedTextFieldPrevisaoEntrada().getText()));
-        reserva.setDataPrevistaSaida(
-                parseData(view.getjFormattedTextFieldDataPrevisaoSaida().getText()));
+        reserva.setDataPrevistaEntrada(parseData(view.getjFormattedTextFieldPrevisaoEntrada().getText()));
+        reserva.setDataPrevistaSaida(parseData(view.getjFormattedTextFieldDataPrevisaoSaida().getText()));
         reserva.setObs(view.getjTextFieldObservacao().getText());
         reserva.setStatus(getStatusDoFormulario());
         return reserva;
