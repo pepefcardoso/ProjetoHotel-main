@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -30,8 +31,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 /**
- * Tela de Check-in do Hotel. Abas: Check | Hóspedes | Quarto | Vaga/Veículo |
- * Recebimento
+ * Tela de Check-in / Check-out do Hotel. Abas: Check | Hóspedes | Quarto |
+ * Vaga/Veículo | Recebimento | Check-out
  */
 public class TelaCheck extends JDialog {
 
@@ -86,6 +87,15 @@ public class TelaCheck extends JDialog {
     private JTextField jTextFieldObsRecebimento;
     private JComboBox<String> jComboBoxStatusRecebimento;
 
+    private JPanel jPanelCheckout;
+    private JFormattedTextField jFormattedTextFieldCheckoutId;
+    private JButton jButtonBuscarCheckout;
+    private JTextArea jTextAreaCheckoutInfo;
+    private JFormattedTextField jFormattedTextFieldDataSaidaCheckout;
+    private JTextField jTextFieldObsCheckout;
+    private JTextField jTextFieldValorPagoCheckout;
+    private JComboBox<String> jComboBoxStatusRecebimentoCheckout;
+
     private JButton jButtonNovo;
     private JButton jButtonCancelar;
     private JButton jButtonGravar;
@@ -98,7 +108,7 @@ public class TelaCheck extends JDialog {
     }
 
     private void initComponents() {
-        setTitle("Check-in");
+        setTitle("Check-in / Check-out");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLayout(new BorderLayout(0, 4));
@@ -119,7 +129,7 @@ public class TelaCheck extends JDialog {
                 javax.swing.border.BevelBorder.RAISED));
         jPanelTitulo.setPreferredSize(new Dimension(0, 50));
 
-        JLabel lbl = new JLabel("Check-in");
+        JLabel lbl = new JLabel("Check-in / Check-out");
         lbl.setFont(new Font("Times New Roman", Font.BOLD, 22));
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
         jPanelTitulo.add(lbl, BorderLayout.CENTER);
@@ -135,7 +145,8 @@ public class TelaCheck extends JDialog {
         jTabbedPane1.addTab("Quarto", buildTabQuarto());
         jTabbedPane1.addTab("Vaga/Veículo", buildTabVaga());
         jTabbedPane1.addTab("Recebimento", buildTabRecebimento());
-        
+        jTabbedPane1.addTab("Check-out", buildTabCheckout());
+
         return jTabbedPane1;
     }
 
@@ -582,6 +593,93 @@ public class TelaCheck extends JDialog {
         return jPanelRecebimento;
     }
 
+    private JPanel buildTabCheckout() {
+        jPanelCheckout = new JPanel(new BorderLayout(4, 4));
+        jPanelCheckout.setBorder(BorderFactory.createBevelBorder(
+                javax.swing.border.BevelBorder.RAISED));
+
+        JPanel top = new JPanel(new GridBagLayout());
+        top.setBorder(BorderFactory.createTitledBorder("Dados do Check-out"));
+        GridBagConstraints g = new GridBagConstraints();
+        g.insets = new Insets(5, 8, 5, 8);
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.anchor = GridBagConstraints.WEST;
+
+        g.gridx = 0;
+        g.gridy = 0;
+        g.weightx = 0;
+        top.add(new JLabel("Nº do Check-in"), g);
+        g.gridx = 1;
+        g.gridy = 0;
+        g.weightx = 0.8;
+        jFormattedTextFieldCheckoutId = new JFormattedTextField();
+        jFormattedTextFieldCheckoutId.setEnabled(false);
+        top.add(jFormattedTextFieldCheckoutId, g);
+        g.gridx = 2;
+        g.gridy = 0;
+        g.weightx = 0;
+        g.fill = GridBagConstraints.NONE;
+        jButtonBuscarCheckout = iconButton("/images/Find.png", "Buscar Check-in Ativo");
+        top.add(jButtonBuscarCheckout, g);
+        g.fill = GridBagConstraints.HORIZONTAL;
+
+        g.gridx = 0;
+        g.gridy = 1;
+        g.weightx = 0;
+        top.add(new JLabel("Data de Saída"), g);
+        g.gridx = 1;
+        g.gridy = 1;
+        g.weightx = 0.8;
+        jFormattedTextFieldDataSaidaCheckout = criarCampoData();
+        jFormattedTextFieldDataSaidaCheckout.setEditable(false);
+        top.add(jFormattedTextFieldDataSaidaCheckout, g);
+
+        g.gridx = 0;
+        g.gridy = 2;
+        g.weightx = 0;
+        top.add(new JLabel("Valor Pago"), g);
+        g.gridx = 1;
+        g.gridy = 2;
+        g.weightx = 0.8;
+        jTextFieldValorPagoCheckout = new JTextField("0.00");
+        top.add(jTextFieldValorPagoCheckout, g);
+
+        g.gridx = 0;
+        g.gridy = 3;
+        g.weightx = 0;
+        top.add(new JLabel("Status Recebimento"), g);
+        g.gridx = 1;
+        g.gridy = 3;
+        g.weightx = 0.8;
+        jComboBoxStatusRecebimentoCheckout = new JComboBox<>(new String[]{"Pendente", "Pago"});
+        jComboBoxStatusRecebimentoCheckout.setEnabled(false);
+        top.add(jComboBoxStatusRecebimentoCheckout, g);
+
+        g.gridx = 0;
+        g.gridy = 4;
+        g.weightx = 0;
+        top.add(new JLabel("Observação"), g);
+        g.gridx = 1;
+        g.gridy = 4;
+        g.weightx = 0.8;
+        jTextFieldObsCheckout = new JTextField();
+        jTextFieldObsCheckout.setEditable(false);
+        top.add(jTextFieldObsCheckout, g);
+
+        jTextAreaCheckoutInfo = new JTextArea(5, 40);
+        jTextAreaCheckoutInfo.setEditable(false);
+        jTextAreaCheckoutInfo.setBackground(new Color(240, 248, 240));
+        jTextAreaCheckoutInfo.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        jTextAreaCheckoutInfo.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        JPanel infoPanel = new JPanel(new BorderLayout());
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Informações do Check-in"));
+        infoPanel.add(new JScrollPane(jTextAreaCheckoutInfo), BorderLayout.CENTER);
+
+        jPanelCheckout.add(top, BorderLayout.NORTH);
+        jPanelCheckout.add(infoPanel, BorderLayout.CENTER);
+        return jPanelCheckout;
+    }
+
     private JPanel buildBotoes() {
         jPanelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 6));
         jPanelBotoes.setBorder(BorderFactory.createBevelBorder(
@@ -660,6 +758,10 @@ public class TelaCheck extends JDialog {
 
     public JPanel getjPanelRecebimento() {
         return jPanelRecebimento;
+    }
+
+    public JPanel getjPanelCheckout() {
+        return jPanelCheckout;
     }
 
     public JTabbedPane getjTabbedPane() {
@@ -832,6 +934,34 @@ public class TelaCheck extends JDialog {
 
     public JComboBox<String> getjComboBoxStatusRecebimento() {
         return jComboBoxStatusRecebimento;
+    }
+
+    public JFormattedTextField getjFormattedTextFieldCheckoutId() {
+        return jFormattedTextFieldCheckoutId;
+    }
+
+    public JButton getjButtonBuscarCheckout() {
+        return jButtonBuscarCheckout;
+    }
+
+    public JTextArea getjTextAreaCheckoutInfo() {
+        return jTextAreaCheckoutInfo;
+    }
+
+    public JFormattedTextField getjFormattedTextFieldDataSaidaCheckout() {
+        return jFormattedTextFieldDataSaidaCheckout;
+    }
+
+    public JTextField getjTextFieldObsCheckout() {
+        return jTextFieldObsCheckout;
+    }
+
+    public JTextField getjTextFieldValorPagoCheckout() {
+        return jTextFieldValorPagoCheckout;
+    }
+
+    public JComboBox<String> getjComboBoxStatusRecebimentoCheckout() {
+        return jComboBoxStatusRecebimentoCheckout;
     }
 
     public static void main(String[] args) {
