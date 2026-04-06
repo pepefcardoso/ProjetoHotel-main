@@ -95,7 +95,7 @@ public class TelaCheck extends javax.swing.JDialog {
 
         jTabbedPane3.addTab("Check-in", jPanel3);
 
-        jButtonRelacionarProduto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonRelacionarProduto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonRelacionarProduto1.setActionCommand("1");
         jButtonRelacionarProduto1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,7 +108,7 @@ public class TelaCheck extends javax.swing.JDialog {
         jPanelTitulo.setBackground(new java.awt.Color(255, 204, 153));
         jPanelTitulo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabelTitulo.setFont(new java.awt.Font("Times New Roman", 1, 24));
         jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTitulo.setText("Check-in/Check-out");
 
@@ -167,7 +167,7 @@ public class TelaCheck extends javax.swing.JDialog {
 
         jLabelReservaId.setText("Reserva ID");
 
-        jButtonVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonVeiculo.setActionCommand("1");
         jButtonVeiculo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,7 +193,7 @@ public class TelaCheck extends javax.swing.JDialog {
             }
         });
 
-        jButtonQuarto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonQuarto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonQuarto.setActionCommand("1");
         jButtonQuarto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -219,7 +219,7 @@ public class TelaCheck extends javax.swing.JDialog {
             }
         });
 
-        jButtonVaga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonVaga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonVaga.setActionCommand("1");
         jButtonVaga.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -227,7 +227,7 @@ public class TelaCheck extends javax.swing.JDialog {
             }
         });
 
-        jButtonReservaId.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonReservaId.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonReservaId.setActionCommand("1");
         jButtonReservaId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -432,7 +432,7 @@ public class TelaCheck extends javax.swing.JDialog {
         jLabelValorPago.setText("Valor pago");
 
         jTextFieldValorPagar.setEditable(false);
-        jTextFieldValorPagar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jTextFieldValorPagar.setFont(new java.awt.Font("Segoe UI", 1, 12));
         jTextFieldValorPagar.setForeground(new java.awt.Color(0, 103, 37));
         jTextFieldValorPagar.setText("R$");
 
@@ -443,7 +443,7 @@ public class TelaCheck extends javax.swing.JDialog {
             }
         });
 
-        jButtonQuarto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
+        jButtonQuarto1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png")));
         jButtonQuarto1.setActionCommand("1");
         jButtonQuarto1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -552,29 +552,29 @@ public class TelaCheck extends javax.swing.JDialog {
 
         jPanelBotoes.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButtonNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Create.png"))); // NOI18N
+        jButtonNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Create.png")));
         jButtonNovo.setText("Novo");
         jButtonNovo.setActionCommand("0");
         jPanelBotoes.add(jButtonNovo);
 
-        jButtonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.png"))); // NOI18N
+        jButtonCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.png")));
         jButtonCancelar.setText("Cancelar");
         jButtonCancelar.setActionCommand("1");
         jButtonCancelar.setEnabled(false);
         jPanelBotoes.add(jButtonCancelar);
 
-        jButtonGravar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/OK.png"))); // NOI18N
+        jButtonGravar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/OK.png")));
         jButtonGravar.setText("Gravar");
         jButtonGravar.setActionCommand("1");
         jButtonGravar.setEnabled(false);
         jPanelBotoes.add(jButtonGravar);
 
-        jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Load.png"))); // NOI18N
+        jButtonBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Load.png")));
         jButtonBuscar.setText("Buscar");
         jButtonBuscar.setActionCommand("0");
         jPanelBotoes.add(jButtonBuscar);
 
-        jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Exit.png"))); // NOI18N
+        jButtonSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Exit.png")));
         jButtonSair.setText("Sair");
         jButtonSair.setActionCommand("0");
         jPanelBotoes.add(jButtonSair);
@@ -714,6 +714,38 @@ public class TelaCheck extends javax.swing.JDialog {
             }
         });
     }
+
+    public javax.swing.JPanel getjPanelBotoes() { return jPanelBotoes; }
+    public javax.swing.JPanel getjPanelDados() { return jPanelDados; }
+    public javax.swing.JTabbedPane getjTabbedPane4() { return jTabbedPane4; }
+
+    public javax.swing.JButton getjButtonNovo() { return jButtonNovo; }
+    public javax.swing.JButton getjButtonCancelar() { return jButtonCancelar; }
+    public javax.swing.JButton getjButtonGravar() { return jButtonGravar; }
+    public javax.swing.JButton getjButtonBuscar() { return jButtonBuscar; }
+    public javax.swing.JButton getjButtonSair() { return jButtonSair; }
+
+    public javax.swing.JTextField getjTextFieldId() { return jTextFieldId; }
+    public javax.swing.JComboBox<String> getjComboBoxStatus() { return jComboBoxStatus; }
+    public javax.swing.JTextField getjTextFieldReservaId() { return jTextFieldReservaId; }
+    public javax.swing.JButton getjButtonReservaId() { return jButtonReservaId; }
+    public javax.swing.JTextField getjTextFieldHospede() { return jTextFieldHospede; }
+    public javax.swing.JFormattedTextField getjFormattedTextFieldDataEntrada() { return jFormattedTextFieldDataEntrada; }
+    public javax.swing.JTextField getjTextFieldQuarto() { return jTextFieldQuarto; }
+    public javax.swing.JButton getjButtonQuarto() { return jButtonQuarto; }
+    public javax.swing.JTextField getjTextFieldVeiculo() { return jTextFieldVeiculo; }
+    public javax.swing.JButton getjButtonVeiculo() { return jButtonVeiculo; }
+    public javax.swing.JTextField getjTextFieldVaga() { return jTextFieldVaga; }
+    public javax.swing.JButton getjButtonVaga() { return jButtonVaga; }
+    public javax.swing.JTextField getjTextFieldObservacao() { return jTextFieldObservacao; }
+
+    public javax.swing.JTextField getjTextFieldQuarto1() { return jTextFieldQuarto1; }
+    public javax.swing.JButton getjButtonQuarto1() { return jButtonQuarto1; }
+    public javax.swing.JFormattedTextField getjFormattedTextFieldDataSaida() { return jFormattedTextFieldDataSaida; }
+    public javax.swing.JTextField getjTextFieldValorPagar() { return jTextFieldValorPagar; }
+    public javax.swing.JTextField getjTextFieldValorPago() { return jTextFieldValorPago; }
+    public javax.swing.JComboBox<String> getjComboBoxStatusRecebimento() { return jComboBoxStatusRecebimento; }
+    public javax.swing.JTextField getjTextFieldObservacao1() { return jTextFieldObservacao1; }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBuscar;

@@ -1,98 +1,187 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import view.TelaCadastroReserva;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import model.Hospede;
+import model.Reserva;
+import service.HospedeService;
+import service.ReservaService;
 import utilities.Utilities;
 import view.TelaBuscaHospede;
+import view.TelaBuscaReserva;
+import view.TelaCadastroReserva;
 
-public class ControllerCadReserva implements ActionListener {
+public final class ControllerCadReserva extends AbstractControllerCad<Reserva, TelaCadastroReserva> {
 
-    TelaCadastroReserva telaCadastroReserva;
     private int idHospedeSelecionado = 0;
 
-    public ControllerCadReserva(TelaCadastroReserva telaCadastroReserva) {
-        this.telaCadastroReserva = telaCadastroReserva;
-        
-        this.telaCadastroReserva.getjButtonNovo().addActionListener(this);
-        this.telaCadastroReserva.getjButtonCancelar().addActionListener(this);
-        this.telaCadastroReserva.getjButtonGravar().addActionListener(this);
-        this.telaCadastroReserva.getjButtonBuscar().addActionListener(this);
-        this.telaCadastroReserva.getjButtonSair().addActionListener(this);
-        this.telaCadastroReserva.getjButtonBuscarHospede().addActionListener(this);
-        
-        Utilities.ativaDesativa(this.telaCadastroReserva.getjPanelBotoes(), true);
-        Utilities.limpaComponentes(this.telaCadastroReserva.getjPanelDados(), false);
+    public ControllerCadReserva(TelaCadastroReserva view) {
+        super(view, new ReservaService());
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        
-        if (e.getSource() == this.telaCadastroReserva.getjButtonNovo()) {
-            Utilities.ativaDesativa(this.telaCadastroReserva.getjPanelBotoes(), false);
-            Utilities.limpaComponentes(this.telaCadastroReserva.getjPanelDados(), true);
-            
-            this.telaCadastroReserva.getjTextFieldId().setEnabled(false);
-            this.telaCadastroReserva.getjTextFieldHospede().setEditable(false);
-            this.telaCadastroReserva.getjComboBoxStatus().setSelectedIndex(0);
+    protected void inicializarView() {
+        super.inicializarView();
+        Utilities.setAlwaysDisabled(view.getjTextFieldHospede(), true);
+        view.getjFormattedTextFieldPrevisaoEntrada().setEditable(false);
+        view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(false);
+    }
+
+    @Override
+    public void handleNovo() {
+        super.handleNovo();
+        idHospedeSelecionado = 0;
+        view.getjFormattedTextFieldPrevisaoEntrada().setEditable(true);
+        view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(true);
+    }
+
+    @Override
+    public void handleCancelar() {
+        super.handleCancelar();
+        idHospedeSelecionado = 0;
+        view.getjFormattedTextFieldPrevisaoEntrada().setEditable(false);
+        view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(false);
+    }
+
+    @Override
+    protected void limparRelacionamentos() {
+        idHospedeSelecionado = 0;
+        view.getjTextFieldHospede().setText("");
+    }
+
+    @Override
+    protected void configurarListenersAdicionais() {
+        view.getjButtonBuscarHospede().addActionListener(this);
+    }
+
+    @Override
+    protected void handleAcoesAdicionais(ActionEvent evento) {
+        if (evento.getSource() == view.getjButtonBuscarHospede()) {
+            handleBuscarHospede();
         }
-        
-        else if (e.getSource() == this.telaCadastroReserva.getjButtonCancelar()) {
-            Utilities.ativaDesativa(this.telaCadastroReserva.getjPanelBotoes(), true);
-            Utilities.limpaComponentes(this.telaCadastroReserva.getjPanelDados(), false);
-        }
-        
-        else if (e.getSource() == this.telaCadastroReserva.getjButtonGravar()) {
-            try {
-                model.Reserva reserva = new model.Reserva();
-                
-                service.HospedeService hospedeService = new service.HospedeService();
-                reserva.setHospede(hospedeService.Carregar(this.idHospedeSelecionado));
-                
-                reserva.PrevisaoEntrada(this.telaCadastroReserva.getjFormattedTextFieldPrevisaoEntrada().getText());
-                reserva.setDataHoraPrevisaoSaida(this.telaCadastroReserva.getjFormattedTextFieldSaida().getText());
-                reserva.setObservacao(this.telaCadastroReserva.getjTextFieldObservacao().getText());
-                
-                String status = this.telaCadastroReserva.getjComboBoxStatus().getSelectedItem().toString();
-                reserva.setStatus(status.equals("Ativo") ? 'A' : 'I');
-                
-                service.ReservaService reservaService = new service.ReservaService();
-                reservaService.Criar(reserva);
-                
-                Utilities.ativaDesativa(this.telaCadastroReserva.getjPanelBotoes(), true);
-                Utilities.limpaComponentes(this.telaCadastroReserva.getjPanelDados(), false);
-                
-                javax.swing.JOptionPane.showMessageDialog(null, "Reserva salva com sucesso!");
-                
-            } catch (Exception ex) {
-                javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+    }
+
+    private void handleBuscarHospede() {
+        TelaBuscaHospede tela = new TelaBuscaHospede(null, true);
+        new ControllerBuscaHospede(tela, this::onHospedeSelecionado);
+        tela.setVisible(true);
+    }
+
+    private void onHospedeSelecionado(int id) {
+        if (id <= 0) return;
+        try {
+            Hospede h = new HospedeService().Carregar(id);
+            if (h != null) {
+                idHospedeSelecionado = id;
+                view.getjTextFieldHospede().setText(h.getNome());
             }
+        } catch (Exception ex) {
+            showError("Erro ao carregar hóspede: " + ex.getMessage());
         }
-        
-        else if (e.getSource() == this.telaCadastroReserva.getjButtonBuscarHospede()) {
-            TelaBuscaHospede telaBusca = new TelaBuscaHospede(null, true);
-            
-            new ControllerBuscaHospede(telaBusca, (Integer idSelecionado) -> {
-                if (idSelecionado != null && idSelecionado > 0) {
-                    try {
-                        service.HospedeService hospedeService = new service.HospedeService();
-                        model.Hospede hospede = hospedeService.Carregar(idSelecionado);
-                        
-                        if (hospede != null) {
-                            this.idHospedeSelecionado = idSelecionado;
-                            this.telaCadastroReserva.getjTextFieldHospede().setText(hospede.getNome());
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-            
-            telaBusca.setVisible(true);
+    }
+
+    @Override
+    public boolean isFormularioValido() {
+        String entrada = view.getjFormattedTextFieldPrevisaoEntrada().getText();
+        String saida   = view.getjFormattedTextFieldDataPrevisaoSaida().getText();
+
+        if (Utilities.apenasNumeros(entrada).length() != 8) {
+            showMessage("Informe a Data Prevista de Entrada (dd/mm/aaaa).");
+            view.getjFormattedTextFieldPrevisaoEntrada().requestFocus();
+            return false;
         }
-        
-        else if (e.getSource() == this.telaCadastroReserva.getjButtonSair()) {
-            this.telaCadastroReserva.dispose();
+        if (Utilities.apenasNumeros(saida).length() != 8) {
+            showMessage("Informe a Data Prevista de Saída (dd/mm/aaaa).");
+            view.getjFormattedTextFieldDataPrevisaoSaida().requestFocus();
+            return false;
+        }
+
+        LocalDateTime dtEntrada = parseData(entrada);
+        LocalDateTime dtSaida   = parseData(saida);
+
+        if (dtEntrada == null) {
+            showMessage("Data Prevista de Entrada inválida.");
+            return false;
+        }
+        if (dtSaida == null || !dtSaida.isAfter(dtEntrada)) {
+            showMessage("A Data de Saída deve ser posterior à Data de Entrada.");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Reserva construirDoFormulario() {
+        Reserva reserva = new Reserva();
+        reserva.setDataHoraReserva(LocalDateTime.now());
+        reserva.setDataPrevistaEntrada(parseData(view.getjFormattedTextFieldPrevisaoEntrada().getText()));
+        reserva.setDataPrevistaSaida(parseData(view.getjFormattedTextFieldDataPrevisaoSaida().getText()));
+        reserva.setObs(view.getjTextFieldObservacao().getText());
+        reserva.setStatus(getStatusDoFormulario());
+        return reserva;
+    }
+
+    @Override
+    protected void preencherFormulario(Reserva reserva) {
+        view.getjFormattedTextFieldPrevisaoEntrada().setEditable(true);
+        view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(true);
+        view.getjFormattedTextFieldPrevisaoEntrada().setText(
+                Utilities.formatarData(reserva.getDataPrevistaEntrada()));
+        view.getjFormattedTextFieldDataPrevisaoSaida().setText(
+                Utilities.formatarData(reserva.getDataPrevistaSaida()));
+        view.getjTextFieldObservacao().setText(reserva.getObs());
+        view.getjComboBoxStatus().setSelectedItem(reserva.getStatus() == 'A' ? "Ativo" : "Inativo");
+    }
+
+    @Override
+    protected void setId(Reserva entidade, int id) {
+        entidade.setId(id);
+    }
+
+    @Override
+    protected JDialog criarTelaBusca() {
+        return new TelaBuscaReserva(null, true);
+    }
+
+    @Override
+    protected void criarControllerBusca(JDialog telaBusca, Consumer<Integer> callback) {
+        new ControllerBuscaReserva((TelaBuscaReserva) telaBusca, callback);
+    }
+
+    @Override
+    protected void focarPrimeiroCampo() {
+        view.getjFormattedTextFieldPrevisaoEntrada().requestFocus();
+    }
+
+    @Override protected JTextField     getTextFieldId()   { return view.getjTextFieldId(); }
+    @Override protected JComboBox<String> getComboBoxStatus() { return view.getjComboBoxStatus(); }
+    @Override protected JPanel         getPanelBotoes()   { return view.getjPanelBotoes(); }
+    @Override protected JPanel         getPanelDados()    { return view.getjPanelDados(); }
+    @Override protected JButton        getButtonNovo()    { return view.getjButtonNovo(); }
+    @Override protected JButton        getButtonCancelar(){ return view.getjButtonCancelar(); }
+    @Override protected JButton        getButtonGravar()  { return view.getjButtonGravar(); }
+    @Override protected JButton        getButtonBuscar()  { return view.getjButtonBuscar(); }
+    @Override protected JButton        getButtonSair()    { return view.getjButtonSair(); }
+
+    private static LocalDateTime parseData(String texto) {
+        if (texto == null) return null;
+        String nums = Utilities.apenasNumeros(texto);
+        if (nums.length() != 8) return null;
+        try {
+            return java.time.LocalDate
+                    .parse(nums, DateTimeFormatter.ofPattern("ddMMuuuu"))
+                    .atStartOfDay();
+        } catch (Exception e) {
+            return null;
         }
     }
 }

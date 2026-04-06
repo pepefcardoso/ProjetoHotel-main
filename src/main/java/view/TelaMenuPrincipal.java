@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import controller.ControllerCadCheck;
 import controller.ControllerCadFornecedor;
 import controller.ControllerCadFuncionario;
 import controller.ControllerCadHospede;
@@ -17,10 +18,13 @@ import controller.ControllerCadMarca;
 import controller.ControllerCadModelo;
 import controller.ControllerCadProduto;
 import controller.ControllerCadQuarto;
+import controller.ControllerCadReserva;
 import controller.ControllerCadServico;
 import controller.ControllerCadVagaEstacionamento;
 import controller.ControllerCadVeiculo;
 import model.DAO.JPAUtil;
+import view.TelaCheck;
+import view.TelaCadastroReserva;
 
 /**
  *
@@ -60,6 +64,8 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItemSair = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        jMenuItemReserva = new javax.swing.JMenuItem();
+        jMenuItemCheck = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -131,6 +137,17 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Movimentos");
+
+        jMenuItemReserva.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Load.png"))); // NOI18N
+        jMenuItemReserva.setText("Reserva");
+        jMenuItemReserva.addActionListener(this::jMenuItemReservaActionPerformed);
+        jMenu3.add(jMenuItemReserva);
+
+        jMenuItemCheck.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/OK.png"))); // NOI18N
+        jMenuItemCheck.setText("Check-in / Check-out");
+        jMenuItemCheck.addActionListener(this::jMenuItemCheckActionPerformed);
+        jMenu3.add(jMenuItemCheck);
+
         jMenuBar1.add(jMenu3);
 
         jMenu4.setText("Relatórios");
@@ -187,13 +204,10 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
 
    @SuppressWarnings("unused")
     private void jMenuItemQuartoActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // Criamos a tela de QUARTO (não a de reserva)
         view.TelaCadastroQuarto telaCadastroQuarto = new view.TelaCadastroQuarto(null, true);
         
-        // Passamos a tela de QUARTO para o controlador de QUARTO
         new ControllerCadQuarto(telaCadastroQuarto);
         
-        // Abrimos a tela
         telaCadastroQuarto.setVisible(true);
     }
     @SuppressWarnings("unused")
@@ -237,6 +251,20 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         ControllerCadProduto controllerCadProduto = new ControllerCadProduto(telaCadastroProduto);
         telaCadastroProduto.setVisible(true);
     }
+    
+    @SuppressWarnings("unused")
+    private void jMenuItemReservaActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaCadastroReserva tela = new TelaCadastroReserva(null, true);
+        new ControllerCadReserva(tela);
+        tela.setVisible(true);
+    }
+
+    @SuppressWarnings("unused")
+    private void jMenuItemCheckActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaCheck tela = new TelaCheck(null, true);
+        new ControllerCadCheck(tela);
+        tela.setVisible(true);
+    }
 
     /**
      * @param args the command line arguments
@@ -279,6 +307,7 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemCheck;
     private javax.swing.JMenuItem jMenuItemFornecedor;
     private javax.swing.JMenuItem jMenuItemFuncionario;
     private javax.swing.JMenuItem jMenuItemHospede;
@@ -286,6 +315,7 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemModelo;
     private javax.swing.JMenuItem jMenuItemProduto;
     private javax.swing.JMenuItem jMenuItemQuarto;
+    private javax.swing.JMenuItem jMenuItemReserva;
     private javax.swing.JMenuItem jMenuItemSair;
     private javax.swing.JMenuItem jMenuItemServico;
     private javax.swing.JMenuItem jMenuItemVeiculo;
