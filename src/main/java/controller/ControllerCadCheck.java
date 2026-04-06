@@ -16,6 +16,7 @@ import model.Hospede;
 import model.Quarto;
 import model.Receber;
 import model.Reserva;
+import model.ReservaQuarto;
 import model.VagaEstacionamento;
 import model.Veiculo;
 import service.AlocacaoVagaService;
@@ -25,6 +26,7 @@ import service.CheckService;
 import service.HospedeService;
 import service.QuartoService;
 import service.ReceberService;
+import service.ReservaQuartoService;
 import service.ReservaService;
 import service.VagaEstacionamentoService;
 import service.VeiculoService;
@@ -41,26 +43,25 @@ public class ControllerCadCheck implements ActionListener {
 
     private final TelaCheck view;
 
-    private final CheckService checkService = new CheckService();
-    private final CheckQuartoService checkQuartoService = new CheckQuartoService();
+    private final CheckService checkService               = new CheckService();
+    private final CheckQuartoService checkQuartoService   = new CheckQuartoService();
     private final CheckHospedeService checkHospedeService = new CheckHospedeService();
-    private final AlocacaoVagaService alocacaoVagaService = new AlocacaoVagaService();
-    private final ReceberService receberService = new ReceberService();
-    private final HospedeService hospedeService = new HospedeService();
-    private final QuartoService quartoService = new QuartoService();
-    private final VeiculoService veiculoService = new VeiculoService();
-    private final VagaEstacionamentoService vagaService = new VagaEstacionamentoService();
-    private final ReservaService reservaService = new ReservaService();
+    private final AlocacaoVagaService alocacaoVagaService  = new AlocacaoVagaService();
+    private final ReceberService receberService            = new ReceberService();
+    private final HospedeService hospedeService            = new HospedeService();
+    private final QuartoService quartoService              = new QuartoService();
+    private final VeiculoService veiculoService            = new VeiculoService();
+    private final VagaEstacionamentoService vagaService    = new VagaEstacionamentoService();
+    private final ReservaService reservaService            = new ReservaService();
+    private final ReservaQuartoService reservaQuartoService = new ReservaQuartoService();
 
-    private Hospede hospedeCheckIn = null;
-    private Quarto quartoCheckIn = null;
-    private Veiculo veiculoCheckIn = null;
-    private VagaEstacionamento vagaCheckIn = null;
-    private Reserva reservaCheckIn = null;
-
-    private Check checkParaCheckout = null;
-
-    private boolean modoEdicao = false;
+    private Hospede hospedeCheckIn          = null;
+    private Quarto quartoCheckIn            = null;
+    private Veiculo veiculoCheckIn          = null;
+    private VagaEstacionamento vagaCheckIn  = null;
+    private Reserva reservaCheckIn          = null;
+    private Check checkParaCheckout         = null;
+    private boolean modoEdicao              = false;
 
     public ControllerCadCheck(TelaCheck view) {
         this.view = view;
@@ -92,35 +93,38 @@ public class ControllerCadCheck implements ActionListener {
         view.getjButtonQuarto().addActionListener(this);
         view.getjButtonVeiculo().addActionListener(this);
         view.getjButtonVaga().addActionListener(this);
-
         view.getjButtonQuarto1().addActionListener(this);
+
+        /*
+         * O campo jTextFieldHospede não possui botão próprio no form NetBeans.
+         * Um MouseListener no campo desabilitado aciona a busca quando o
+         * operador clica sobre ele durante o modo de edição — solução que não
+         * exige alteração do .form gerado.
+         */
+        view.getjTextFieldHospede().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (modoEdicao) {
+                    handleBuscarHospede();
+                }
+            }
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
 
-        if (src == view.getjButtonNovo()) {
-            handleNovo();
-        } else if (src == view.getjButtonCancelar()) {
-            handleCancelar();
-        } else if (src == view.getjButtonGravar()) {
-            handleGravar();
-        } else if (src == view.getjButtonBuscar()) {
-            handleBuscar();
-        } else if (src == view.getjButtonSair()) {
-            view.dispose();
-        } else if (src == view.getjButtonReservaId()) {
-            handleBuscarReserva();
-        } else if (src == view.getjButtonQuarto()) {
-            handleBuscarQuartoCheckIn();
-        } else if (src == view.getjButtonVeiculo()) {
-            handleBuscarVeiculo();
-        } else if (src == view.getjButtonVaga()) {
-            handleBuscarVaga();
-        } else if (src == view.getjButtonQuarto1()) {
-            handleBuscarCheckParaCheckout();
-        }
+        if      (src == view.getjButtonNovo())       handleNovo();
+        else if (src == view.getjButtonCancelar())   handleCancelar();
+        else if (src == view.getjButtonGravar())     handleGravar();
+        else if (src == view.getjButtonBuscar())     handleBuscar();
+        else if (src == view.getjButtonSair())       view.dispose();
+        else if (src == view.getjButtonReservaId())  handleBuscarReserva();
+        else if (src == view.getjButtonQuarto())     handleBuscarQuartoCheckIn();
+        else if (src == view.getjButtonVeiculo())    handleBuscarVeiculo();
+        else if (src == view.getjButtonVaga())       handleBuscarVaga();
+        else if (src == view.getjButtonQuarto1())    handleBuscarCheckParaCheckout();
     }
 
     private void handleNovo() {
@@ -131,6 +135,7 @@ public class ControllerCadCheck implements ActionListener {
         view.getjComboBoxStatus().setSelectedItem("Ativo");
         view.getjFormattedTextFieldDataEntrada().setEditable(true);
         view.getjFormattedTextFieldDataEntrada().setText(Utilities.getDataHoje());
+        view.getjTextFieldHospede().setToolTipText("Clique para buscar um hóspede");
     }
 
     private void handleCancelar() {
@@ -139,6 +144,7 @@ public class ControllerCadCheck implements ActionListener {
         limparCamposCheckout();
         definirEstadoBotoes(false);
         view.getjFormattedTextFieldDataEntrada().setEditable(false);
+        view.getjTextFieldHospede().setToolTipText(null);
     }
 
     private void handleGravar() {
@@ -157,15 +163,34 @@ public class ControllerCadCheck implements ActionListener {
             CheckQuarto checkQuarto = new CheckQuarto();
             checkQuarto.setQuarto(quartoCheckIn);
             checkQuarto.setDataHoraInicio(LocalDateTime.now());
-            checkQuarto.setDataHoraFim(LocalDateTime.now().plusDays(1));
+
+            LocalDateTime dataFimPrevista = (reservaCheckIn != null && reservaCheckIn.getDataPrevistaSaida() != null)
+                    ? reservaCheckIn.getDataPrevistaSaida()
+                    : LocalDateTime.now().plusDays(1);
+            checkQuarto.setDataHoraFim(dataFimPrevista);
+
             checkQuarto.setObs(view.getjTextFieldObservacao().getText());
             checkQuarto.setStatus('A');
+
+            if (reservaCheckIn != null) {
+                try {
+                    java.util.List<model.ReservaQuarto> rqList =
+                            reservaQuartoService.Carregar("reserva.id",
+                                    String.valueOf(reservaCheckIn.getId()));
+                    if (!rqList.isEmpty()) {
+                        checkQuarto.setReservaQuarto(rqList.get(0));
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }
+
             checkQuartoService.Criar(checkQuarto);
 
             Check check = new Check();
             check.setDataHoraCadastro(LocalDateTime.now());
             check.setDataHoraEntrada(parseData(view.getjFormattedTextFieldDataEntrada().getText()));
-            check.setDataHoraSaida(LocalDateTime.now().plusDays(1));
+            check.setDataHoraSaida(dataFimPrevista);
             check.setObs(view.getjTextFieldObservacao().getText());
             check.setStatus('A');
             check.setCheckQuarto(checkQuarto);
@@ -200,14 +225,22 @@ public class ControllerCadCheck implements ActionListener {
                 reservaCheckIn.setCheck(check);
                 reservaCheckIn.setStatus('F');
                 reservaService.Atualizar(reservaCheckIn);
+
+                if (checkQuarto.getReservaQuarto() != null) {
+                    ReservaQuarto rq = checkQuarto.getReservaQuarto();
+                    rq.setStatus('F');
+                    reservaQuartoService.Atualizar(rq);
+                }
             }
 
             view.getjTextFieldId().setText(String.valueOf(check.getId()));
-            JOptionPane.showMessageDialog(view, "Check-in realizado com sucesso! ID: " + check.getId());
+            JOptionPane.showMessageDialog(view,
+                    "Check-in realizado com sucesso!\nID do Check: " + check.getId());
             handleCancelar();
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(view, "Erro ao realizar check-in: " + ex.getMessage(),
+            JOptionPane.showMessageDialog(view,
+                    "Erro ao realizar check-in: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
@@ -215,7 +248,8 @@ public class ControllerCadCheck implements ActionListener {
 
     private void handleGravarCheckOut() {
         if (checkParaCheckout == null) {
-            JOptionPane.showMessageDialog(view, "Selecione um Check-in ativo para realizar o checkout.");
+            JOptionPane.showMessageDialog(view,
+                    "Selecione um Check-in ativo para realizar o checkout.");
             return;
         }
 
@@ -226,11 +260,11 @@ public class ControllerCadCheck implements ActionListener {
             return;
         }
 
-        String valorPagoStr = view.getjTextFieldValorPago().getText().trim()
+        String valorPagoRaw = view.getjTextFieldValorPago().getText()
                 .replace("R$", "").replace(".", "").replace(",", ".").trim();
         BigDecimal valorPago;
         try {
-            valorPago = new BigDecimal(valorPagoStr.isEmpty() ? "0" : valorPagoStr);
+            valorPago = new BigDecimal(valorPagoRaw.isEmpty() ? "0" : valorPagoRaw);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, "Valor Pago inválido.");
             view.getjTextFieldValorPago().requestFocus();
@@ -241,11 +275,11 @@ public class ControllerCadCheck implements ActionListener {
             LocalDateTime dataSaida = parseData(dataSaidaStr);
             if (dataSaida == null) dataSaida = LocalDateTime.now();
 
-            String valorPagarStr = view.getjTextFieldValorPagar().getText()
+            String valorPagarRaw = view.getjTextFieldValorPagar().getText()
                     .replace("R$", "").replace(".", "").replace(",", ".").trim();
             BigDecimal valorOriginal;
             try {
-                valorOriginal = new BigDecimal(valorPagarStr.isEmpty() ? "0" : valorPagarStr);
+                valorOriginal = new BigDecimal(valorPagarRaw.isEmpty() ? "0" : valorPagarRaw);
             } catch (NumberFormatException ex) {
                 valorOriginal = BigDecimal.ZERO;
             }
@@ -282,7 +316,8 @@ public class ControllerCadCheck implements ActionListener {
             checkParaCheckout = null;
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(view, "Erro ao realizar check-out: " + ex.getMessage(),
+            JOptionPane.showMessageDialog(view,
+                    "Erro ao realizar check-out: " + ex.getMessage(),
                     "Erro", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
@@ -308,7 +343,8 @@ public class ControllerCadCheck implements ActionListener {
                             check.getStatus() == 'A' ? "Ativo" : "Inativo");
                     view.getjTextFieldObservacao().setText(check.getObs());
                     if (check.getReserva() != null) {
-                        view.getjTextFieldReservaId().setText(String.valueOf(check.getReserva().getId()));
+                        view.getjTextFieldReservaId().setText(
+                                String.valueOf(check.getReserva().getId()));
                         reservaCheckIn = check.getReserva();
                     }
                     if (check.getCheckQuarto() != null && check.getCheckQuarto().getQuarto() != null) {
@@ -318,7 +354,29 @@ public class ControllerCadCheck implements ActionListener {
                     }
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar check: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar check: " + ex.getMessage());
+            }
+        }
+    }
+
+    /** Abre dialog de busca de hóspede e preenche o campo de exibição. */
+    private void handleBuscarHospede() {
+        int[] codigoHolder = {0};
+        TelaBuscaHospede tela = new TelaBuscaHospede(null, true);
+        new ControllerBuscaHospede(tela, val -> codigoHolder[0] = val);
+        tela.setVisible(true);
+
+        if (codigoHolder[0] != 0) {
+            try {
+                Hospede h = hospedeService.Carregar(codigoHolder[0]);
+                if (h != null) {
+                    hospedeCheckIn = h;
+                    view.getjTextFieldHospede().setText(h.getNome());
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar hóspede: " + ex.getMessage());
             }
         }
     }
@@ -341,7 +399,8 @@ public class ControllerCadCheck implements ActionListener {
                     }
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar reserva: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar reserva: " + ex.getMessage());
             }
         }
     }
@@ -357,10 +416,12 @@ public class ControllerCadCheck implements ActionListener {
                 Quarto q = quartoService.Carregar(codigoHolder[0]);
                 if (q != null) {
                     quartoCheckIn = q;
-                    view.getjTextFieldQuarto().setText(q.getIdentificacao() + " - " + q.getDescricao());
+                    view.getjTextFieldQuarto().setText(
+                            q.getIdentificacao() + " - " + q.getDescricao());
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar quarto: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar quarto: " + ex.getMessage());
             }
         }
     }
@@ -379,7 +440,8 @@ public class ControllerCadCheck implements ActionListener {
                     view.getjTextFieldVeiculo().setText(v.getPlaca() + " - " + v.getCor());
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar veículo: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar veículo: " + ex.getMessage());
             }
         }
     }
@@ -398,7 +460,8 @@ public class ControllerCadCheck implements ActionListener {
                     view.getjTextFieldVaga().setText(vaga.getDescricao());
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar vaga: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar vaga: " + ex.getMessage());
             }
         }
     }
@@ -417,73 +480,82 @@ public class ControllerCadCheck implements ActionListener {
                     return;
                 }
                 if (check.getStatus() == 'F') {
-                    JOptionPane.showMessageDialog(view, "Este check-in já foi finalizado.");
+                    JOptionPane.showMessageDialog(view,
+                            "Este check-in já foi finalizado.");
                     return;
                 }
                 checkParaCheckout = check;
                 preencherCamposCheckout(check);
-
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(view, "Erro ao carregar check: " + ex.getMessage());
+                JOptionPane.showMessageDialog(view,
+                        "Erro ao carregar check: " + ex.getMessage());
             }
         }
-    }
-
-    private void preencherCamposCheckout(Check check) {
-        view.getjTextFieldQuarto1().setText("Check #" + check.getId());
-        view.getjFormattedTextFieldDataSaida().setEditable(true);
-        view.getjFormattedTextFieldDataSaida().setText(Utilities.getDataHoje());
-
-        if (check.getDataHoraEntrada() != null) {
-            long dias = java.time.Duration.between(
-                    check.getDataHoraEntrada(), LocalDateTime.now()).toDays();
-            if (dias < 1) dias = 1;
-            view.getjTextFieldValorPagar().setText(String.format("%.2f", 0.0));
-        }
-        view.getjTextFieldValorPago().setText("0,00");
-        view.getjComboBoxStatusRecebimento().setSelectedItem("Ativo");
     }
 
     private boolean validarCheckIn() {
         if (hospedeCheckIn == null) {
-            int[] codigoHolder = {0};
-            TelaBuscaHospede tela = new TelaBuscaHospede(null, true);
-            new ControllerBuscaHospede(tela, val -> {
-                try {
-                    Hospede h = hospedeService.Carregar(val);
-                    if (h != null) {
-                        hospedeCheckIn = h;
-                        view.getjTextFieldHospede().setText(h.getNome());
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            });
-            tela.setVisible(true);
-
-            if (hospedeCheckIn == null) {
-                JOptionPane.showMessageDialog(view, "Selecione um Hóspede para o check-in.");
-                return false;
+            int confirm = JOptionPane.showConfirmDialog(view,
+                    "Nenhum hóspede selecionado. Deseja buscar agora?",
+                    "Hóspede obrigatório", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                handleBuscarHospede();
             }
+            if (hospedeCheckIn == null) return false;
         }
+
         if (quartoCheckIn == null) {
-            JOptionPane.showMessageDialog(view, "Selecione um Quarto para o check-in.");
+            JOptionPane.showMessageDialog(view,
+                    "Selecione um Quarto para o check-in.");
             return false;
         }
+
         String dataEntrada = view.getjFormattedTextFieldDataEntrada().getText();
         if (dataEntrada == null || Utilities.apenasNumeros(dataEntrada).length() != 8) {
-            JOptionPane.showMessageDialog(view, "Informe a Data de Entrada (dd/mm/aaaa).");
+            JOptionPane.showMessageDialog(view,
+                    "Informe a Data de Entrada (dd/mm/aaaa).");
+            view.getjFormattedTextFieldDataEntrada().requestFocus();
             return false;
         }
+
+        if (veiculoCheckIn != null && vagaCheckIn == null) {
+            JOptionPane.showMessageDialog(view,
+                    "Veículo informado sem vaga. Selecione uma Vaga ou remova o veículo.");
+            return false;
+        }
+
         return true;
     }
 
+    private void preencherCamposCheckout(Check check) {
+        view.getjTextFieldQuarto1().setText("Check #" + check.getId()
+                + (check.getCheckQuarto() != null && check.getCheckQuarto().getQuarto() != null
+                   ? " — Quarto " + check.getCheckQuarto().getQuarto().getIdentificacao()
+                   : ""));
+
+        view.getjFormattedTextFieldDataSaida().setEditable(true);
+        view.getjFormattedTextFieldDataSaida().setText(Utilities.getDataHoje());
+
+        long dias = 1;
+        if (check.getDataHoraEntrada() != null) {
+            dias = java.time.Duration.between(
+                    check.getDataHoraEntrada(), LocalDateTime.now()).toDays();
+            if (dias < 1) dias = 1;
+        }
+        view.getjTextFieldValorPagar().setText(
+                dias + " diária(s) — informe o valor");
+
+        view.getjTextFieldValorPago().setText("0,00");
+        view.getjComboBoxStatusRecebimento().setEnabled(true);
+        view.getjComboBoxStatusRecebimento().setSelectedItem("Ativo");
+    }
+
     private void limparCamposCheckIn() {
-        hospedeCheckIn = null;
-        quartoCheckIn = null;
-        veiculoCheckIn = null;
-        vagaCheckIn = null;
-        reservaCheckIn = null;
+        hospedeCheckIn  = null;
+        quartoCheckIn   = null;
+        veiculoCheckIn  = null;
+        vagaCheckIn     = null;
+        reservaCheckIn  = null;
 
         view.getjTextFieldId().setText("");
         view.getjTextFieldReservaId().setText("");
@@ -497,12 +569,14 @@ public class ControllerCadCheck implements ActionListener {
     }
 
     private void limparCamposCheckout() {
+        checkParaCheckout = null;
         view.getjTextFieldQuarto1().setText("");
         view.getjFormattedTextFieldDataSaida().setText("");
         view.getjFormattedTextFieldDataSaida().setEditable(false);
         view.getjTextFieldValorPagar().setText("R$");
         view.getjTextFieldValorPago().setText("R$");
         view.getjTextFieldObservacao1().setText("");
+        view.getjComboBoxStatusRecebimento().setEnabled(false);
     }
 
     private void definirEstadoBotoes(boolean editando) {
@@ -514,8 +588,9 @@ public class ControllerCadCheck implements ActionListener {
         String nums = Utilities.apenasNumeros(texto);
         if (nums.length() != 8) return null;
         try {
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("ddMMuuuu");
-            return java.time.LocalDate.parse(nums, fmt).atStartOfDay();
+            return java.time.LocalDate
+                    .parse(nums, DateTimeFormatter.ofPattern("ddMMuuuu"))
+                    .atStartOfDay();
         } catch (Exception e) {
             return null;
         }

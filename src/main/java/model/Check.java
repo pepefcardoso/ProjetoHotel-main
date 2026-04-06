@@ -45,7 +45,8 @@ public class Check {
     public Check() {
     }
 
-    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada, LocalDateTime dataHoraSaida, String obs, char status, Reserva reserva) {
+    public Check(int id, LocalDateTime dataHoraCadastro, LocalDateTime dataHoraEntrada,
+            LocalDateTime dataHoraSaida, String obs, char status, Reserva reserva) {
         this.id = id;
         this.dataHoraCadastro = dataHoraCadastro;
         this.dataHoraEntrada = dataHoraEntrada;
@@ -55,61 +56,29 @@ public class Check {
         this.reserva = reserva;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public LocalDateTime getDataHoraCadastro() { return dataHoraCadastro; }
+    public void setDataHoraCadastro(LocalDateTime dataHoraCadastro) { this.dataHoraCadastro = dataHoraCadastro; }
 
-    public LocalDateTime getDataHoraCadastro() {
-        return dataHoraCadastro;
-    }
+    public LocalDateTime getDataHoraEntrada() { return dataHoraEntrada; }
+    public void setDataHoraEntrada(LocalDateTime dataHoraEntrada) { this.dataHoraEntrada = dataHoraEntrada; }
 
-    public void setDataHoraCadastro(LocalDateTime dataHoraCadastro) {
-        this.dataHoraCadastro = dataHoraCadastro;
-    }
+    public LocalDateTime getDataHoraSaida() { return dataHoraSaida; }
+    public void setDataHoraSaida(LocalDateTime dataHoraSaida) { this.dataHoraSaida = dataHoraSaida; }
 
-    public LocalDateTime getDataHoraEntrada() {
-        return dataHoraEntrada;
-    }
+    public String getObs() { return obs; }
+    public void setObs(String obs) { this.obs = obs; }
 
-    public void setDataHoraEntrada(LocalDateTime dataHoraEntrada) {
-        this.dataHoraEntrada = dataHoraEntrada;
-    }
+    public char getStatus() { return status; }
+    public void setStatus(char status) { this.status = status; }
 
-    public LocalDateTime getDataHoraSaida() {
-        return dataHoraSaida;
-    }
+    public Reserva getReserva() { return reserva; }
+    public void setReserva(Reserva reserva) { this.reserva = reserva; }
 
-    public void setDataHoraSaida(LocalDateTime dataHoraSaida) {
-        this.dataHoraSaida = dataHoraSaida;
-    }
-
-    public String getObs() {
-        return obs;
-    }
-
-    public void setObs(String obs) {
-        this.obs = obs;
-    }
-
-   public char getStatus() {
-        return status;
-    }
-
-    public void setStatus(char status) {
-        this.status = status;
-    }
-
-    public Reserva getReserva() {
-        return reserva;
-    }
-
-    public void setReserva(Reserva reserva) {
-        this.reserva = reserva;
-    }
+    public CheckQuarto getCheckQuarto() { return checkQuarto; }
+    public void setCheckQuarto(CheckQuarto checkQuarto) { this.checkQuarto = checkQuarto; }
 
     @Override
     public String toString() {
@@ -119,6 +88,7 @@ public class Check {
                 + "\nData/Hora Sai. = " + this.getDataHoraSaida()
                 + "\nObs            = " + this.getObs()
                 + "\nStatus         = " + this.getStatus()
-                + "\nReserva ID     = " + (this.getReserva() != null ? this.getReserva().getId() : "null");
+                + "\nReserva ID     = " + (this.getReserva() != null ? this.getReserva().getId() : "null")
+                + "\nCheckQuarto ID = " + (this.getCheckQuarto() != null ? this.getCheckQuarto().getId() : "null");
     }
 }
