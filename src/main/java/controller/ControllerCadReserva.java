@@ -11,19 +11,13 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.Hospede;
 import model.Reserva;
-import service.HospedeService;
 import service.ReservaService;
 import utilities.Utilities;
-import view.TelaBuscaHospede;
 import view.TelaBuscaReserva;
 import view.TelaCadastroReserva;
 
 public final class ControllerCadReserva extends AbstractControllerCad<Reserva, TelaCadastroReserva> {
-
-    private int idHospedeSelecionado = 0;
-
     public ControllerCadReserva(TelaCadastroReserva view) {
         super(view, new ReservaService());
     }
@@ -31,7 +25,6 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
     @Override
     protected void inicializarView() {
         super.inicializarView();
-        Utilities.setAlwaysDisabled(view.getjTextFieldHospede(), true);
         view.getjFormattedTextFieldPrevisaoEntrada().setEditable(false);
         view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(false);
     }
@@ -39,7 +32,6 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
     @Override
     public void handleNovo() {
         super.handleNovo();
-        idHospedeSelecionado = 0;
         view.getjFormattedTextFieldPrevisaoEntrada().setEditable(true);
         view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(true);
     }
@@ -47,46 +39,18 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
     @Override
     public void handleCancelar() {
         super.handleCancelar();
-        idHospedeSelecionado = 0;
         view.getjFormattedTextFieldPrevisaoEntrada().setEditable(false);
         view.getjFormattedTextFieldDataPrevisaoSaida().setEditable(false);
     }
 
     @Override
-    protected void limparRelacionamentos() {
-        idHospedeSelecionado = 0;
-        view.getjTextFieldHospede().setText("");
-    }
-
-    @Override
     protected void configurarListenersAdicionais() {
-        view.getjButtonBuscarHospede().addActionListener(this);
+        //
     }
 
     @Override
     protected void handleAcoesAdicionais(ActionEvent evento) {
-        if (evento.getSource() == view.getjButtonBuscarHospede()) {
-            handleBuscarHospede();
-        }
-    }
-
-    private void handleBuscarHospede() {
-        TelaBuscaHospede tela = new TelaBuscaHospede(null, true);
-        new ControllerBuscaHospede(tela, this::onHospedeSelecionado);
-        tela.setVisible(true);
-    }
-
-    private void onHospedeSelecionado(int id) {
-        if (id <= 0) return;
-        try {
-            Hospede h = new HospedeService().Carregar(id);
-            if (h != null) {
-                idHospedeSelecionado = id;
-                view.getjTextFieldHospede().setText(h.getNome());
-            }
-        } catch (Exception ex) {
-            showError("Erro ao carregar hóspede: " + ex.getMessage());
-        }
+        //
     }
 
     @Override

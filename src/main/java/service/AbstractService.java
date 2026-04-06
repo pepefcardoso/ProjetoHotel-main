@@ -46,4 +46,9 @@ public abstract class AbstractService<T, D extends InterfaceDAO<T>> implements I
     protected D getDao() {
         return dao;
     }
+
+    @Override
+    public List<T> listarTodos() throws SQLException {
+        return dao.listarTodos();
+    }
 }

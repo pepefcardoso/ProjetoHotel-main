@@ -11,4 +11,5 @@ public interface InterfaceService<T> {
     public abstract void Atualizar(T objeto) throws SQLException;
     public abstract void Apagar(T objeto) throws SQLException;
     public abstract void AtivarInativar(int id, boolean ativar) throws SQLException;
+    public abstract List<T> listarTodos() throws SQLException;
 }

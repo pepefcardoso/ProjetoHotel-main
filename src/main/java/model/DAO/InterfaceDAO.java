@@ -15,4 +15,6 @@ public interface InterfaceDAO<T> {
     void Delete(T objeto);
 
     void AtivarInativar(int id, boolean ativar);
+
+    List<T> listarTodos();
 }

@@ -39,8 +39,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
 
     public javax.swing.JTextField getjTextFieldId() { return jTextFieldId; }
     public javax.swing.JComboBox<String> getjComboBoxStatus() { return jComboBoxStatus; }
-    public javax.swing.JTextField getjTextFieldHospede() { return jTextFieldHospede; }
-    public javax.swing.JButton getjButtonBuscarHospede() { return jButtonBuscarHospede; }
     public javax.swing.JFormattedTextField getjFormattedTextFieldPrevisaoEntrada() { return jFormattedTextFieldPrevisaoEntrada; }
     public javax.swing.JFormattedTextField getjFormattedTextFieldDataPrevisaoSaida() { return jFormattedTextFieldDataPrevisaoSaida; }
     public javax.swing.JTextField getjTextFieldObservacao() { return jTextFieldObservacao; }
@@ -72,9 +70,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
         jLabelObservacao = new javax.swing.JLabel();
         jFormattedTextFieldDataPrevisaoSaida = new javax.swing.JFormattedTextField();
         jLabelPrevisaoSaida = new javax.swing.JLabel();
-        jButtonBuscarHospede = new javax.swing.JButton();
-        jLabelHospede = new javax.swing.JLabel();
-        jTextFieldHospede = new javax.swing.JTextField();
         jPanelBotoes = new javax.swing.JPanel();
         jButtonNovo = new javax.swing.JButton();
         jButtonCancelar = new javax.swing.JButton();
@@ -158,23 +153,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
 
         jLabelPrevisaoSaida.setText("Data Previsão Saída:");
 
-        jButtonBuscarHospede.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Find.png"))); // NOI18N
-        jButtonBuscarHospede.setActionCommand("1");
-        jButtonBuscarHospede.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonBuscarHospedeActionPerformed(evt);
-            }
-        });
-
-        jLabelHospede.setText("Hóspede");
-
-        jTextFieldHospede.setEnabled(false);
-        jTextFieldHospede.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldHospedeActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanelDadosLayout = new javax.swing.GroupLayout(jPanelDados);
         jPanelDados.setLayout(jPanelDadosLayout);
         jPanelDadosLayout.setHorizontalGroup(
@@ -200,11 +178,7 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
                             .addComponent(jFormattedTextFieldDataPrevisaoSaida, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                             .addComponent(jFormattedTextFieldPrevisaoEntrada)
                             .addComponent(jLabelObservacao)
-                            .addComponent(jTextFieldObservacao)
-                            .addComponent(jLabelHospede)
-                            .addComponent(jTextFieldHospede))
-                        .addGap(10, 10, 10)
-                        .addComponent(jButtonBuscarHospede)
+                            .addComponent(jTextFieldObservacao))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -225,12 +199,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
                                 .addGap(28, 28, 28))
                             .addComponent(jComboBoxStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(76, 76, 76)
-                .addComponent(jLabelHospede)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanelDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextFieldHospede, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonBuscarHospede, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addComponent(jLabelPrevisaoEntrada)
                 .addGap(4, 4, 4)
                 .addComponent(jFormattedTextFieldPrevisaoEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -371,7 +339,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBuscar;
-    private javax.swing.JButton jButtonBuscarHospede;
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonGravar;
     private javax.swing.JButton jButtonNovo;
@@ -379,7 +346,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> jComboBoxStatus;
     private javax.swing.JFormattedTextField jFormattedTextFieldDataPrevisaoSaida;
     private javax.swing.JFormattedTextField jFormattedTextFieldPrevisaoEntrada;
-    private javax.swing.JLabel jLabelHospede;
     private javax.swing.JLabel jLabelId;
     private javax.swing.JLabel jLabelObservacao;
     private javax.swing.JLabel jLabelPrevisaoEntrada;
@@ -389,7 +355,6 @@ public class TelaCadastroReserva extends javax.swing.JDialog {
     private javax.swing.JPanel jPanelBotoes;
     private javax.swing.JPanel jPanelDados;
     private javax.swing.JPanel jPanelTitulo;
-    private javax.swing.JTextField jTextFieldHospede;
     private javax.swing.JTextField jTextFieldId;
     private javax.swing.JTextField jTextFieldObservacao;
     // End of variables declaration//GEN-END:variables

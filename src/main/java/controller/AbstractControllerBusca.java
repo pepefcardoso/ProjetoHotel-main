@@ -87,18 +87,21 @@ public abstract class AbstractControllerBusca<T, V extends JDialog>
 
     @Override
     public void handleFiltrar() {
-        String filtroTexto = getTextFieldFiltro().getText().trim();
-
-        if (filtroTexto.isEmpty()) {
-            showMessage("Sem Dados para a Seleção...");
-            return;
-        }
-
         DefaultTableModel tabela = (DefaultTableModel) getTable().getModel();
         tabela.setRowCount(0);
 
-        int filtroIndex = getComboBoxFiltro().getSelectedIndex();
+        String filtroTexto = getTextFieldFiltro().getText().trim();
 
+        if (filtroTexto.isEmpty()) {
+            try {
+                service.listarTodos().forEach(item -> adicionarLinhaTabela(tabela, item));
+            } catch (Exception ex) {
+                showError("Erro ao carregar dados: " + ex.getMessage());
+            }
+            return;
+        }
+
+        int filtroIndex = getComboBoxFiltro().getSelectedIndex();
         try {
             executarFiltro(filtroIndex, filtroTexto, tabela);
         } catch (NumberFormatException ex) {
