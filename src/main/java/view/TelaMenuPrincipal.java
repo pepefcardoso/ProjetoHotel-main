@@ -185,13 +185,17 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         telaCadastroFuncionario.setVisible(true);
     }//GEN-LAST:event_jMenuItemFuncionarioActionPerformed
 
-    @SuppressWarnings("unused")
-    private void jMenuItemQuartoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemQuartoActionPerformed
-        TelaCadastroQuarto telaCadastroQuarto = new TelaCadastroQuarto(null, true);
-        ControllerCadQuarto controllerCadQuarto = new ControllerCadQuarto(telaCadastroQuarto);
+   @SuppressWarnings("unused")
+    private void jMenuItemQuartoActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        // Criamos a tela de QUARTO (não a de reserva)
+        view.TelaCadastroQuarto telaCadastroQuarto = new view.TelaCadastroQuarto(null, true);
+        
+        // Passamos a tela de QUARTO para o controlador de QUARTO
+        new ControllerCadQuarto(telaCadastroQuarto);
+        
+        // Abrimos a tela
         telaCadastroQuarto.setVisible(true);
-    }//GEN-LAST:EVENT_jMenuItemQuartoActionPerformed
-
+    }
     @SuppressWarnings("unused")
     private void jMenuItemVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemVeiculoActionPerformed
         TelaCadastroVeiculo telaCadastroVeiculo = new TelaCadastroVeiculo(null, true);
