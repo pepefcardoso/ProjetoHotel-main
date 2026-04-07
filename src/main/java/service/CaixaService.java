@@ -10,7 +10,6 @@ public class CaixaService extends AbstractService<Caixa, CaixaDAO> {
     }
 
     public boolean isCaixaAberto() {
-        // Instancia o DAO para acessar a consulta customizada
-        return new CaixaDAO().isCaixaAberto(); 
+        return this.dao.isCaixaAberto(); 
     }
 }

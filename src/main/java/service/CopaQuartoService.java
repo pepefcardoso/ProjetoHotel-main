@@ -12,7 +12,6 @@ public class CopaQuartoService extends AbstractService<CopaQuarto, CopaQuartoDAO
     }
 
     public BigDecimal buscarTotalConsumo(int checkId) {
-        // Instancia o DAO para acessar a consulta customizada
-        return new CopaQuartoDAO().buscarTotalConsumo(checkId);
+        return this.dao.buscarTotalConsumo(checkId);
     }
 }
