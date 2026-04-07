@@ -25,7 +25,6 @@ import model.Reserva;
 import model.ReservaQuarto;
 import model.VagaEstacionamento;
 import model.Veiculo;
-
 import service.AlocacaoVagaService;
 import service.CaixaService;
 import service.CheckHospedeService;
@@ -40,7 +39,6 @@ import service.ReservaService;
 import service.VagaEstacionamentoService;
 import service.VeiculoService;
 import utilities.Utilities;
-
 import view.TelaBuscaCheck;
 import view.TelaBuscaHospede;
 import view.TelaBuscaQuarto;
@@ -202,6 +200,21 @@ public class ControllerCadCheck implements ActionListener {
             LocalDateTime dtEntrada = parseData(view.getjFormattedTextFieldDataEntrada().getText());
             LocalDateTime dtSaida = parseData(view.getjFormattedTextFieldDataSaida().getText());
 
+            // 1. ISOLATE THE FIRST ROOM to satisfy the Check model's requirement
+            Object[] firstRoomInfo = quartosAlocados.get(0);
+            Quarto firstQuarto = (Quarto) firstRoomInfo[0];
+            String firstObsQuarto = (String) firstRoomInfo[1];
+
+            CheckQuarto cqFirst = new CheckQuarto();
+            cqFirst.setQuarto(firstQuarto);
+            cqFirst.setDataHoraInicio(dtEntrada);
+            cqFirst.setDataHoraFim(dtSaida);
+            cqFirst.setObs(firstObsQuarto);
+            cqFirst.setStatus('A');
+            // Save it first so it gets an ID in the database
+            checkQuartoService.Criar(cqFirst);
+
+            // 2. CREATE THE CHECK
             Check check = new Check();
             check.setDataHoraCadastro(parseData(view.getjFormattedTextFieldDataCadastro().getText()));
             check.setDataHoraEntrada(dtEntrada);
@@ -213,9 +226,19 @@ public class ControllerCadCheck implements ActionListener {
                 check.setReserva(reservaCheckIn);
             }
 
+            // Bind the saved room to satisfy the @NotNull constraint in your model
+            check.setCheckQuarto(cqFirst);
+
+            // Now Hibernate will allow this to save
             checkService.Criar(check);
 
-            for (Object[] qInfo : quartosAlocados) {
+            // 3. LINK THE FIRST ROOM BACK TO THE CHECK AND UPDATE IT
+            cqFirst.setCheck(check);
+            checkQuartoService.Atualizar(cqFirst); // Note: Assumes your service has an Atualizar method
+
+            // 4. SAVE ANY ADDITIONAL ROOMS (Index 1 onwards)
+            for (int i = 1; i < quartosAlocados.size(); i++) {
+                Object[] qInfo = quartosAlocados.get(i);
                 Quarto quarto = (Quarto) qInfo[0];
                 String obsQuarto = (String) qInfo[1];
 
@@ -229,11 +252,11 @@ public class ControllerCadCheck implements ActionListener {
                 checkQuartoService.Criar(cq);
             }
 
+            // 5. SAVE HOSPEDES
             for (Hospede h : hospedesAlocados) {
                 CheckHospede ch = new CheckHospede();
                 ch.setCheck(check);
                 ch.setHospede(h);
-                // Busca o tipo do hóspede direto da tabela
                 String tipo = "Acompanhante";
                 for (int i = 0; i < view.getjTableHospedes().getRowCount(); i++) {
                     if ((int) view.getjTableHospedes().getValueAt(i, 0) == h.getId()) {
@@ -247,6 +270,7 @@ public class ControllerCadCheck implements ActionListener {
                 checkHospedeService.Criar(ch);
             }
 
+            // 6. SAVE VAGAS/VEICULOS
             for (Object[] entry : vagasAlocadas) {
                 Veiculo veiculo = (Veiculo) entry[0];
                 VagaEstacionamento vaga = (VagaEstacionamento) entry[1];
