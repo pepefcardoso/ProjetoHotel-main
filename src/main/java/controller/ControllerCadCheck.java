@@ -383,9 +383,8 @@ public class ControllerCadCheck implements ActionListener {
             view.getjFormattedTextFieldReserva().setText(String.valueOf(reservaCheckIn.getId()));
         }
 
-        // Buscar consumo automático da Copa
+        // 1. Carregar consumo automático da Copa
         try {
-            // Método mock presumido, pode adaptar conforme nome de integração real
             BigDecimal totalConsumo = copaQuartoService.buscarTotalConsumo(check.getId());
             if (totalConsumo != null) {
                 view.getjTextFieldValorProdutos().setText(totalConsumo.toPlainString());
@@ -393,7 +392,82 @@ public class ControllerCadCheck implements ActionListener {
         } catch (Exception ignored) {
         }
 
-        // Nota: A lógica de carregar múltiplos quartos/hóspedes do banco para tela de edição dependeria de rotinas de Listagem.
+        // --- INÍCIO DA CARGA DE RELACIONAMENTOS ---
+        try {
+            // 2. Carregar Hóspedes
+            List<CheckHospede> listaHospedes = checkHospedeService.findByCheckId(check.getId());
+            if (listaHospedes != null) {
+                for (CheckHospede ch : listaHospedes) {
+                    hospedesAlocados.add(ch.getHospede());
+                    adicionarLinhaTabela(view.getjTableHospedes(), new Object[]{
+                        ch.getHospede().getId(),
+                        ch.getHospede().getNome(),
+                        ch.getTipoHospede(),
+                        ch.getObs(),
+                        ch.getStatus()
+                    });
+                }
+            }
+
+            // 3. Carregar Quartos
+            List<CheckQuarto> listaQuartos = checkQuartoService.findByCheckId(check.getId());
+            if (listaQuartos != null) {
+                for (CheckQuarto cq : listaQuartos) {
+                    quartosAlocados.add(new Object[]{cq.getQuarto(), cq.getObs()});
+                    adicionarLinhaTabela(view.getjTableQuartos(), new Object[]{
+                        cq.getQuarto().getId(),
+                        cq.getQuarto().getIdentificacao(),
+                        cq.getQuarto().getDescricao(),
+                        cq.getObs(),
+                        cq.getStatus()
+                    });
+                }
+            }
+
+            // 4. Carregar Vagas e Veículos
+            List<AlocacaoVaga> listaVagas = alocacaoVagaService.findByCheckId(check.getId());
+            if (listaVagas != null) {
+                for (AlocacaoVaga av : listaVagas) {
+                    vagasAlocadas.add(new Object[]{av.getVeiculo(), av.getVagaEstacionamento(), av.getObs()});
+                    adicionarLinhaTabela(view.getjTableAlocacoesVagas(), new Object[]{
+                        vagasAlocadas.size(), // Usa o size atual como ID fictício na grid
+                        av.getVeiculo().getPlaca(),
+                        av.getVagaEstacionamento().getDescricao(),
+                        av.getObs(),
+                        av.getStatus()
+                    });
+                }
+            }
+
+            // 5. Carregar Financeiro (Receber)
+            Receber receber = receberService.findByCheckId(check.getId());
+            if (receber != null) {
+                // Recupera o valor da copa já preenchido
+                BigDecimal valorCopa = parseBD(view.getjTextFieldValorProdutos().getText());
+
+                // NOTA: Como no save (criarReceberSePreenchido) o valor gravado é (Original + Produtos),
+                // subtraímos aqui para evitar duplicação quando recalcular() for chamado.
+                BigDecimal valorEstadia = receber.getValorOriginal().subtract(valorCopa);
+                if (valorEstadia.compareTo(BigDecimal.ZERO) < 0) {
+                    valorEstadia = BigDecimal.ZERO;
+                }
+
+                view.getjTextFieldValorOriginal().setText(valorEstadia.toPlainString());
+                view.getjTextFieldDesconto().setText(receber.getDesconto().toPlainString());
+                view.getjTextFieldAcrescimo().setText(receber.getAcrescimo().toPlainString());
+                view.getjTextFieldValorPago().setText(receber.getValorPago().toPlainString());
+                view.getjTextFieldObsRecebimento().setText(receber.getObs());
+                view.getjComboBoxStatusRecebimento().setSelectedItem(receber.getStatus() == 'P' ? "Pago" : "Pendente");
+
+                recalcular();
+            }
+
+        } catch (Exception ex) {
+            erro("Erro ao carregar dados complementares do check-in: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        // --- FIM DA CARGA DE RELACIONAMENTOS ---
+
         view.getjTabbedPane().setSelectedIndex(0);
     }
 
