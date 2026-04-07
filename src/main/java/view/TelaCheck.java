@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -31,8 +30,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
 /**
- * Tela de Check-in / Check-out do Hotel. Abas: Check | Hóspedes | Quarto |
- * Vaga/Veículo | Recebimento | Check-out
+ * Tela de Check-in do Hotel. Abas: Check | Hóspedes | Quarto | Vaga/Veículo |
+ * Recebimento
  */
 public class TelaCheck extends JDialog {
 
@@ -40,6 +39,7 @@ public class TelaCheck extends JDialog {
     private JTabbedPane jTabbedPane1;
     private JPanel jPanelBotoes;
 
+    // Aba Check
     private JPanel jPanelCheck;
     private JTextField jTextFieldId;
     private JComboBox<String> jComboBoxStatus;
@@ -50,6 +50,7 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRelacionarReserva;
     private JTextField jTextFieldObs;
 
+    // Aba Hóspedes
     private JPanel jPanelHospedes;
     private JFormattedTextField jFormattedTextFieldHospede;
     private JButton jButtonRelacionarHospede;
@@ -59,6 +60,7 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverHospede;
     private JTable jTableHospedes;
 
+    // Aba Quarto
     private JPanel jPanelQuartos;
     private JFormattedTextField jFormattedTextFieldQuarto;
     private JButton jButtonRelacionarQuarto;
@@ -67,6 +69,7 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverQuarto;
     private JTable jTableQuartos;
 
+    // Aba Vaga / Veículo
     private JPanel jPanelVaga;
     private JFormattedTextField jFormattedTextFieldVeiculo;
     private JButton jButtonRelacionarVeiculo;
@@ -77,6 +80,7 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverVaga;
     private JTable jTableAlocacoesVagas;
 
+    // Aba Recebimento
     private JPanel jPanelRecebimento;
     private JTextField jTextFieldValorOriginal;
     private JTextField jTextFieldDesconto;
@@ -87,15 +91,7 @@ public class TelaCheck extends JDialog {
     private JTextField jTextFieldObsRecebimento;
     private JComboBox<String> jComboBoxStatusRecebimento;
 
-    private JPanel jPanelCheckout;
-    private JFormattedTextField jFormattedTextFieldCheckoutId;
-    private JButton jButtonBuscarCheckout;
-    private JTextArea jTextAreaCheckoutInfo;
-    private JFormattedTextField jFormattedTextFieldDataSaidaCheckout;
-    private JTextField jTextFieldObsCheckout;
-    private JTextField jTextFieldValorPagoCheckout;
-    private JComboBox<String> jComboBoxStatusRecebimentoCheckout;
-
+    // Botões Inferiores
     private JButton jButtonNovo;
     private JButton jButtonCancelar;
     private JButton jButtonGravar;
@@ -108,7 +104,7 @@ public class TelaCheck extends JDialog {
     }
 
     private void initComponents() {
-        setTitle("Check-in / Check-out");
+        setTitle("Check-in");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLayout(new BorderLayout(0, 4));
@@ -129,7 +125,7 @@ public class TelaCheck extends JDialog {
                 javax.swing.border.BevelBorder.RAISED));
         jPanelTitulo.setPreferredSize(new Dimension(0, 50));
 
-        JLabel lbl = new JLabel("Check-in / Check-out");
+        JLabel lbl = new JLabel("Controle de Check-in");
         lbl.setFont(new Font("Times New Roman", Font.BOLD, 22));
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
         jPanelTitulo.add(lbl, BorderLayout.CENTER);
@@ -145,7 +141,6 @@ public class TelaCheck extends JDialog {
         jTabbedPane1.addTab("Quarto", buildTabQuarto());
         jTabbedPane1.addTab("Vaga/Veículo", buildTabVaga());
         jTabbedPane1.addTab("Recebimento", buildTabRecebimento());
-        jTabbedPane1.addTab("Check-out", buildTabCheckout());
 
         return jTabbedPane1;
     }
@@ -164,7 +159,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 0;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("ID"), g);
-
         g.gridx = 1;
         g.gridy = 0;
         g.weightx = 0.3;
@@ -176,31 +170,27 @@ public class TelaCheck extends JDialog {
         g.gridy = 0;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Status"), g);
-
         g.gridx = 3;
         g.gridy = 0;
         g.weightx = 0.7;
         jComboBoxStatus = new JComboBox<>(new String[]{"Ativo", "Inativo"});
-        jComboBoxStatus.setEnabled(false);
         jPanelCheck.add(jComboBoxStatus, g);
 
         g.gridx = 0;
         g.gridy = 1;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Data Cadastro"), g);
-
         g.gridx = 1;
         g.gridy = 1;
         g.weightx = 0.3;
         jFormattedTextFieldDataCadastro = criarCampoData();
-        jFormattedTextFieldDataCadastro.setEditable(false);
+        jFormattedTextFieldDataCadastro.setEnabled(false);
         jPanelCheck.add(jFormattedTextFieldDataCadastro, g);
 
         g.gridx = 2;
         g.gridy = 1;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Data Entrada"), g);
-
         g.gridx = 3;
         g.gridy = 1;
         g.weightx = 0.7;
@@ -211,7 +201,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 2;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Data Saída Prev."), g);
-
         g.gridx = 1;
         g.gridy = 2;
         g.weightx = 0.3;
@@ -222,7 +211,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 3;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Reserva"), g);
-
         g.gridx = 1;
         g.gridy = 3;
         g.weightx = 0.3;
@@ -242,7 +230,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 4;
         g.weightx = 0;
         jPanelCheck.add(new JLabel("Observação"), g);
-
         g.gridx = 1;
         g.gridy = 4;
         g.weightx = 1.0;
@@ -270,7 +257,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 0;
         g.weightx = 0;
         top.add(new JLabel("Hóspede"), g);
-
         g.gridx = 1;
         g.gridy = 0;
         g.weightx = 1.0;
@@ -291,19 +277,16 @@ public class TelaCheck extends JDialog {
         g.weightx = 0;
         g.fill = GridBagConstraints.HORIZONTAL;
         top.add(new JLabel("Tipo"), g);
-
         g.gridx = 1;
         g.gridy = 1;
         g.weightx = 0.4;
-        jComboBoxTipoHospede = new JComboBox<>(
-                new String[]{"Responsável", "Dependente", "Visitante"});
+        jComboBoxTipoHospede = new JComboBox<>(new String[]{"Titular", "Acompanhante"});
         top.add(jComboBoxTipoHospede, g);
 
         g.gridx = 2;
         g.gridy = 1;
         g.weightx = 0;
         top.add(new JLabel("Obs"), g);
-
         g.gridx = 3;
         g.gridy = 1;
         g.weightx = 0.6;
@@ -323,7 +306,7 @@ public class TelaCheck extends JDialog {
 
         jTableHospedes = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"#", "Nome", "Tipo", "OBS", "Status"}));
+                new String[]{"ID", "Nome", "Tipo", "OBS", "Status"}));
         jTableHospedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTableHospedes.getColumnModel().getColumn(0).setMaxWidth(40);
         jTableHospedes.getColumnModel().getColumn(4).setMaxWidth(60);
@@ -352,7 +335,7 @@ public class TelaCheck extends JDialog {
                 javax.swing.border.BevelBorder.RAISED));
 
         JPanel top = new JPanel(new GridBagLayout());
-        top.setBorder(BorderFactory.createTitledBorder("Selecionar Quarto"));
+        top.setBorder(BorderFactory.createTitledBorder("Selecionar Quartos"));
         GridBagConstraints g = new GridBagConstraints();
         g.insets = new Insets(4, 6, 4, 6);
         g.fill = GridBagConstraints.HORIZONTAL;
@@ -362,7 +345,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 0;
         g.weightx = 0;
         top.add(new JLabel("Quarto"), g);
-
         g.gridx = 1;
         g.gridy = 0;
         g.weightx = 1.0;
@@ -383,7 +365,6 @@ public class TelaCheck extends JDialog {
         g.gridy = 1;
         g.weightx = 0;
         top.add(new JLabel("OBS"), g);
-
         g.gridx = 1;
         g.gridy = 1;
         g.weightx = 0.8;
@@ -394,7 +375,7 @@ public class TelaCheck extends JDialog {
         g.gridy = 1;
         g.weightx = 0;
         g.fill = GridBagConstraints.NONE;
-        jButtonAlocarQuarto = new JButton("Alocar");
+        jButtonAlocarQuarto = new JButton("Alocar Quarto");
         try {
             jButtonAlocarQuarto.setIcon(new ImageIcon(getClass().getResource("/images/OK.png")));
         } catch (Exception ignored) {
@@ -403,7 +384,7 @@ public class TelaCheck extends JDialog {
 
         jTableQuartos = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"#", "Identificação", "Descrição", "OBS", "Status"}));
+                new String[]{"ID", "Identificação", "Descrição", "OBS", "Status"}));
         jTableQuartos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTableQuartos.getColumnModel().getColumn(0).setMaxWidth(40);
         jTableQuartos.getColumnModel().getColumn(4).setMaxWidth(60);
@@ -496,7 +477,7 @@ public class TelaCheck extends JDialog {
 
         jTableAlocacoesVagas = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"#", "Placa", "Vaga", "OBS", "Status"}));
+                new String[]{"ID", "Placa", "Vaga", "OBS", "Status"}));
         jTableAlocacoesVagas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTableAlocacoesVagas.getColumnModel().getColumn(0).setMaxWidth(40);
         jTableAlocacoesVagas.getColumnModel().getColumn(4).setMaxWidth(60);
@@ -528,8 +509,8 @@ public class TelaCheck extends JDialog {
         g.anchor = GridBagConstraints.WEST;
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        String[] labels = {"Valor Original", "Desconto", "Acréscimo",
-            "Valor Produtos (auto)", "Valor a Pagar (auto)", "Valor Pago"};
+        String[] labels = {"Valor Original (Estadia)", "Desconto", "Acréscimo",
+            "Valor Produtos (Copa)", "Valor a Pagar (auto)", "Valor Pago"};
         int row = 0;
         for (String lbl : labels) {
             g.gridx = 0;
@@ -554,12 +535,14 @@ public class TelaCheck extends JDialog {
                 case 3:
                     jTextFieldValorProdutos = tf;
                     tf.setEditable(false);
+                    tf.setBackground(new Color(245, 245, 245));
                     break;
                 case 4:
                     jTextFieldValorPagar = tf;
                     tf.setEditable(false);
                     tf.setFont(tf.getFont().deriveFont(Font.BOLD));
                     tf.setForeground(new Color(0, 100, 0));
+                    tf.setBackground(new Color(230, 255, 230));
                     break;
                 case 5:
                     jTextFieldValorPago = tf;
@@ -591,93 +574,6 @@ public class TelaCheck extends JDialog {
         jPanelRecebimento.add(jTextFieldObsRecebimento, g);
 
         return jPanelRecebimento;
-    }
-
-    private JPanel buildTabCheckout() {
-        jPanelCheckout = new JPanel(new BorderLayout(4, 4));
-        jPanelCheckout.setBorder(BorderFactory.createBevelBorder(
-                javax.swing.border.BevelBorder.RAISED));
-
-        JPanel top = new JPanel(new GridBagLayout());
-        top.setBorder(BorderFactory.createTitledBorder("Dados do Check-out"));
-        GridBagConstraints g = new GridBagConstraints();
-        g.insets = new Insets(5, 8, 5, 8);
-        g.fill = GridBagConstraints.HORIZONTAL;
-        g.anchor = GridBagConstraints.WEST;
-
-        g.gridx = 0;
-        g.gridy = 0;
-        g.weightx = 0;
-        top.add(new JLabel("Nº do Check-in"), g);
-        g.gridx = 1;
-        g.gridy = 0;
-        g.weightx = 0.8;
-        jFormattedTextFieldCheckoutId = new JFormattedTextField();
-        jFormattedTextFieldCheckoutId.setEnabled(false);
-        top.add(jFormattedTextFieldCheckoutId, g);
-        g.gridx = 2;
-        g.gridy = 0;
-        g.weightx = 0;
-        g.fill = GridBagConstraints.NONE;
-        jButtonBuscarCheckout = iconButton("/images/Find.png", "Buscar Check-in Ativo");
-        top.add(jButtonBuscarCheckout, g);
-        g.fill = GridBagConstraints.HORIZONTAL;
-
-        g.gridx = 0;
-        g.gridy = 1;
-        g.weightx = 0;
-        top.add(new JLabel("Data de Saída"), g);
-        g.gridx = 1;
-        g.gridy = 1;
-        g.weightx = 0.8;
-        jFormattedTextFieldDataSaidaCheckout = criarCampoData();
-        jFormattedTextFieldDataSaidaCheckout.setEditable(false);
-        top.add(jFormattedTextFieldDataSaidaCheckout, g);
-
-        g.gridx = 0;
-        g.gridy = 2;
-        g.weightx = 0;
-        top.add(new JLabel("Valor Pago"), g);
-        g.gridx = 1;
-        g.gridy = 2;
-        g.weightx = 0.8;
-        jTextFieldValorPagoCheckout = new JTextField("0.00");
-        top.add(jTextFieldValorPagoCheckout, g);
-
-        g.gridx = 0;
-        g.gridy = 3;
-        g.weightx = 0;
-        top.add(new JLabel("Status Recebimento"), g);
-        g.gridx = 1;
-        g.gridy = 3;
-        g.weightx = 0.8;
-        jComboBoxStatusRecebimentoCheckout = new JComboBox<>(new String[]{"Pendente", "Pago"});
-        jComboBoxStatusRecebimentoCheckout.setEnabled(false);
-        top.add(jComboBoxStatusRecebimentoCheckout, g);
-
-        g.gridx = 0;
-        g.gridy = 4;
-        g.weightx = 0;
-        top.add(new JLabel("Observação"), g);
-        g.gridx = 1;
-        g.gridy = 4;
-        g.weightx = 0.8;
-        jTextFieldObsCheckout = new JTextField();
-        jTextFieldObsCheckout.setEditable(false);
-        top.add(jTextFieldObsCheckout, g);
-
-        jTextAreaCheckoutInfo = new JTextArea(5, 40);
-        jTextAreaCheckoutInfo.setEditable(false);
-        jTextAreaCheckoutInfo.setBackground(new Color(240, 248, 240));
-        jTextAreaCheckoutInfo.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        jTextAreaCheckoutInfo.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        JPanel infoPanel = new JPanel(new BorderLayout());
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Informações do Check-in"));
-        infoPanel.add(new JScrollPane(jTextAreaCheckoutInfo), BorderLayout.CENTER);
-
-        jPanelCheckout.add(top, BorderLayout.NORTH);
-        jPanelCheckout.add(infoPanel, BorderLayout.CENTER);
-        return jPanelCheckout;
     }
 
     private JPanel buildBotoes() {
@@ -736,6 +632,7 @@ public class TelaCheck extends JDialog {
         return btn;
     }
 
+    // Getters
     public JPanel getjPanelBotoes() {
         return jPanelBotoes;
     }
@@ -758,10 +655,6 @@ public class TelaCheck extends JDialog {
 
     public JPanel getjPanelRecebimento() {
         return jPanelRecebimento;
-    }
-
-    public JPanel getjPanelCheckout() {
-        return jPanelCheckout;
     }
 
     public JTabbedPane getjTabbedPane() {
@@ -936,38 +829,9 @@ public class TelaCheck extends JDialog {
         return jComboBoxStatusRecebimento;
     }
 
-    public JFormattedTextField getjFormattedTextFieldCheckoutId() {
-        return jFormattedTextFieldCheckoutId;
-    }
-
-    public JButton getjButtonBuscarCheckout() {
-        return jButtonBuscarCheckout;
-    }
-
-    public JTextArea getjTextAreaCheckoutInfo() {
-        return jTextAreaCheckoutInfo;
-    }
-
-    public JFormattedTextField getjFormattedTextFieldDataSaidaCheckout() {
-        return jFormattedTextFieldDataSaidaCheckout;
-    }
-
-    public JTextField getjTextFieldObsCheckout() {
-        return jTextFieldObsCheckout;
-    }
-
-    public JTextField getjTextFieldValorPagoCheckout() {
-        return jTextFieldValorPagoCheckout;
-    }
-
-    public JComboBox<String> getjComboBoxStatusRecebimentoCheckout() {
-        return jComboBoxStatusRecebimentoCheckout;
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             TelaCheck d = new TelaCheck(null, true);
-            d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             d.setVisible(true);
         });
     }
