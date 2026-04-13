@@ -22,9 +22,13 @@ import controller.ControllerCadReserva;
 import controller.ControllerCadServico;
 import controller.ControllerCadVagaEstacionamento;
 import controller.ControllerCadVeiculo;
+import controller.ControllerCadCopaQuarto;
+import controller.ControllerCadCaixa;
 import model.DAO.JPAUtil;
 import view.TelaCheck;
 import view.TelaCadastroReserva;
+import view.TelaCadastroCopaQuarto;
+import view.TelaCadastroCaixa;
 
 /**
  *
@@ -61,6 +65,8 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         jMenuItemVeiculo = new javax.swing.JMenuItem();
         jMenuItemModelo = new javax.swing.JMenuItem();
         jMenuItemMarca = new javax.swing.JMenuItem();
+        jMenuItemCopa = new javax.swing.JMenuItem();
+        jMenuItemCaixa = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItemSair = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -147,6 +153,18 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         jMenuItemCheck.setText("Check-in / Check-out");
         jMenuItemCheck.addActionListener(this::jMenuItemCheckActionPerformed);
         jMenu3.add(jMenuItemCheck);
+
+        jMenuItemCopa = new javax.swing.JMenuItem();
+        jMenuItemCopa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/List.png"))); // NOI18N
+        jMenuItemCopa.setText("Copa do Quarto");
+        jMenuItemCopa.addActionListener(this::jMenuItemCopaActionPerformed);
+        jMenu3.add(jMenuItemCopa); 
+
+        jMenuItemCaixa = new javax.swing.JMenuItem();
+        jMenuItemCaixa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Buy.png"))); // NOI18N
+        jMenuItemCaixa.setText("Caixa");
+        jMenuItemCaixa.addActionListener(this::jMenuItemCaixaActionPerformed);
+        jMenu3.add(jMenuItemCaixa);
 
         jMenuBar1.add(jMenu3);
 
@@ -266,6 +284,20 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         tela.setVisible(true);
     }
 
+    @SuppressWarnings("unused")
+    private void jMenuItemCopaActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaCadastroCopaQuarto tela = new TelaCadastroCopaQuarto(null, true);
+        new ControllerCadCopaQuarto(tela);
+        tela.setVisible(true);
+    }
+
+    @SuppressWarnings("unused")
+    private void jMenuItemCaixaActionPerformed(java.awt.event.ActionEvent evt) {
+        TelaCadastroCaixa tela = new TelaCadastroCaixa(null, true);
+        new ControllerCadCaixa(tela);
+        tela.setVisible(true);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -320,6 +352,8 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemServico;
     private javax.swing.JMenuItem jMenuItemVeiculo;
     private javax.swing.JMenuItem jMenuItemVeiculo1;
+    private javax.swing.JMenuItem jMenuItemCopa;
+    private javax.swing.JMenuItem jMenuItemCaixa;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     // End of variables declaration//GEN-END:variables
