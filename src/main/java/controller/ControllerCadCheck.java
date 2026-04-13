@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -51,9 +52,6 @@ import view.TelaBuscaVaga;
 import view.TelaBuscaVeiculo;
 import view.TelaCheck;
 
-/**
- * Controller de Check-in e Check-out.
- */
 public class ControllerCadCheck implements ActionListener {
 
     private final TelaCheck view;
@@ -84,7 +82,6 @@ public class ControllerCadCheck implements ActionListener {
     private final List<Object[]>  quartosAlocados  = new ArrayList<>();
     private final List<Object[]>  vagasAlocadas    = new ArrayList<>();
 
-    // ========================================================================
     public ControllerCadCheck(TelaCheck view) {
         this.view = view;
         inicializar();
@@ -122,7 +119,6 @@ public class ControllerCadCheck implements ActionListener {
         view.getjButtonAlocarVaga().addActionListener(this);
         view.getjButtonRemoverVaga().addActionListener(this);
 
-        // Botão de Checkout (criado dinamicamente se não existir)
         JButton btnCheckout = obterBotaoCheckout();
         if (btnCheckout != null) btnCheckout.addActionListener(this);
     }
@@ -153,18 +149,24 @@ public class ControllerCadCheck implements ActionListener {
         }
     }
 
-    // ========================================================================
-    // CHECKOUT
-    // ========================================================================
-    /**
-     * Processo completo de Check-out:
-     * 1. Valida que há um check ativo carregado
-     * 2. Atualiza consumo da copa
-     * 3. Confirma valores com o usuário
-     * 4. Registra ou atualiza o 'receber'
-     * 5. Cria movimentação de caixa
-     * 6. Finaliza check, check_quartos e liberação de vagas
-     */
+    private void atualizarConsumoCopaPorQuartos() {
+        try {
+            BigDecimal total;
+            String idStr = view.getjTextFieldId().getText().trim();
+            if (!idStr.isEmpty()) {
+                total = copaQuartoService.buscarTotalConsumo(Integer.parseInt(idStr));
+            } else {
+                List<Integer> quartoIds = quartosAlocados.stream()
+                        .map(q -> ((Quarto) q[0]).getId())
+                        .collect(Collectors.toList());
+                total = copaQuartoService.buscarTotalConsumoByQuartos(quartoIds);
+            }
+            view.getjTextFieldValorProdutos().setText(total != null ? total.toPlainString() : "0.00");
+        } catch (Exception ignored) {
+            //
+        }
+    }
+
     private void handleCheckout() {
         String idStr = view.getjTextFieldId().getText().trim();
         if (idStr.isEmpty()) {
@@ -191,17 +193,14 @@ public class ControllerCadCheck implements ActionListener {
                 return;
             }
 
-            // Atualiza consumo copa antes do checkout
-            atualizarConsumoCopa(checkId);
+            atualizarConsumoCopaPorQuartos();
 
-            // Calcula valores
             BigDecimal valOriginal = parseBD(view.getjTextFieldValorOriginal().getText());
             BigDecimal valProdutos = parseBD(view.getjTextFieldValorProdutos().getText());
             BigDecimal desconto    = parseBD(view.getjTextFieldDesconto().getText());
             BigDecimal acrescimo   = parseBD(view.getjTextFieldAcrescimo().getText());
             BigDecimal valPagar    = valOriginal.add(valProdutos).subtract(desconto).add(acrescimo);
 
-            // Confirmação
             String msg = String.format(
                 "=== RESUMO DO CHECK-OUT ===\n\n" +
                 "Check #%d\n" +
@@ -224,17 +223,14 @@ public class ControllerCadCheck implements ActionListener {
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (conf != JOptionPane.YES_OPTION) return;
 
-            // Valor pago (pode ser diferente do total)
             String valPagoStr = view.getjTextFieldValorPago().getText().trim();
             BigDecimal valPago = parseBD(valPagoStr);
 
-            // Valida caixa se há movimentação financeira
             if (valPago.compareTo(BigDecimal.ZERO) > 0 && !caixaService.isCaixaAberto()) {
                 erro("Não há Caixa aberto. Abra o caixa antes de registrar um pagamento.");
                 return;
             }
 
-            // 1. Atualiza ou cria Receber
             Receber receber = receberService.findByCheckId(checkId);
             if (receber == null) {
                 receber = new Receber();
@@ -254,12 +250,10 @@ public class ControllerCadCheck implements ActionListener {
                 receberService.Atualizar(receber);
             }
 
-            // 2. Cria movimentação de caixa se houve pagamento
             if (valPago.compareTo(BigDecimal.ZERO) > 0) {
                 criarMovimentoCaixa(receber, valPago, checkId);
             }
 
-            // 3. Finaliza check_quartos (libera quartos)
             List<CheckQuarto> listaQuartos = checkQuartoService.findByCheckId(checkId);
             for (CheckQuarto cq : listaQuartos) {
                 cq.setStatus('F');
@@ -267,26 +261,22 @@ public class ControllerCadCheck implements ActionListener {
                 checkQuartoService.Atualizar(cq);
             }
 
-            // 4. Finaliza alocações de vagas (libera estacionamento)
             List<AlocacaoVaga> listaVagas = alocacaoVagaService.findByCheckId(checkId);
             for (AlocacaoVaga av : listaVagas) {
                 av.setStatus('F');
                 alocacaoVagaService.Atualizar(av);
             }
 
-            // 5. Finaliza o Check
             check.setStatus('F');
             check.setDataHoraSaida(LocalDateTime.now());
             checkService.Atualizar(check);
 
-            // 6. Atualiza a reserva associada (se houver)
             if (check.getReserva() != null) {
                 Reserva reserva = check.getReserva();
                 reserva.setStatus('F');
                 reservaService.Atualizar(reserva);
             }
 
-            // 7. Atualiza interface
             view.getjComboBoxStatus().setSelectedItem("Inativo");
             setModoEdicao(false);
             modoEdicao = false;
@@ -316,7 +306,6 @@ public class ControllerCadCheck implements ActionListener {
 
     private void criarMovimentoCaixa(Receber receber, BigDecimal valor, int checkId) {
         try {
-            // Obtém o caixa aberto
             List<Caixa> todos = caixaService.listarTodos();
             Caixa caixaAberto = todos.stream()
                     .filter(c -> c.getStatus() == 'A')
@@ -333,23 +322,10 @@ public class ControllerCadCheck implements ActionListener {
             mov.setStatus('A');
             movCaixaService.Criar(mov);
         } catch (Exception e) {
-            // Movimento de caixa falhou – não bloqueia o checkout
             System.err.println("Aviso: não foi possível criar movimentação de caixa: " + e.getMessage());
         }
     }
 
-    private void atualizarConsumoCopa(int checkId) {
-        try {
-            BigDecimal totalCopa = copaQuartoService.buscarTotalConsumo(checkId);
-            if (totalCopa != null) {
-                view.getjTextFieldValorProdutos().setText(totalCopa.toPlainString());
-            }
-        } catch (Exception ignored) {}
-    }
-
-    // ========================================================================
-    // CHECK-IN (preservado do original)
-    // ========================================================================
     private void handleNovo() {
         modoEdicao = true;
         limparFormulario();
@@ -457,7 +433,6 @@ public class ControllerCadCheck implements ActionListener {
 
             view.getjTextFieldId().setText(String.valueOf(check.getId()));
 
-            // Habilita botão de checkout
             JButton btnCheckout = obterBotaoCheckout();
             if (btnCheckout != null) btnCheckout.setEnabled(true);
 
@@ -537,13 +512,6 @@ public class ControllerCadCheck implements ActionListener {
             view.getjFormattedTextFieldReserva().setText(String.valueOf(reservaCheckIn.getId()));
         }
 
-        // Copa
-        try {
-            BigDecimal totalConsumo = copaQuartoService.buscarTotalConsumo(check.getId());
-            if (totalConsumo != null) view.getjTextFieldValorProdutos().setText(totalConsumo.toPlainString());
-        } catch (Exception ignored) {}
-
-        // Hóspedes
         try {
             List<CheckHospede> listaHospedes = checkHospedeService.findByCheckId(check.getId());
             if (listaHospedes != null) {
@@ -557,7 +525,6 @@ public class ControllerCadCheck implements ActionListener {
             }
         } catch (Exception ignored) {}
 
-        // Quartos
         try {
             List<CheckQuarto> listaQuartos = checkQuartoService.findByCheckId(check.getId());
             if (listaQuartos != null) {
@@ -571,7 +538,8 @@ public class ControllerCadCheck implements ActionListener {
             }
         } catch (Exception ignored) {}
 
-        // Vagas
+        atualizarConsumoCopaPorQuartos();
+
         try {
             List<AlocacaoVaga> listaVagas = alocacaoVagaService.findByCheckId(check.getId());
             if (listaVagas != null) {
@@ -585,7 +553,6 @@ public class ControllerCadCheck implements ActionListener {
             }
         } catch (Exception ignored) {}
 
-        // Financeiro
         try {
             Receber receber = receberService.findByCheckId(check.getId());
             if (receber != null) {
@@ -603,7 +570,6 @@ public class ControllerCadCheck implements ActionListener {
             }
         } catch (Exception ignored) {}
 
-        // Habilita checkout apenas para checks ativos
         JButton btnCheckout = obterBotaoCheckout();
         if (btnCheckout != null) {
             btnCheckout.setEnabled(check.getStatus() == 'A');
@@ -612,9 +578,6 @@ public class ControllerCadCheck implements ActionListener {
         view.getjTabbedPane().setSelectedIndex(0);
     }
 
-    // ========================================================================
-    // HANDLERS – RELACIONAMENTOS (preservados do original)
-    // ========================================================================
     private void handleBuscarReserva() {
         if (!modoEdicao) return;
         int[] holder = {0};
@@ -652,6 +615,7 @@ public class ControllerCadCheck implements ActionListener {
                                         new Object[]{q.getId(), q.getIdentificacao(), q.getDescricao(), "", q.getStatus()});
                             }
                         }
+                        atualizarConsumoCopaPorQuartos();
                     }
                 }
             } catch (Exception ex) {
@@ -744,6 +708,8 @@ public class ControllerCadCheck implements ActionListener {
         quartoPendente = null;
         view.getjFormattedTextFieldQuarto().setText("");
         view.getjTextFieldObsQuarto().setText("");
+
+        atualizarConsumoCopaPorQuartos();
     }
 
     private void handleRemoverQuarto() {
@@ -751,6 +717,7 @@ public class ControllerCadCheck implements ActionListener {
         if (row == -1) { mensagem("Selecione um quarto para remover."); return; }
         quartosAlocados.remove(row);
         ((DefaultTableModel) view.getjTableQuartos().getModel()).removeRow(row);
+        atualizarConsumoCopaPorQuartos();
     }
 
     private void handleBuscarVeiculo() {
@@ -818,9 +785,6 @@ public class ControllerCadCheck implements ActionListener {
         ((DefaultTableModel) view.getjTableAlocacoesVagas().getModel()).removeRow(row);
     }
 
-    // ========================================================================
-    // VALIDAÇÃO / UTILIDADES
-    // ========================================================================
     private void configurarCalculoRecebimento() {
         DocumentListener dl = new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { recalcular(); }
@@ -925,7 +889,6 @@ public class ControllerCadCheck implements ActionListener {
         view.getjTextFieldObsRecebimento().setEditable(editando);
         view.getjComboBoxStatusRecebimento().setEnabled(editando);
 
-        // Botão de checkout: só disponível quando há check carregado e não está editando
         JButton btnCheckout = obterBotaoCheckout();
         if (btnCheckout != null && editando) btnCheckout.setEnabled(false);
     }
@@ -1001,18 +964,12 @@ public class ControllerCadCheck implements ActionListener {
         return (sel != null && "Pago".equals(sel.toString())) ? 'P' : 'A';
     }
 
-    /**
-     * Obtém o botão de checkout da tela.
-     * O botão é adicionado dinamicamente ao painel de botões do TelaCheck.
-     */
     private JButton obterBotaoCheckout() {
-        // Busca pelo botão já existente no painel
         for (java.awt.Component c : view.getjPanelBotoes().getComponents()) {
             if (c instanceof JButton && "checkout".equals(((JButton) c).getName())) {
                 return (JButton) c;
             }
         }
-        // Cria o botão de checkout e adiciona antes do botão Sair
         JButton btnCheckout = new JButton("Check-out");
         btnCheckout.setName("checkout");
         btnCheckout.setEnabled(false);
@@ -1022,7 +979,6 @@ public class ControllerCadCheck implements ActionListener {
             btnCheckout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Exit.png")));
         } catch (Exception ignored) {}
 
-        // Insere o botão de checkout entre Buscar e Sair
         view.getjPanelBotoes().add(btnCheckout, view.getjPanelBotoes().getComponentCount() - 1);
         view.getjPanelBotoes().revalidate();
         view.getjPanelBotoes().repaint();

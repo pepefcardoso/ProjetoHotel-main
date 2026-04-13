@@ -18,9 +18,6 @@ import view.TelaBuscaProduto;
 import view.TelaBuscaQuarto;
 import view.TelaCadastroCopaQuartoNova;
 
-/**
- * Controller da tela de Copa do Quarto (pedidos de produtos/room service).
- */
 public final class ControllerCadCopaQuarto implements ActionListener {
 
     private final TelaCadastroCopaQuartoNova view;
@@ -70,7 +67,6 @@ public final class ControllerCadCopaQuarto implements ActionListener {
         else if (src == view.getjButtonRelacionarProduto())  handleBuscarProduto();
     }
 
-    // -------------------------------------------------------------------------
     private void handleNovo() {
         modoEdicao = true;
         codigoAtual = 0;
@@ -213,7 +209,6 @@ public final class ControllerCadCopaQuarto implements ActionListener {
         }
     }
 
-    // -------------------------------------------------------------------------
     private boolean validar() {
         if (quartoSelecionado == null) {
             mensagem("Selecione um Quarto antes de gravar.");

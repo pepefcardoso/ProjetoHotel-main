@@ -4,12 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-/**
- * Tela de Cadastro de Copa do Quarto (Pedidos de Produtos/Room Service).
- */
 public class TelaCadastroCopaQuartoNova extends JDialog {
 
-    // --- Componentes ---
     private JTextField jTextFieldId;
     private JTextField jTextFieldObservacao;
     private JTextField jTextFieldQuantidade;
@@ -40,7 +36,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         setResizable(false);
         setLayout(new BorderLayout(0, 4));
 
-        // --- Título ---
         JPanel panelTitulo = new JPanel(new BorderLayout());
         panelTitulo.setBackground(new Color(255, 204, 153));
         panelTitulo.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -51,7 +46,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         panelTitulo.add(lbl, BorderLayout.CENTER);
         add(panelTitulo, BorderLayout.NORTH);
 
-        // --- Painel de Dados ---
         jPanelDados = new JPanel(new GridBagLayout());
         jPanelDados.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         GridBagConstraints g = new GridBagConstraints();
@@ -59,7 +53,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         g.anchor = GridBagConstraints.WEST;
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        // ID
         g.gridx = 0; g.gridy = 0; g.weightx = 0;
         jPanelDados.add(new JLabel("ID"), g);
         g.gridx = 1; g.gridy = 0; g.weightx = 0.3;
@@ -67,7 +60,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         jTextFieldId.setEnabled(false);
         jPanelDados.add(jTextFieldId, g);
 
-        // Status
         g.gridx = 2; g.gridy = 0; g.weightx = 0;
         jPanelDados.add(new JLabel("Status"), g);
         g.gridx = 3; g.gridy = 0; g.weightx = 0.3;
@@ -75,7 +67,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         jComboBoxStatus.setEnabled(false);
         jPanelDados.add(jComboBoxStatus, g);
 
-        // Data Cadastro
         g.gridx = 4; g.gridy = 0; g.weightx = 0;
         jPanelDados.add(new JLabel("Data Pedido"), g);
         g.gridx = 5; g.gridy = 0; g.weightx = 0.4;
@@ -89,7 +80,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         jFormattedTextFieldCadastro.setHorizontalAlignment(JTextField.CENTER);
         jPanelDados.add(jFormattedTextFieldCadastro, g);
 
-        // Quarto
         g.gridx = 0; g.gridy = 1; g.weightx = 0;
         jPanelDados.add(new JLabel("Quarto"), g);
         g.gridx = 1; g.gridy = 1; g.weightx = 1.0; g.gridwidth = 4;
@@ -103,7 +93,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         jPanelDados.add(jButtonRelacionarQuarto, g);
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        // Produto
         g.gridx = 0; g.gridy = 2; g.weightx = 0;
         jPanelDados.add(new JLabel("Produto"), g);
         g.gridx = 1; g.gridy = 2; g.weightx = 1.0; g.gridwidth = 4;
@@ -117,19 +106,16 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         jPanelDados.add(jButtonRelacionarProduto, g);
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        // Quantidade
         g.gridx = 0; g.gridy = 3; g.weightx = 0;
         jPanelDados.add(new JLabel("Quantidade"), g);
         g.gridx = 1; g.gridy = 3; g.weightx = 0.3;
         jTextFieldQuantidade = new JTextField("1", 6);
         jPanelDados.add(jTextFieldQuantidade, g);
 
-        // Espaço vazio nas colunas restantes da linha 3
         g.gridx = 2; g.gridy = 3; g.weightx = 1.0; g.gridwidth = 4;
         jPanelDados.add(new JLabel(""), g);
         g.gridwidth = 1;
 
-        // Observação
         g.gridx = 0; g.gridy = 4; g.weightx = 0;
         jPanelDados.add(new JLabel("Observação"), g);
         g.gridx = 1; g.gridy = 4; g.weightx = 1.0; g.gridwidth = 5;
@@ -139,7 +125,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
 
         add(jPanelDados, BorderLayout.CENTER);
 
-        // --- Botões ---
         jPanelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 6));
         jPanelBotoes.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -180,7 +165,6 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
         return btn;
     }
 
-    // --- Getters ---
     public JTextField getjTextFieldId()            { return jTextFieldId; }
     public JTextField getjTextFieldObservacao()     { return jTextFieldObservacao; }
     public JTextField getjTextFieldQuantidade()     { return jTextFieldQuantidade; }

@@ -24,7 +24,7 @@ public class Hospede extends Pessoa {
     public Hospede() {
     }
 
-    public Hospede(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, LocalDateTime dataCadastro, String cpf, String rg, char sexo, String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status) { // dataCadastro alterado para LocalDateTime
+    public Hospede(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, LocalDateTime dataCadastro, String cpf, String rg, char sexo, String razaoSocial, String cnpj, String inscricaoEstadual, String contato, String obs, char status) {
         super(id, nome, fone1, fone2, email, cep, logradouro, bairro, cidade, complemento, dataCadastro, cpf, rg, obs, status, sexo);
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;

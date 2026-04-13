@@ -45,7 +45,7 @@ public class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, LocalDateTime dataCadastro, String cpf, String rg, String obs, char status, char sexo) { // Corrigido para LocalDateTime
+    public Pessoa(int id, String nome, String fone1, String fone2, String email, String cep, String logradouro, String bairro, String cidade, String complemento, LocalDateTime dataCadastro, String cpf, String rg, String obs, char status, char sexo) {
         this.id = id;
         this.nome = nome;
         this.fone1 = fone1;

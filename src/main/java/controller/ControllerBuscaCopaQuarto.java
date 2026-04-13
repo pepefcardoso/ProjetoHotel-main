@@ -38,7 +38,6 @@ public final class ControllerBuscaCopaQuarto extends AbstractControllerBusca<Cop
                 carregarPorId(Integer.parseInt(filtroTexto), tabela);
                 break;
             case QUARTO_ID:
-                // Busca por quarto.id via JPQL nativo - simplificado via obs
                 carregarPorAtributo("quarto.id", filtroTexto, tabela);
                 break;
             case PRODUTO_ID:

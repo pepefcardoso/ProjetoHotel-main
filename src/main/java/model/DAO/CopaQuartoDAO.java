@@ -12,11 +12,6 @@ public class CopaQuartoDAO extends BaseDAO<CopaQuarto> {
         super(CopaQuarto.class);
     }
 
-    /**
-     * Calcula o total de consumo de copa para todos os quartos de um check.
-     * Faz o join via check_quarto para encontrar os quartos do check,
-     * então soma quantidade * produto.valor de cada pedido de copa.
-     */
     public BigDecimal buscarTotalConsumo(int checkId) {
         String jpql =
             "SELECT COALESCE(SUM(c.quantidade * c.produto.valor), 0) " +
@@ -35,9 +30,22 @@ public class CopaQuartoDAO extends BaseDAO<CopaQuarto> {
         }
     }
 
-    /**
-     * Lista todos os pedidos de copa de um quarto específico.
-     */
+    public BigDecimal buscarTotalConsumoByQuartos(List<Integer> quartoIds) {
+        if (quartoIds == null || quartoIds.isEmpty()) return BigDecimal.ZERO;
+        String jpql =
+            "SELECT COALESCE(SUM(c.quantidade * c.produto.valor), 0) " +
+            "FROM CopaQuarto c WHERE c.quarto.id IN :quartoIds";
+        try {
+            BigDecimal total = em.createQuery(jpql, BigDecimal.class)
+                                 .setParameter("quartoIds", quartoIds)
+                                 .getSingleResult();
+            return total != null ? total : BigDecimal.ZERO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BigDecimal.ZERO;
+        }
+    }
+
     public List<CopaQuarto> findByQuartoId(int quartoId) {
         try {
             return em.createQuery(
@@ -50,9 +58,6 @@ public class CopaQuartoDAO extends BaseDAO<CopaQuarto> {
         }
     }
 
-    /**
-     * Lista pedidos de copa de todos os quartos de um check.
-     */
     public List<CopaQuarto> findByCheckId(int checkId) {
         String jpql =
             "SELECT c FROM CopaQuarto c " +

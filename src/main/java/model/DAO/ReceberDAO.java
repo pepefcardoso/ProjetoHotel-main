@@ -15,7 +15,7 @@ public class ReceberDAO extends BaseDAO<Receber> {
                  .setParameter("checkId", checkId)
                  .getSingleResult();
     } catch (jakarta.persistence.NoResultException e) {
-        return null; // Retorna null caso ainda não exista um registro de 'Receber' para este check
+        return null;
     }
 }
 }

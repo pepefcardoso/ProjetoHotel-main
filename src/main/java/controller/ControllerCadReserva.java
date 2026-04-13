@@ -97,9 +97,6 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
         }
     }
 
-    /**
-     * Cria um novo ReservaQuarto se um quarto foi selecionado.
-     */
     private void salvarReservaQuarto(Reserva reserva) throws Exception {
         if (quartoSelecionado == null) {
             return;
@@ -115,10 +112,6 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
         reservaQuartoService.Criar(rq);
     }
 
-    /**
-     * Correção: Atualiza as datas corretamente caso o quarto continue o mesmo
-     * ou desativa os relacionamentos antigos caso o quarto tenha sido trocado.
-     */
     private void atualizarReservaQuarto(Reserva reserva) throws Exception {
         if (quartoSelecionado == null) {
             return;
@@ -247,9 +240,6 @@ public final class ControllerCadReserva extends AbstractControllerCad<Reserva, T
         carregarQuartoDaReserva(reserva.getId());
     }
 
-    /**
-     * Carrega o primeiro ReservaQuarto ativo associado à reserva.
-     */
     private void carregarQuartoDaReserva(int reservaId) {
         try {
             List<ReservaQuarto> lista = reservaQuartoService.findByReservaId(reservaId);

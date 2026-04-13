@@ -4,13 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-/**
- * Tela de Cadastro e Controle de Caixa.
- * Permite abrir/fechar caixa e visualizar movimentações.
- */
 public class TelaCadastroCaixa extends JDialog {
 
-    // --- Campos principais ---
     private JTextField jTextFieldId;
     private JTextField jTextFieldValorAbertura;
     private JTextField jTextFieldValorFechamento;
@@ -21,7 +16,6 @@ public class TelaCadastroCaixa extends JDialog {
     private JTextField jTextFieldFuncionario;
     private JButton jButtonRelacionarFuncionario;
 
-    // --- Botões principais ---
     private JButton jButtonNovo;
     private JButton jButtonCancelar;
     private JButton jButtonGravar;
@@ -30,7 +24,6 @@ public class TelaCadastroCaixa extends JDialog {
     private JButton jButtonAbrirCaixa;
     private JButton jButtonFecharCaixa;
 
-    // --- Movimentações ---
     private JTable jTableMovimentos;
     private JTextField jTextFieldTotalEntradas;
     private JTextField jTextFieldTotalSaidas;
@@ -51,7 +44,6 @@ public class TelaCadastroCaixa extends JDialog {
         setResizable(false);
         setLayout(new BorderLayout(0, 4));
 
-        // Título
         JPanel panelTitulo = new JPanel(new BorderLayout());
         panelTitulo.setBackground(new Color(255, 204, 153));
         panelTitulo.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -62,14 +54,12 @@ public class TelaCadastroCaixa extends JDialog {
         panelTitulo.add(lbl, BorderLayout.CENTER);
         add(panelTitulo, BorderLayout.NORTH);
 
-        // Abas
         jTabbedPane = new JTabbedPane();
         jTabbedPane.setBorder(BorderFactory.createEmptyBorder(4, 4, 0, 4));
         jTabbedPane.addTab("Caixa", buildTabCaixa());
         jTabbedPane.addTab("Movimentações", buildTabMovimentos());
         add(jTabbedPane, BorderLayout.CENTER);
 
-        // Botões
         add(buildBotoes(), BorderLayout.SOUTH);
 
         pack();
@@ -85,7 +75,6 @@ public class TelaCadastroCaixa extends JDialog {
         g.anchor = GridBagConstraints.WEST;
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        // Linha 0 – ID e Status
         g.gridx = 0; g.gridy = 0; g.weightx = 0;
         jPanelDados.add(new JLabel("ID"), g);
         g.gridx = 1; g.gridy = 0; g.weightx = 0.2;
@@ -100,7 +89,6 @@ public class TelaCadastroCaixa extends JDialog {
         jComboBoxStatus.setEnabled(false);
         jPanelDados.add(jComboBoxStatus, g);
 
-        // Linha 1 – Funcionário
         g.gridx = 0; g.gridy = 1; g.weightx = 0;
         jPanelDados.add(new JLabel("Funcionário Resp."), g);
         g.gridx = 1; g.gridy = 1; g.weightx = 1.0; g.gridwidth = 2;
@@ -113,7 +101,6 @@ public class TelaCadastroCaixa extends JDialog {
         jPanelDados.add(jButtonRelacionarFuncionario, g);
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        // Linha 2 – Valor de Abertura e Data Abertura
         g.gridx = 0; g.gridy = 2; g.weightx = 0;
         jPanelDados.add(new JLabel("Valor de Abertura (R$)"), g);
         g.gridx = 1; g.gridy = 2; g.weightx = 0.3;
@@ -133,7 +120,6 @@ public class TelaCadastroCaixa extends JDialog {
         jFormattedTextFieldDataAbertura.setHorizontalAlignment(JTextField.CENTER);
         jPanelDados.add(jFormattedTextFieldDataAbertura, g);
 
-        // Linha 3 – Valor de Fechamento e Data Fechamento
         g.gridx = 0; g.gridy = 3; g.weightx = 0;
         jPanelDados.add(new JLabel("Valor de Fechamento (R$)"), g);
         g.gridx = 1; g.gridy = 3; g.weightx = 0.3;
@@ -156,7 +142,6 @@ public class TelaCadastroCaixa extends JDialog {
         jFormattedTextFieldDataFechamento.setHorizontalAlignment(JTextField.CENTER);
         jPanelDados.add(jFormattedTextFieldDataFechamento, g);
 
-        // Linha 4 – Observação
         g.gridx = 0; g.gridy = 4; g.weightx = 0;
         jPanelDados.add(new JLabel("Observação"), g);
         g.gridx = 1; g.gridy = 4; g.weightx = 1.0; g.gridwidth = 3;
@@ -164,7 +149,6 @@ public class TelaCadastroCaixa extends JDialog {
         jPanelDados.add(jTextFieldObs, g);
         g.gridwidth = 1;
 
-        // Linha 5 – Botões de ação do caixa
         JPanel panelAcoes = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         panelAcoes.setBorder(BorderFactory.createTitledBorder("Ações do Caixa"));
 
@@ -201,7 +185,6 @@ public class TelaCadastroCaixa extends JDialog {
         JPanel panel = new JPanel(new BorderLayout(4, 4));
         panel.setBorder(BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        // Tabela de movimentos
         jTableMovimentos = new JTable(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"ID", "Data/Hora", "Descrição", "Valor (R$)", "Status"}
@@ -215,7 +198,6 @@ public class TelaCadastroCaixa extends JDialog {
 
         panel.add(new JScrollPane(jTableMovimentos), BorderLayout.CENTER);
 
-        // Totais
         JPanel panelTotais = new JPanel(new GridBagLayout());
         panelTotais.setBorder(BorderFactory.createTitledBorder("Resumo do Caixa"));
         GridBagConstraints g = new GridBagConstraints();
@@ -291,7 +273,6 @@ public class TelaCadastroCaixa extends JDialog {
         return btn;
     }
 
-    // --- Getters ---
     public JTextField getjTextFieldId()              { return jTextFieldId; }
     public JTextField getjTextFieldValorAbertura()   { return jTextFieldValorAbertura; }
     public JTextField getjTextFieldValorFechamento() { return jTextFieldValorFechamento; }

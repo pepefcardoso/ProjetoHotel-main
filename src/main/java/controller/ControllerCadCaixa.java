@@ -22,10 +22,6 @@ import view.TelaBuscaCaixa;
 import view.TelaBuscaFuncionario;
 import view.TelaCadastroCaixa;
 
-/**
- * Controller completo para a Tela de Caixa.
- * Suporta: abertura, busca/edição, fechamento e visualização de movimentos.
- */
 public final class ControllerCadCaixa implements ActionListener {
 
     private static final DateTimeFormatter DT_FORMATTER =
@@ -47,7 +43,6 @@ public final class ControllerCadCaixa implements ActionListener {
         verificarStatusCaixaAtual();
     }
 
-    // -------------------------------------------------------------------------
     private void inicializar() {
         view.getjTextFieldId().setEnabled(false);
         view.getjTextFieldValorFechamento().setEditable(false);
@@ -82,25 +77,24 @@ public final class ControllerCadCaixa implements ActionListener {
         else if (src == view.getjButtonRelacionarFuncionario())  handleBuscarFuncionario();
     }
 
-    // -------------------------------------------------------------------------
-    /** Verifica e exibe o caixa atualmente aberto, se houver. */
     private void verificarStatusCaixaAtual() {
         try {
             if (caixaService.isCaixaAberto()) {
-                // Tenta carregar o caixa aberto para exibir info
                 List<Caixa> todos = caixaService.listarTodos();
                 Caixa aberto = todos.stream()
                         .filter(c -> c.getStatus() == 'A')
                         .findFirst()
                         .orElse(null);
                 if (aberto != null) {
+                    caixaAtual = aberto;
                     carregarCaixaParaVisualizacao(aberto);
+                    carregarMovimentos(aberto.getId());
                     view.getjButtonFecharCaixa().setEnabled(true);
                     view.getjButtonAbrirCaixa().setEnabled(false);
                 }
             }
         } catch (Exception ex) {
-            // Silencia – só é chamado na inicialização
+            //
         }
     }
 
@@ -131,13 +125,12 @@ public final class ControllerCadCaixa implements ActionListener {
             caixa.setValorDeAbertura(valorAbertura);
             caixa.setValorDeFechamento(BigDecimal.ZERO);
             caixa.setDataHoraAbertura(LocalDateTime.now());
-            caixa.setDataHoraFechamento(LocalDateTime.now()); // placeholder
+            caixa.setDataHoraFechamento(LocalDateTime.now());
             caixa.setObs(view.getjTextFieldObs().getText().trim());
             caixa.setStatus('A');
             caixa.setFuncionario(funcionarioSelecionado);
 
             if (caixaAtual == null) {
-                // Verifica se já existe caixa aberto
                 if (caixaService.isCaixaAberto()) {
                     erro("Já existe um Caixa aberto. Feche-o antes de abrir um novo.");
                     return;
@@ -170,14 +163,13 @@ public final class ControllerCadCaixa implements ActionListener {
             try {
                 Caixa caixa = caixaService.Carregar(holder[0]);
                 if (caixa != null) {
-                    caixaAtual = caixa;
                     modoEdicao = true;
                     limparFormulario();
+                    caixaAtual = caixa;
                     setModoEdicao(true);
                     carregarCaixaParaVisualizacao(caixa);
                     carregarMovimentos(caixa.getId());
 
-                    // Habilita fechar apenas se aberto
                     view.getjButtonFecharCaixa().setEnabled(caixa.getStatus() == 'A');
                     view.getjButtonAbrirCaixa().setEnabled(false);
                 }
@@ -187,10 +179,8 @@ public final class ControllerCadCaixa implements ActionListener {
         }
     }
 
-    /** Abre um novo caixa com atalho direto sem passar pelo Novo/Gravar. */
     private void handleAbrirCaixa() {
         if (view.getjTextFieldId().getText().trim().isEmpty()) {
-            // Não há caixa carregado – aciona fluxo Novo
             handleNovo();
             mensagem("Preencha o Valor de Abertura e o Funcionário Responsável,\nem seguida clique em 'Gravar' para abrir o caixa.");
         } else {
@@ -216,7 +206,6 @@ public final class ControllerCadCaixa implements ActionListener {
         if (conf != JOptionPane.YES_OPTION) return;
 
         try {
-            // Calcula saldo
             BigDecimal saldo = calcularSaldo(caixaAtual.getId());
 
             caixaAtual.setStatus('F');
@@ -224,7 +213,6 @@ public final class ControllerCadCaixa implements ActionListener {
             caixaAtual.setValorDeFechamento(saldo);
             caixaService.Atualizar(caixaAtual);
 
-            // Atualiza campo de fechamento
             view.getjTextFieldValorFechamento().setText(String.format("%.2f", saldo.doubleValue()));
             view.getjFormattedTextFieldDataFechamento().setText(
                     LocalDateTime.now().format(DT_FORMATTER));
@@ -261,7 +249,6 @@ public final class ControllerCadCaixa implements ActionListener {
         }
     }
 
-    // -------------------------------------------------------------------------
     private void carregarCaixaParaVisualizacao(Caixa caixa) {
         view.getjTextFieldId().setText(String.valueOf(caixa.getId()));
         view.getjComboBoxStatus().setSelectedItem(caixa.getStatus() == 'A' ? "Aberto" : "Fechado");
@@ -321,13 +308,12 @@ public final class ControllerCadCaixa implements ActionListener {
             view.getjTextFieldTotalSaidas().setText(String.format("%.2f", totalSaidas.doubleValue()));
             view.getjTextFieldSaldo().setText(String.format("%.2f", saldo.doubleValue()));
 
-            // Colorir saldo
             Color corSaldo = saldo.compareTo(BigDecimal.ZERO) >= 0
                     ? new Color(0, 100, 0) : new Color(180, 0, 0);
             view.getjTextFieldSaldo().setForeground(corSaldo);
 
         } catch (Exception ex) {
-            // Silencia erro de movimentos
+            //
         }
     }
 
@@ -338,7 +324,6 @@ public final class ControllerCadCaixa implements ActionListener {
             for (MovimentoCaixa mov : movimentos) {
                 soma = soma.add(mov.getValor());
             }
-            // Soma o valor de abertura
             if (caixaAtual != null && caixaAtual.getValorDeAbertura() != null) {
                 soma = soma.add(caixaAtual.getValorDeAbertura());
             }
@@ -349,7 +334,6 @@ public final class ControllerCadCaixa implements ActionListener {
         }
     }
 
-    // -------------------------------------------------------------------------
     private boolean validar() {
         String valorStr = view.getjTextFieldValorAbertura().getText().trim();
         if (valorStr.isEmpty()) {

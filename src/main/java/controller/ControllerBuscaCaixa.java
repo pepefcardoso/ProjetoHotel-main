@@ -59,7 +59,6 @@ public final class ControllerBuscaCaixa extends AbstractControllerBusca<Caixa, T
         });
     }
 
-    // Caixa usa 'A' = Aberto, 'F' = Fechado (não 'I' = Inativo)
     @Override
     protected void handleSelecionarItem() {
         int row = getTable().getSelectedRow();
@@ -67,8 +66,8 @@ public final class ControllerBuscaCaixa extends AbstractControllerBusca<Caixa, T
         Object statusObj = getTable().getValueAt(row, getStatusColumnIndex());
         if (statusObj != null) {
             char status = statusObj.toString().charAt(0);
-            getButtonAtivar().setEnabled(status == 'F');    // pode "reabrir" se fechado
-            getButtonInativar().setEnabled(status == 'A');  // pode "fechar" se aberto
+            getButtonAtivar().setEnabled(status == 'F');
+            getButtonInativar().setEnabled(status == 'A');
         }
     }
 

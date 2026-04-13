@@ -54,8 +54,6 @@ public class TelaCadastroFuncionario extends javax.swing.JDialog {
         return jPanelDados;
     }
     
-    // Adicione os métodos getters e setters para os componentes, igual ao TelaCadastroHospede
-
     public JTextField getjTextFieldId() {
         return jTextFieldId;
     }

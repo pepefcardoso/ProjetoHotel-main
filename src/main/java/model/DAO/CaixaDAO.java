@@ -8,7 +8,6 @@ public class CaixaDAO extends BaseDAO<Caixa> {
         super(Caixa.class);
     }
 
-    // Retorna true se existir pelo menos 1 caixa com status 'A' (Aberto/Ativo)
     public boolean isCaixaAberto() {
         String jpql = "SELECT COUNT(c) FROM Caixa c WHERE c.status = 'A'";
         try {

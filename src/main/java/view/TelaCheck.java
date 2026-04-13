@@ -29,17 +29,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
-/**
- * Tela de Check-in do Hotel. Abas: Check | Hóspedes | Quarto | Vaga/Veículo |
- * Recebimento
- */
 public class TelaCheck extends JDialog {
 
     private JPanel jPanelTitulo;
     private JTabbedPane jTabbedPane1;
     private JPanel jPanelBotoes;
 
-    // Aba Check
     private JPanel jPanelCheck;
     private JTextField jTextFieldId;
     private JComboBox<String> jComboBoxStatus;
@@ -50,7 +45,6 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRelacionarReserva;
     private JTextField jTextFieldObs;
 
-    // Aba Hóspedes
     private JPanel jPanelHospedes;
     private JFormattedTextField jFormattedTextFieldHospede;
     private JButton jButtonRelacionarHospede;
@@ -60,7 +54,6 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverHospede;
     private JTable jTableHospedes;
 
-    // Aba Quarto
     private JPanel jPanelQuartos;
     private JFormattedTextField jFormattedTextFieldQuarto;
     private JButton jButtonRelacionarQuarto;
@@ -69,7 +62,6 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverQuarto;
     private JTable jTableQuartos;
 
-    // Aba Vaga / Veículo
     private JPanel jPanelVaga;
     private JFormattedTextField jFormattedTextFieldVeiculo;
     private JButton jButtonRelacionarVeiculo;
@@ -80,7 +72,6 @@ public class TelaCheck extends JDialog {
     private JButton jButtonRemoverVaga;
     private JTable jTableAlocacoesVagas;
 
-    // Aba Recebimento
     private JPanel jPanelRecebimento;
     private JTextField jTextFieldValorOriginal;
     private JTextField jTextFieldDesconto;
@@ -91,7 +82,6 @@ public class TelaCheck extends JDialog {
     private JTextField jTextFieldObsRecebimento;
     private JComboBox<String> jComboBoxStatusRecebimento;
 
-    // Botões Inferiores
     private JButton jButtonNovo;
     private JButton jButtonCancelar;
     private JButton jButtonGravar;
@@ -632,7 +622,6 @@ public class TelaCheck extends JDialog {
         return btn;
     }
 
-    // Getters
     public JPanel getjPanelBotoes() {
         return jPanelBotoes;
     }
