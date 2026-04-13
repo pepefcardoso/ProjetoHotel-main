@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-public class TelaCadastroCopaQuartoNova extends JDialog {
+public class TelaCadastroCopaQuarto extends JDialog {
 
     private JTextField jTextFieldId;
     private JTextField jTextFieldObservacao;
@@ -25,7 +25,7 @@ public class TelaCadastroCopaQuartoNova extends JDialog {
     private JPanel jPanelBotoes;
     private JPanel jPanelDados;
 
-    public TelaCadastroCopaQuartoNova(Frame parent, boolean modal) {
+    public TelaCadastroCopaQuarto(Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }

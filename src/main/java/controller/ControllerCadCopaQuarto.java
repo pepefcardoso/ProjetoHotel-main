@@ -16,11 +16,11 @@ import utilities.Utilities;
 import view.TelaBuscaCopaQuarto;
 import view.TelaBuscaProduto;
 import view.TelaBuscaQuarto;
-import view.TelaCadastroCopaQuartoNova;
+import view.TelaCadastroCopaQuarto;
 
 public final class ControllerCadCopaQuarto implements ActionListener {
 
-    private final TelaCadastroCopaQuartoNova view;
+    private final TelaCadastroCopaQuarto view;
     private final CopaQuartoService copaQuartoService = new CopaQuartoService();
     private final QuartoService quartoService = new QuartoService();
     private final ProdutoService produtoService = new ProdutoService();
@@ -30,7 +30,7 @@ public final class ControllerCadCopaQuarto implements ActionListener {
     private int codigoAtual = 0;
     private boolean modoEdicao = false;
 
-    public ControllerCadCopaQuarto(TelaCadastroCopaQuartoNova view) {
+    public ControllerCadCopaQuarto(TelaCadastroCopaQuarto view) {
         this.view = view;
         inicializar();
         registrarListeners();
