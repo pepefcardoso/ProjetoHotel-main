@@ -124,7 +124,7 @@ public class ControllerCadCheck implements ActionListener {
         if (btnCheckout != null) btnCheckout.addActionListener(this);
 
         view.getjTabbedPane().addChangeListener(e -> {
-            if (view.getjTabbedPane().getSelectedIndex() == 4 && modoEdicao) {
+            if (modoEdicao) {
                 atualizarConsumoCopaPorQuartos();
             }
         });
@@ -554,9 +554,9 @@ public class ControllerCadCheck implements ActionListener {
         }
 
         try {
-            List<CheckHospede> listaHospedes = checkHospedeService.findByCheckId(check.getId());
+            List<model.CheckHospede> listaHospedes = checkHospedeService.findByCheckId(check.getId());
             if (listaHospedes != null) {
-                for (CheckHospede ch : listaHospedes) {
+                for (model.CheckHospede ch : listaHospedes) {
                     hospedesAlocados.add(ch.getHospede());
                     adicionarLinhaTabela(view.getjTableHospedes(), new Object[]{
                         ch.getHospede().getId(),
@@ -650,24 +650,19 @@ public class ControllerCadCheck implements ActionListener {
                     view.getjFormattedTextFieldDataSaida().setText(Utilities.formatarData(r.getDataPrevistaSaida()));
 
                 List<ReservaQuarto> rqList = reservaQuartoService.findByReservaId(r.getId());
-                if (!rqList.isEmpty()) {
-                    int resp = JOptionPane.showConfirmDialog(view,
-                            "Deseja importar automaticamente todos os quartos associados a esta reserva?",
-                            "Importar Quartos", JOptionPane.YES_NO_OPTION);
-                    if (resp == JOptionPane.YES_OPTION) {
-                        for (ReservaQuarto rq : rqList) {
-                            Quarto q = rq.getQuarto();
-                            boolean exists = quartosAlocados.stream()
-                                    .anyMatch(qInfo -> ((Quarto) qInfo[0]).getId() == q.getId());
-                            if (q != null && !exists) {
-                                quartosAlocados.add(new Object[]{q, ""});
-                                adicionarLinhaTabela(view.getjTableQuartos(),
-                                        new Object[]{q.getId(), q.getIdentificacao(), q.getDescricao(), "", q.getStatus()});
-                            }
-                        }
-                        atualizarConsumoCopaPorQuartos();
+                for (ReservaQuarto rq : rqList) {
+                    Quarto q = rq.getQuarto();
+                    if (q == null) continue;
+                    boolean exists = quartosAlocados.stream()
+                            .anyMatch(qInfo -> ((Quarto) qInfo[0]).getId() == q.getId());
+                    if (!exists) {
+                        quartosAlocados.add(new Object[]{q, ""});
+                        adicionarLinhaTabela(view.getjTableQuartos(),
+                                new Object[]{q.getId(), q.getIdentificacao(), q.getDescricao(), "", q.getStatus()});
                     }
                 }
+                atualizarConsumoCopaPorQuartos();
+
             } catch (Exception ex) {
                 erro("Erro ao carregar reserva: " + ex.getMessage());
             }
@@ -749,7 +744,7 @@ public class ControllerCadCheck implements ActionListener {
             mensagem("Preencha as datas de entrada e saída antes de alocar quartos.");
             return;
         }
-        
+
         boolean exists = quartosAlocados.stream().anyMatch(q -> ((Quarto) q[0]).getId() == quartoPendente.getId());
         if (exists) { mensagem("Este quarto já está alocado neste check-in."); return; }
 
@@ -813,14 +808,14 @@ public class ControllerCadCheck implements ActionListener {
             mensagem("Selecione o Veículo e a Vaga para realizar a alocação.");
             return;
         }
-        
+
         boolean veiculoJaAlocado = vagasAlocadas.stream()
                 .anyMatch(v -> ((Veiculo) v[0]).getId() == veiculoPendente.getId());
         if (veiculoJaAlocado) {
             mensagem("Este veículo já está alocado neste check-in.");
             return;
         }
-        
+
         boolean vagaJaAlocada = vagasAlocadas.stream()
                 .anyMatch(v -> ((VagaEstacionamento) v[1]).getId() == vagaPendente.getId());
         if (vagaJaAlocada) {

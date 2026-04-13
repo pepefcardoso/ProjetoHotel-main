@@ -65,6 +65,12 @@ public final class ControllerCadCaixa implements ActionListener {
         view.getjButtonAbrirCaixa().addActionListener(this);
         view.getjButtonFecharCaixa().addActionListener(this);
         view.getjButtonRelacionarFuncionario().addActionListener(this);
+
+        view.getjTabbedPane().addChangeListener(e -> {
+            if (view.getjTabbedPane().getSelectedIndex() == 1 && caixaAtual != null) {
+                carregarMovimentos(caixaAtual.getId());
+            }
+        });
     }
 
     @Override
