@@ -12,9 +12,11 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import model.Caixa;
+import model.CopaQuarto;
 import model.Funcionario;
 import model.MovimentoCaixa;
 import service.CaixaService;
+import service.CopaQuartoService;
 import service.FuncionarioService;
 import service.MovimentoCaixaService;
 import utilities.Utilities;
@@ -28,9 +30,10 @@ public final class ControllerCadCaixa implements ActionListener {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final TelaCadastroCaixa view;
-    private final CaixaService caixaService = new CaixaService();
-    private final FuncionarioService funcionarioService = new FuncionarioService();
+    private final CaixaService caixaService             = new CaixaService();
+    private final FuncionarioService funcionarioService  = new FuncionarioService();
     private final MovimentoCaixaService movimentoCaixaService = new MovimentoCaixaService();
+    private final CopaQuartoService copaQuartoService   = new CopaQuartoService();
 
     private Funcionario funcionarioSelecionado = null;
     private Caixa caixaAtual = null;
@@ -254,22 +257,18 @@ public final class ControllerCadCaixa implements ActionListener {
         view.getjComboBoxStatus().setSelectedItem(caixa.getStatus() == 'A' ? "Aberto" : "Fechado");
         view.getjTextFieldObs().setText(caixa.getObs() != null ? caixa.getObs() : "");
 
-        if (caixa.getValorDeAbertura() != null) {
+        if (caixa.getValorDeAbertura() != null)
             view.getjTextFieldValorAbertura().setText(
                     String.format("%.2f", caixa.getValorDeAbertura().doubleValue()));
-        }
-        if (caixa.getValorDeFechamento() != null) {
+        if (caixa.getValorDeFechamento() != null)
             view.getjTextFieldValorFechamento().setText(
                     String.format("%.2f", caixa.getValorDeFechamento().doubleValue()));
-        }
-        if (caixa.getDataHoraAbertura() != null) {
+        if (caixa.getDataHoraAbertura() != null)
             view.getjFormattedTextFieldDataAbertura().setText(
                     caixa.getDataHoraAbertura().format(DT_FORMATTER));
-        }
-        if (caixa.getDataHoraFechamento() != null && caixa.getStatus() == 'F') {
+        if (caixa.getDataHoraFechamento() != null && caixa.getStatus() == 'F')
             view.getjFormattedTextFieldDataFechamento().setText(
                     caixa.getDataHoraFechamento().format(DT_FORMATTER));
-        }
         if (caixa.getFuncionario() != null) {
             funcionarioSelecionado = caixa.getFuncionario();
             view.getjTextFieldFuncionario().setText(caixa.getFuncionario().getNome());
@@ -280,11 +279,11 @@ public final class ControllerCadCaixa implements ActionListener {
         DefaultTableModel tabela = (DefaultTableModel) view.getjTableMovimentos().getModel();
         tabela.setRowCount(0);
 
+        BigDecimal totalEntradas = BigDecimal.ZERO;
+        BigDecimal totalSaidas   = BigDecimal.ZERO;
+
         try {
             List<MovimentoCaixa> movimentos = movimentoCaixaService.findByCaixaId(caixaId);
-            BigDecimal totalEntradas = BigDecimal.ZERO;
-            BigDecimal totalSaidas  = BigDecimal.ZERO;
-
             for (MovimentoCaixa mov : movimentos) {
                 String dataStr = mov.getDataHoraMovimento() != null
                         ? mov.getDataHoraMovimento().format(DT_FORMATTER) : "-";
@@ -295,26 +294,49 @@ public final class ControllerCadCaixa implements ActionListener {
                     String.format("R$ %.2f", mov.getValor().doubleValue()),
                     mov.getStatus()
                 });
-
-                if (mov.getValor().compareTo(BigDecimal.ZERO) >= 0) {
+                if (mov.getValor().compareTo(BigDecimal.ZERO) >= 0)
                     totalEntradas = totalEntradas.add(mov.getValor());
-                } else {
+                else
                     totalSaidas = totalSaidas.add(mov.getValor().abs());
-                }
             }
-
-            BigDecimal saldo = totalEntradas.subtract(totalSaidas);
-            view.getjTextFieldTotalEntradas().setText(String.format("%.2f", totalEntradas.doubleValue()));
-            view.getjTextFieldTotalSaidas().setText(String.format("%.2f", totalSaidas.doubleValue()));
-            view.getjTextFieldSaldo().setText(String.format("%.2f", saldo.doubleValue()));
-
-            Color corSaldo = saldo.compareTo(BigDecimal.ZERO) >= 0
-                    ? new Color(0, 100, 0) : new Color(180, 0, 0);
-            view.getjTextFieldSaldo().setForeground(corSaldo);
-
         } catch (Exception ex) {
             //
         }
+
+        try {
+            List<CopaQuarto> copaItems = copaQuartoService.findByCaixaId(caixaId);
+            for (CopaQuarto copa : copaItems) {
+                if (copa.getProduto() == null) continue;
+
+                BigDecimal valorItem = copa.getProduto().getValor()
+                        .multiply(BigDecimal.valueOf(copa.getQuantidade()));
+                String dataStr = copa.getDataHoraPedido() != null
+                        ? copa.getDataHoraPedido().format(DT_FORMATTER) : "-";
+                String descricao = String.format("Copa – %s x%d (Qto %s)",
+                        copa.getProduto().getDescricao(),
+                        copa.getQuantidade(),
+                        copa.getQuarto() != null ? copa.getQuarto().getIdentificacao() : "?");
+
+                tabela.addRow(new Object[]{
+                    "Copa",
+                    dataStr,
+                    descricao,
+                    String.format("R$ %.2f", valorItem.doubleValue()),
+                    copa.getStatus()
+                });
+            }
+        } catch (Exception ex) {
+            //
+        }
+
+        BigDecimal saldo = totalEntradas.subtract(totalSaidas);
+        view.getjTextFieldTotalEntradas().setText(String.format("%.2f", totalEntradas.doubleValue()));
+        view.getjTextFieldTotalSaidas().setText(String.format("%.2f", totalSaidas.doubleValue()));
+        view.getjTextFieldSaldo().setText(String.format("%.2f", saldo.doubleValue()));
+
+        Color corSaldo = saldo.compareTo(BigDecimal.ZERO) >= 0
+                ? new Color(0, 100, 0) : new Color(180, 0, 0);
+        view.getjTextFieldSaldo().setForeground(corSaldo);
     }
 
     private BigDecimal calcularSaldo(int caixaId) {
@@ -388,20 +410,14 @@ public final class ControllerCadCaixa implements ActionListener {
     private BigDecimal parseBD(String texto) {
         if (texto == null || texto.trim().isEmpty()) return BigDecimal.ZERO;
         String clean = texto.trim().replace("R$", "").replace(" ", "");
-        if (clean.contains(",") && clean.contains(".")) {
+        if (clean.contains(",") && clean.contains("."))
             clean = clean.replace(".", "").replace(",", ".");
-        } else if (clean.contains(",")) {
+        else if (clean.contains(","))
             clean = clean.replace(",", ".");
-        }
         try { return new BigDecimal(clean); }
         catch (Exception e) { return BigDecimal.ZERO; }
     }
 
-    private void mensagem(String msg) {
-        JOptionPane.showMessageDialog(view, msg);
-    }
-
-    private void erro(String msg) {
-        JOptionPane.showMessageDialog(view, msg, "Erro", JOptionPane.ERROR_MESSAGE);
-    }
+    private void mensagem(String msg) { JOptionPane.showMessageDialog(view, msg); }
+    private void erro(String msg)     { JOptionPane.showMessageDialog(view, msg, "Erro", JOptionPane.ERROR_MESSAGE); }
 }

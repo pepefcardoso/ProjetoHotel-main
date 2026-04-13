@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -121,6 +122,12 @@ public class ControllerCadCheck implements ActionListener {
 
         JButton btnCheckout = obterBotaoCheckout();
         if (btnCheckout != null) btnCheckout.addActionListener(this);
+
+        view.getjTabbedPane().addChangeListener(e -> {
+            if (view.getjTabbedPane().getSelectedIndex() == 4 && modoEdicao) {
+                atualizarConsumoCopaPorQuartos();
+            }
+        });
     }
 
     @Override
@@ -355,13 +362,47 @@ public class ControllerCadCheck implements ActionListener {
     private void handleGravar() {
         if (!validarCheckIn()) return;
 
+        String idStr = view.getjTextFieldId().getText().trim();
+
+        if (!idStr.isEmpty()) {
+            try {
+                int checkId = Integer.parseInt(idStr);
+                Check check = checkService.Carregar(checkId);
+                if (check == null) { erro("Check não encontrado para atualização."); return; }
+
+                LocalDateTime dtEntrada = parseData(view.getjFormattedTextFieldDataEntrada().getText());
+                LocalDateTime dtSaida   = parseData(view.getjFormattedTextFieldDataSaida().getText());
+
+                check.setDataHoraEntrada(dtEntrada);
+                check.setDataHoraSaida(dtSaida);
+                check.setObs(view.getjTextFieldObs().getText().trim());
+                checkService.Atualizar(check);
+
+                List<CheckQuarto> listaQuartos = checkQuartoService.findByCheckId(checkId);
+                for (CheckQuarto cq : listaQuartos) {
+                    cq.setDataHoraInicio(dtEntrada);
+                    cq.setDataHoraFim(dtSaida);
+                    checkQuartoService.Atualizar(cq);
+                }
+
+                mensagem("Check #" + checkId + " atualizado com sucesso!");
+                setModoEdicao(false);
+                modoEdicao = false;
+
+            } catch (Exception ex) {
+                erro("Erro ao atualizar check: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+            return;
+        }
+
         try {
             LocalDateTime dtEntrada = parseData(view.getjFormattedTextFieldDataEntrada().getText());
             LocalDateTime dtSaida   = parseData(view.getjFormattedTextFieldDataSaida().getText());
 
             Object[] firstRoomInfo = quartosAlocados.get(0);
-            Quarto firstQuarto  = (Quarto) firstRoomInfo[0];
-            String firstObsQuarto = (String) firstRoomInfo[1];
+            Quarto firstQuarto     = (Quarto) firstRoomInfo[0];
+            String firstObsQuarto  = (String) firstRoomInfo[1];
 
             CheckQuarto cqFirst = new CheckQuarto();
             cqFirst.setQuarto(firstQuarto);
@@ -385,8 +426,8 @@ public class ControllerCadCheck implements ActionListener {
             checkQuartoService.Atualizar(cqFirst);
 
             for (int i = 1; i < quartosAlocados.size(); i++) {
-                Object[] qInfo  = quartosAlocados.get(i);
-                CheckQuarto cq  = new CheckQuarto();
+                Object[] qInfo = quartosAlocados.get(i);
+                CheckQuarto cq = new CheckQuarto();
                 cq.setCheck(check);
                 cq.setQuarto((Quarto) qInfo[0]);
                 cq.setDataHoraInicio(dtEntrada);
@@ -518,8 +559,11 @@ public class ControllerCadCheck implements ActionListener {
                 for (CheckHospede ch : listaHospedes) {
                     hospedesAlocados.add(ch.getHospede());
                     adicionarLinhaTabela(view.getjTableHospedes(), new Object[]{
-                        ch.getHospede().getId(), ch.getHospede().getNome(),
-                        ch.getTipoHospede(), ch.getObs(), ch.getStatus()
+                        ch.getHospede().getId(),
+                        ch.getHospede().getNome(),
+                        ch.getTipoHospede(),
+                        ch.getObs() != null ? ch.getObs() : "",
+                        ch.getStatus()
                     });
                 }
             }
@@ -529,10 +573,13 @@ public class ControllerCadCheck implements ActionListener {
             List<CheckQuarto> listaQuartos = checkQuartoService.findByCheckId(check.getId());
             if (listaQuartos != null) {
                 for (CheckQuarto cq : listaQuartos) {
-                    quartosAlocados.add(new Object[]{cq.getQuarto(), cq.getObs()});
+                    quartosAlocados.add(new Object[]{cq.getQuarto(), cq.getObs() != null ? cq.getObs() : ""});
                     adicionarLinhaTabela(view.getjTableQuartos(), new Object[]{
-                        cq.getQuarto().getId(), cq.getQuarto().getIdentificacao(),
-                        cq.getQuarto().getDescricao(), cq.getObs(), cq.getStatus()
+                        cq.getQuarto().getId(),
+                        cq.getQuarto().getIdentificacao(),
+                        cq.getQuarto().getDescricao(),
+                        cq.getObs() != null ? cq.getObs() : "",
+                        cq.getStatus()
                     });
                 }
             }
@@ -544,10 +591,13 @@ public class ControllerCadCheck implements ActionListener {
             List<AlocacaoVaga> listaVagas = alocacaoVagaService.findByCheckId(check.getId());
             if (listaVagas != null) {
                 for (AlocacaoVaga av : listaVagas) {
-                    vagasAlocadas.add(new Object[]{av.getVeiculo(), av.getVagaEstacionamento(), av.getObs()});
+                    vagasAlocadas.add(new Object[]{av.getVeiculo(), av.getVagaEstacionamento(), av.getObs() != null ? av.getObs() : ""});
                     adicionarLinhaTabela(view.getjTableAlocacoesVagas(), new Object[]{
-                        vagasAlocadas.size(), av.getVeiculo().getPlaca(),
-                        av.getVagaEstacionamento().getDescricao(), av.getObs(), av.getStatus()
+                        vagasAlocadas.size(),
+                        av.getVeiculo().getPlaca(),
+                        av.getVagaEstacionamento().getDescricao(),
+                        av.getObs() != null ? av.getObs() : "",
+                        av.getStatus()
                     });
                 }
             }
@@ -556,7 +606,7 @@ public class ControllerCadCheck implements ActionListener {
         try {
             Receber receber = receberService.findByCheckId(check.getId());
             if (receber != null) {
-                BigDecimal valorCopa = parseBD(view.getjTextFieldValorProdutos().getText());
+                BigDecimal valorCopa    = parseBD(view.getjTextFieldValorProdutos().getText());
                 BigDecimal valorEstadia = receber.getValorOriginal().subtract(valorCopa);
                 if (valorEstadia.compareTo(BigDecimal.ZERO) < 0) valorEstadia = BigDecimal.ZERO;
 
@@ -564,7 +614,7 @@ public class ControllerCadCheck implements ActionListener {
                 view.getjTextFieldDesconto().setText(receber.getDesconto().toPlainString());
                 view.getjTextFieldAcrescimo().setText(receber.getAcrescimo().toPlainString());
                 view.getjTextFieldValorPago().setText(receber.getValorPago().toPlainString());
-                view.getjTextFieldObsRecebimento().setText(receber.getObs());
+                view.getjTextFieldObsRecebimento().setText(receber.getObs() != null ? receber.getObs() : "");
                 view.getjComboBoxStatusRecebimento().setSelectedItem(receber.getStatus() == 'P' ? "Pago" : "Pendente");
                 recalcular();
             }
@@ -643,8 +693,10 @@ public class ControllerCadCheck implements ActionListener {
 
     private void handleAlocarHospede() {
         if (hospedePendente == null) { mensagem("Selecione um hóspede antes de alocar."); return; }
+
         boolean exists = hospedesAlocados.stream().anyMatch(h -> h.getId() == hospedePendente.getId());
-        if (exists) { mensagem("Este hóspede já foi alocado."); return; }
+        if (exists) { mensagem("Este hóspede já foi alocado neste check-in."); return; }
+
         String tipoSelecionado = view.getjComboBoxTipoHospede().getSelectedItem().toString();
         if ("Titular".equals(tipoSelecionado)) {
             for (int i = 0; i < view.getjTableHospedes().getRowCount(); i++) {
@@ -697,8 +749,10 @@ public class ControllerCadCheck implements ActionListener {
             mensagem("Preencha as datas de entrada e saída antes de alocar quartos.");
             return;
         }
+        
         boolean exists = quartosAlocados.stream().anyMatch(q -> ((Quarto) q[0]).getId() == quartoPendente.getId());
-        if (exists) { mensagem("Este quarto já está alocado."); return; }
+        if (exists) { mensagem("Este quarto já está alocado neste check-in."); return; }
+
         String obs = view.getjTextFieldObsQuarto().getText().trim();
         quartosAlocados.add(new Object[]{quartoPendente, obs});
         adicionarLinhaTabela(view.getjTableQuartos(), new Object[]{
@@ -759,13 +813,21 @@ public class ControllerCadCheck implements ActionListener {
             mensagem("Selecione o Veículo e a Vaga para realizar a alocação.");
             return;
         }
-        for (Object[] v : vagasAlocadas) {
-            if (((Veiculo) v[0]).getId() == veiculoPendente.getId() &&
-                ((VagaEstacionamento) v[1]).getId() == vagaPendente.getId()) {
-                mensagem("Essa combinação de Veículo e Vaga já está alocada.");
-                return;
-            }
+        
+        boolean veiculoJaAlocado = vagasAlocadas.stream()
+                .anyMatch(v -> ((Veiculo) v[0]).getId() == veiculoPendente.getId());
+        if (veiculoJaAlocado) {
+            mensagem("Este veículo já está alocado neste check-in.");
+            return;
         }
+        
+        boolean vagaJaAlocada = vagasAlocadas.stream()
+                .anyMatch(v -> ((VagaEstacionamento) v[1]).getId() == vagaPendente.getId());
+        if (vagaJaAlocada) {
+            mensagem("Esta vaga já está ocupada neste check-in.");
+            return;
+        }
+
         String obs = view.getjTextFieldObsVaga().getText().trim();
         vagasAlocadas.add(new Object[]{veiculoPendente, vagaPendente, obs});
         adicionarLinhaTabela(view.getjTableAlocacoesVagas(), new Object[]{

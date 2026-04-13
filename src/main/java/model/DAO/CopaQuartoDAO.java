@@ -72,4 +72,26 @@ public class CopaQuartoDAO extends BaseDAO<CopaQuarto> {
             return Collections.emptyList();
         }
     }
+
+    public List<CopaQuarto> findByCaixaId(int caixaId) {
+        String jpql =
+            "SELECT DISTINCT c FROM CopaQuarto c " +
+            "WHERE c.quarto.id IN (" +
+            "  SELECT cq.quarto.id FROM CheckQuarto cq " +
+            "  WHERE cq.check.id IN (" +
+            "    SELECT r.check.id FROM Receber r " +
+            "    WHERE r.id IN (" +
+            "      SELECT m.receber.id FROM MovimentoCaixa m WHERE m.caixa.id = :caixaId" +
+            "    )" +
+            "  )" +
+            ") ORDER BY c.dataHoraPedido";
+        try {
+            return em.createQuery(jpql, CopaQuarto.class)
+                     .setParameter("caixaId", caixaId)
+                     .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
 }

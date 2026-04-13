@@ -27,4 +27,8 @@ public class CopaQuartoService extends AbstractService<CopaQuarto, CopaQuartoDAO
     public List<CopaQuarto> findByCheckId(int checkId) {
         return this.dao.findByCheckId(checkId);
     }
+
+    public List<CopaQuarto> findByCaixaId(int caixaId) {
+        return new CopaQuartoDAO().findByCaixaId(caixaId);
+    }
 }
